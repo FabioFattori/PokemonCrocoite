@@ -3,7 +3,7 @@
 - git clone repo
 - create a copy of the file .env.example and rename it to .env
 - run `sail up` to start the server
-- run `npm run dev` to make the front end build and watch for changes 
+- run `sail npm run dev` to make the front end build and watch for changes 
 - open the browser and go to `localhost` to see the project
 
 # Procject documentation
