@@ -1,0 +1,239 @@
+\documentclass{article}
+
+
+\title{Pokemon Crocoite}
+\author{Fabio Fattori 0001071463 \and Mattia Senni \and Francesco Tonelli}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Analisi dei Requisiti}
+\subsection{Testo del Problema}
+La software house Nintendo richiede un sistema gestionale di supporto per la realizzazione del nuovo gioco Pokémon Crocoite. 
+Il sistema informativo richiesto deve poter modellare tutte le informazioni riguardanti il gioco, poiché gli stessi dati verranno poi utilizzati dal software che la compagnia realizzerà. Il sistema dovrà gestire un gioco multiplayer dove ogni utente è un allenatore.
+Ogni utente deve potersi loggare nel sito, e deve avere le seguenti informazioni: nome e sesso (maschio o femmina).
+Ogni utente potrà catturare pokémon, si vuole sapere di ogni pokémon catturato, quando è stato catturato e dove è stato catturato.
+Ogni utente gestirà i suoi pokémon nella seguente maniera:
+da 1 a 6 pokémon (non si può giocare con 0 Pokémon in squadra. Il franchise assegna sempre almeno un pokémon al giocatore all’inizio dell’avventura) faranno parte della sua squadra (è importante l’ordine) con cui andrà in giro nella mappa, mentre gli altri andranno in un box strutturato nella seguente maniera: si possono avere fino a 24 box, ogni box ha fino a un massimo di 100 pokémon ed un nome.
+Ogni utente ha inoltre un pokédex dove sono presenti tutte le specie di pokémon presenti in natura
+Ogni utente ha inoltre una lista di strumenti.
+Gli strumenti possono essere di 3 tipi: utili ai fini della storia, utili in battaglia, utili per insegnare mosse ai pokémon.
+Di ogni strumento si vuole sapere la quantità presente nella borsa.
+Gli strumenti utili ai fini della storia sono strumenti presi da una lista di strumenti con nome ed una descrizione.
+Gli strumenti utili in battaglia possono o curare da uno stato del pokémon o restituire al pokémon da 1 a tutti i punti vita o entrambi.
+Gli strumenti utili per insegnare mosse ai pokémon possono essere o  MT (Move Trainer, cioè un oggetto che può essere usato per determinati tipi di Pokémon per far loro imparare la mossa in questione, ogni MT può essere usata solamente una volta) o MN (come le MT ma possono essere usate più di una volta).
+Ogni Pokémon ha 1 o 2 tipi (presi da una lista di tipi possibili), da 1 a 4 mosse apprese (prese da una lista di mosse), una lista di mosse che può apprendere tramite il salire di livello con annesso livello a cui le apprende, una lista di mosse che può apprendere tramite MT o MN ed un livello di rarità (preso da una lista di livelli di rarità). 
+Le mosse possono essere solo di un tipo e se usate su determinati tipi di Pokémon possono essere super efficaci, poco efficaci o inutili.
+Ogni mossa ha una probabilità di causare un cambiamento di stato.
+Ogni istanza di Pokémon ha (oltre ai dati spora descritti) i punti vita, il livello, un sesso (maschio, femmina o unico (alcuni pokemon speciali non hanno un sesso)), una natura (presa da una lista di possibili nature ed assegnata casualmente), delle statistiche (velocità, attacco, attacco speciale, difesa, difesa speciale), uno strumento che può tenere ed uno stato (preso da una lista di stati) (ad esempio addormentato).
+Il sistema deve gestire in tutto e per tutto una mappa di gioco tipica di pokémon, quindi saranno presenti diverse zone.
+Di ogni zona si vuole sapere nome, se è o no una città (il viaggio rapido (teletrasporto) è garantito solo nelle città), se ha una palestra, nel caso quale palestra è, la lista di allenatori presenti in quel villaggio, e quali specie di pokémon selvatici che possono essere trovati in quella zona.
+La palestra è una speciale struttura dove è possibile battere il capopalestra per ottenere una medaglia.
+Di ogni palestra si vuole memorizzare il capopalestra (che è un allenatore), una serie di allenatori presenti nella palestra ed il tipo in cui la palestra è specializzata.
+Ogni allenatore (NPC) ha fino a 6 pokemon (e comunque almeno 1) ed una lista di strumenti utili in battaglia.
+Ogni utente ha una lista di medaglie ottenute tramite lotta in palestra
+Si vogliono inoltre gestire le coordinate del gioco tramite coordinate X e Y.
+Bisogna quindi sapere in qualsiasi momento dove sono tutti gli utenti e NPC del gioco.
+Bisogna inoltre sapere la posizione della zona (ogni zona è rettangolare, bisogna quindi sapere quanto è lunga e alta) e di ogni palestra.
+
+\subsection{Comprensione del problema e degli attori principali}
+La software house Nintendo richiede un sistema gestionale di supporto per la realizzazione del nuovo gioco Pokémon Crocoite. 
+Il sistema informativo richiesto deve poter modellare tutte le informazioni riguardanti il gioco, poiché gli stessi dati verranno poi utilizzati dal software che la compagnia realizzerà. Il sistema dovrà gestire un gioco multiplayer dove ogni utente è un allenatore.
+Ogni utente deve potersi loggare nel sito, e deve avere le seguenti informazioni: nome e sesso (maschio o femmina).
+Ogni utente potrà catturare pokémon, si vuole sapere di ogni pokémon catturato, quando è stato catturato e dove è stato catturato.
+Ogni utente gestirà i suoi pokémon nella seguente maniera:
+da 1 a 6 pokémon (non si può giocare con 0 Pokémon in squadra. Il franchise assegna sempre almeno un pokémon al giocatore all’inizio dell’avventura) faranno parte della sua squadra (è importante l’ordine) con cui
+andrà in giro nella mappa, mentre gli altri andranno in un box strutturato nella seguente maniera: si possono avere fino a 24 box, ogni box ha fino a un massimo di 100 pokémon, ha un tema preso da una lista ed un nome.
+Ogni utente ha inoltre un pokédex dove sono presenti tutte le specie di pokémon presenti in natura
+Ogni utente ha inoltre una lista di strumenti.
+Gli strumenti possono essere di 3 tipi: utili ai fini della storia, utili in battaglia, utili per insegnare mosse ai pokémon.
+Di ogni strumento si vuole sapere la quantità presente nella borsa.
+Gli strumenti utili ai fini della storia sono strumenti presi da una lista di strumenti con nome ed una descrizione.
+Gli strumenti utili in battaglia possono o curare da uno stato del pokémon o restituire al pokémon da 1 a tutti i punti vita o entrambi.
+Gli strumenti utili per insegnare mosse ai pokémon possono essere o  MT (Move Trainer, cioè un oggetto che può essere usato per determinati tipi di Pokémon per far loro imparare la mossa in questione, ogni MT può essere usata solamente una volta) o MN (come le MT ma possono essere usate più di una volta).
+Ogni Pokémon ha 1 o 2 tipi (presi da una lista di tipi possibili), da 1 a 4 mosse apprese (prese da una lista di mosse), una lista di mosse che può apprendere tramite il salire di livello con annesso livello a cui le apprende, una lista di mosse che può apprendere tramite MT o MN ed un livello di rarità (preso da una lista di livelli di rarità). 
+Le mosse possono essere solo di un tipo e se usate su determinati tipi di Pokémon possono essere super efficaci, poco efficaci o inutili.
+Ogni mossa ha una probabilità di causare un cambiamento di stato.
+Ogni istanza di Pokémon ha (oltre ai dati spora descritti) i punti vita, il livello, un sesso (maschio, femmina o unico (alcuni pokemon speciali non hanno un sesso)), una natura (presa da una lista di possibili nature ed assegnata casualmente), delle statistiche (velocità, attacco, attacco speciale, difesa, difesa speciale), uno strumento che può tenere ed uno stato (preso da una lista di stati) (ad esempio addormentato).
+Il sistema deve gestire in tutto e per tutto una mappa di gioco tipica di pokémon, quindi saranno presenti diverse zone.
+Di ogni zona si vuole sapere nome, se è o no una città (il viaggio rapido (teletrasporto) è garantito solo nelle città), se ha una palestra, nel caso quale palestra è, la lista di allenatori presenti in quel villaggio, e quali specie di pokémon selvatici che possono essere trovati in quella zona.
+La palestra è una speciale struttura dove è possibile battere il capopalestra per ottenere una medaglia.
+Di ogni palestra si vuole memorizzare il capopalestra (che è un allenatore), una serie di allenatori presenti nella palestra ed il tipo in cui la palestra è specializzata.
+Ogni allenatore (NPC) ha fino a 6 pokemon (e comunque almeno 1) ed una lista di strumenti utili in battaglia.
+Ogni utente ha una lista di medaglie ottenute tramite lotta in palestra
+Si vogliono inoltre gestire le coordinate del gioco tramite coordinate X e Y.
+Bisogna quindi sapere in qualsiasi momento dove sono tutti gli utenti e NPC del gioco.
+Bisogna inoltre sapere la posizione della zona (ogni zona è rettangolare, bisogna quindi sapere quanto è lunga e alta) e di ogni palestra.
+
+\subsection{Progetto dello schema concettuale}
+Di seguito riportiamo una tabella che riporta come saranno raffigurati 
+e cosa sono gli attori principali del problema posto.
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+Nome & Tipo & Descrizione \\
+\hline
+utente & E & L’utente è una persona che crea un account nel gioco, e quindi è il giocatore che avrà dei pokémon, una squadra e degli oggetti \\
+admin & E & Gli o il admin è l’amministratore (quindi Nintendo) che potrà inserire i pokémon e gestire tutti i dati contenuti nel Database \\
+\hline
+razzaPokemon & E & È l’equivalente di uno “stampino” per tutti gli esemplari che verranno creati nel gioco, quindi conterrà tutte le caratteristiche uguali tra gli esemplari della razza \\
+Esemplare & E & L’esemplare è il pokémon specifico che il giocatore troverà giocando, ogni esemplare avrà delle statistiche personali diverse dagli altri esemplari della stessa razza \\
+strumentiStoria & E & Sono tutti gli strumenti che servono per la storia \\
+strumentiVita & E & Sono tutti gli strumenti che alterano la vita/stato del pokémon sul quale vengono usati \\
+MNMT & E & Strumenti che servono per insegnare una mossa ad un pokemon \\
+Mosse & E & Tutte le mosse che esistono nel gioco \\
+mosseAppreseDaPokemon & R & Le mosse che il pokemon in questione può usare (max 4) \\
+mosseImparabili & R & Le mosse che il pokemon può imparare \\
+mosseImparabiliMNMT & R & Tutte le mosse che il pokémon può imparare grazie le MNMT \\
+Box & E & Contenitore che il giocatore può usare per depositare i suoi pokemon \\
+TemiBox & E & Temi dei box \\
+StatiPokemon & E & Ogni stato che il pokémon può assumere \\
+Stati-Esemplare & R & Quali stati l’esemplare ha assunto in questo momento \\
+Pokedex & R & Strumento grafico che permette ad ogni giocatore di vedere quali pokémon ha catturato/visto e quando \\
+Zona & E & Una località presente nella mappa di gioco \\
+RazzaInZona & R & Quali razze pokemon posso trovare in una determinata zona \\
+SquadraPokemon & BOH & BOH \\
+Palestra & E & Mini zona dentro una zona dove ci sono degli allenatori ed un capopalestra, quando egli viene sconfitto viene assegnata al player la medaglia della palestra \\
+zainoStrumentiStoria & R & Lista di strumenti inerenti alla storia che un giocatore possiede \\
+zainoStrumentiVita & R & Lista di strumenti inerenti alla vita che un giocatore possiede \\
+zainoStrumentiMNMT & R & Lista di strumenti MNMT che un giocatore possiede \\
+Posizione & E & La posizione di un giocatore o di un NPC qualsiasi \\
+Livelli Rarita & E & La rarità di un pokémon \\
+Natura & E & L'attributo di un esemplare pokémon che modifica le sue statistiche durante la battaglia \\
+\hline
+\end{tabular}
+\caption{Tabella degli attori principali e delle entità}
+\end{table}
+
+\section{Specifiche funzionali}
+\subsection{Funzionalità richieste}
+\subsubsection{Funzionalità admin}
+Visualizzare, aggiungere, modificare, eliminare qualsiasi entità di qualsiasi tabella.
+\subsubsection{Funzionalità user}
+L’utilizzo del sito da parte di uno user è a solo scopo consultivo, in quanto la modifica di qualsiasi parametro (componenti della squadra, oggetti posseduti, box pokémon) viene fatta in-game.
+Visualizzazione della carta allenatore (nome, sesso, medaglie…).
+Visualizzare il pokédex (tutti i pokémon disponibili).
+Visualizzare tutte le mosse che un pokémon può imparare.
+Visualizzare alcune delle caratteristiche (in che zona può essere trovato...).
+Visualizzare le zone, la zona in cui è in quel momento, gli NPC presenti, i pokémon trovabili.
+Visualizzare la sua squadra, gli oggetti che possiede e i suoi box.
+Visualizzare la top 3 delle razze di pokémon più utilizzate (ovvero in squadra) dagli allenatori.
+Visualizzare la top 3 dei tipi di pokémon più utilizzati.
+Visualizzare la top 3 dei migliori allenatori (maggior numero di medaglie, in caso di pari punteggio viene considerato più forte l'allenatore con la media dei livelli dei pokémon in squadra più alta).
+Visualizzare la top 3 degli strumenti più rari del gioco, ovvero meno posseduti dagli allenatori (di qualsiasi tipo: ai fini della storia, utili in battaglia, MN e MT, non considerando la quantità, in quanto gli strumenti chiave per la storia e le MN hanno quantità massima trasportabile di 1).
+Visualizzare la zona più pop
+olata da utenti.
+
+\section{Progetto logico}
+
+Il progetto logico del sistema si basa sull'organizzazione delle entità e sulle relazioni tra di esse. Le entità principali sono rappresentate dalle tabelle del database, mentre le relazioni tra di esse definiscono come i dati sono correlati e interconnessi.
+
+\subsection{Progettazione delle tabelle}
+
+Le tabelle del database sono progettate in modo da rappresentare tutte le entità e le relazioni descritte nel problema. Ogni tabella corrisponde a una entità o a una relazione tra entità.
+
+\begin{itemize}
+    \item \textbf{Tabella utente}: Contiene le informazioni degli utenti che giocano al gioco, come nome, sesso e altre informazioni personali.
+    \item \textbf{Tabella admin}: Memorizza i dati degli amministratori del gioco.
+    \item \textbf{Tabella razzaPokemon}: Rappresenta le caratteristiche comuni di una specie di Pokémon.
+    \item \textbf{Tabella Esemplare}: Contiene le informazioni specifiche di ogni singolo esemplare di Pokémon.
+    \item \textbf{Tabella strumentiStoria}: Memorizza gli strumenti utilizzati per la storia del gioco.
+    \item \textbf{Tabella strumentiVita}: Contiene gli strumenti che influenzano la vita o lo stato dei Pokémon.
+    \item \textbf{Tabella MNMT}: Rappresenta gli strumenti utilizzati per insegnare mosse ai Pokémon.
+    \item \textbf{Tabella Mosse}: Contiene tutte le mosse disponibili nel gioco.
+    \item \textbf{Tabella mosseAppreseDaPokemon}: Definisce le mosse apprese da un Pokémon.
+    \item \textbf{Tabella mosseImparabili}: Memorizza le mosse che un Pokémon può imparare.
+    \item \textbf{Tabella mosseImparabiliMNMT}: Rappresenta le mosse apprendibili tramite MNMT.
+    \item \textbf{Tabella Box}: Contiene i box in cui gli utenti possono depositare i loro Pokémon.
+    \item \textbf{Tabella TemiBox}: Rappresenta i temi dei box.
+    \item \textbf{Tabella StatiPokemon}: Memorizza gli stati che un Pokémon può assumere.
+    \item \textbf{Tabella Stati-Esemplare}: Definisce gli stati attuali di un esemplare di Pokémon.
+    \item \textbf{Tabella Pokedex}: Contiene le informazioni visualizzabili nel Pokedex.
+    \item \textbf{Tabella Zona}: Rappresenta le diverse zone presenti nella mappa di gioco.
+    \item \textbf{Tabella RazzaInZona}: Definisce quali razze di Pokémon sono presenti in una determinata zona.
+    \item \textbf{Tabella SquadraPokemon}: Memorizza le squadre di Pokémon di ciascun utente.
+    \item \textbf{Tabella Palestra}: Contiene le informazioni sulle palestre presenti nel gioco.
+    \item \textbf{Tabella zainoStrumentiStoria}: Rappresenta gli strumenti per la storia posseduti dagli utenti.
+    \item \textbf{Tabella zainoStrumentiVita}: Memorizza gli strumenti per la vita posseduti dagli utenti.
+    \item \textbf{Tabella zainoStrumentiMNMT}: Contiene gli strumenti MNMT posseduti dagli utenti.
+    \item \textbf{Tabella Posizione}: Rappresenta la posizione degli utenti e degli NPC nel gioco.
+    \item \textbf{Tabella LivelliRarita}: Memorizza i livelli di rarità dei Pokémon.
+    \item \textbf{Tabella Natura}: Contiene le nature dei Pokémon.
+\end{itemize}
+
+\subsection{Definizione delle relazioni}
+
+Le relazioni tra le tabelle definiscono come i dati sono correlati tra di loro. Ad esempio, la relazione tra la tabella \textbf{utente} e la tabella \textbf{SquadraPokemon} stabilisce quali Pokémon sono in possesso di ciascun utente. Allo stesso modo, la relazione tra la tabella \textbf{Zona} e la tabella \textbf{RazzaInZona} indica quali specie di Pokémon sono presenti in una determinata zona.
+
+\subsection{Vincoli di integrità referenziale}
+
+Per garantire l'integrità dei dati, vengono definiti vincoli di integrità referenziale tra le tabelle. Ad esempio, il campo che identifica la razza di un Pokémon nella tabella \textbf{Esemplare} è vincolato alla tabella \textbf{razzaPokemon}, garantendo che ogni esemplare faccia riferimento a una razza valida.
+
+\section{Progetto fisico}
+
+Il progetto fisico del database definisce come le tabelle e le relazioni sono implementate concretamente all'interno di un sistema di gestione di database specifico, come ad esempio MySQL o PostgreSQL. Include la definizione dei tipi di dati, degli indici e delle chiavi primarie e esterne.
+
+\subsection{Definizione dei tipi di dati}
+
+I tipi di dati vengono scelti in base alle esigenze del problema e alle caratteristiche del sistema di gestione di database utilizzato. Ad esempio, i nomi degli utenti possono essere memorizzati come stringhe di caratteri, mentre le statistiche dei Pokémon possono essere rappresentate come numeri interi.
+
+\subsection{Gestione delle chiavi primarie e esterne}
+
+Le chiavi primarie vengono assegnate a ciascuna tabella per identificare univocamente ogni record. Le chiavi esterne vengono utilizzate per stabilire relazioni tra le tabelle, garantendo l'integrità referenziale dei dati.
+
+\subsection{Creazione degli indici}
+
+Gli indici vengono creati per ottimizzare le prestazioni delle interrogazioni sul database. Vengono definiti sugli attributi più frequentemente utilizzati nelle interrogazioni, consentendo di accedere rapidamente ai dati.
+
+\section{L'interfaccia utente}
+
+L'interfaccia utente del sistema fornisce agli utenti un'esperienza intuitiva e user-friendly per interagire con il gioco. Include schermate per la gestione del profilo utente, la visualizzazione del Pokedex, la navigazione tra le diverse zone della mappa e altre funzionalità del gioco.
+
+\subsection{Design dell'interfaccia utente}
+
+L'interfaccia utente è progettata per essere intuitiva e facile da usare, consentendo agli utenti di accedere facilmente a tutte le funzionalità del gioco. Ecco alcuni punti chiave del design dell'interfaccia utente:
+
+\begin{itemize}
+\item \textbf{Homepage}: La homepage fornisce un accesso rapido alle funzionalità principali del gioco, come il profilo dell'utente, il Pokedex, la mappa del gioco e le impostazioni.
+\item \textbf{Profilo utente}: La pagina del profilo utente mostra le informazioni personali dell'utente, come il nome, il sesso e le statistiche di gioco, come il numero di Pokémon catturati e il numero di medaglie ottenute.
+\item \textbf{Pokedex}: La sezione del Pokedex consente agli utenti di visualizzare tutte le specie di Pokémon presenti nel gioco, insieme alle informazioni su dove e quando sono stati avvistati.
+\item \textbf{Mappa del gioco}: La mappa del gioco mostra tutte le zone disponibili e consente agli utenti di navigare tra di esse. È possibile fare clic su una zona per visualizzare informazioni dettagliate, come i Pokémon selvatici che possono essere trovati lì e gli allenatori presenti.
+\item \textbf{Squadra Pokémon}: Gli utenti possono gestire la propria squadra di Pokémon attraverso un'interfaccia intuitiva che consente loro di visualizzare, aggiungere, rimuovere o scambiare Pokémon nella loro squadra.
+\item \textbf{Inventario degli strumenti}: Gli utenti possono visualizzare e gestire il loro inventario di strumenti, inclusi gli strumenti per la storia, quelli per la vita e quelli per insegnare mosse ai Pokémon.
+\item \textbf{Classifiche}: Le classifiche mostrano le statistiche dei migliori giocatori del gioco, come il numero di medaglie ottenute, il livello medio dei Pokémon in squadra e altro ancora.
+\end{itemize}
+
+\subsection{Accesso alle funzionalità}
+
+L'interfaccia utente fornisce un accesso intuitivo e diretto a tutte le funzionalità del gioco. Gli utenti possono accedere alle diverse sezioni del gioco tramite un menu di navigazione ben organizzato e possono utilizzare pulsanti e link chiaramente etichettati per eseguire azioni come catturare Pokémon, gestire la squadra e esplorare la mappa del gioco.
+
+\subsection{Design visivo}
+
+Il design visivo dell'interfaccia utente è accattivante e coinvolgente, con colori vivaci e immagini di alta qualità che rappresentano i Pokémon e le varie ambientazioni del gioco. Le icone e gli elementi grafici sono ben progettati e facili da comprendere, consentendo agli utenti di navigare nel gioco in modo rapido e intuitivo.
+
+\subsection{Usabilità e accessibilità}
+
+L'usabilità e l'accessibilità dell'interfaccia utente sono priorità fondamentali nella progettazione del gioco. Le funzionalità sono organizzate in modo logico e coerente, con un layout pulito e intuitivo che facilita la navigazione e l'utilizzo del gioco per utenti di tutte le capacità. Inoltre, vengono adottate pratiche di progettazione accessibile per garantire che il gioco sia accessibile a tutti, compresi gli utenti con disabilità visive o motorie.
+
+\subsection{Feedback e interazione}
+
+L'interfaccia utente fornisce feedback tempestivo agli utenti in risposta alle loro azioni, ad esempio attraverso messaggi di conferma quando viene eseguita un'azione con successo o messaggi di errore quando si verifica un problema. Inoltre, gli utenti possono interagire con il gioco in vari modi, ad esempio tramite clic, tap o gesture, a seconda del dispositivo utilizzato per giocare.
+
+\subsection{Aggiornamenti e miglioramenti}
+
+Il design dell'interfaccia utente viene continuamente valutato e migliorato in base ai feedback degli utenti e alle nuove funzionalità aggiunte al gioco. Gli aggiornamenti vengono rilasciati regolarmente per garantire che l'esperienza di gioco sia sempre all'altezza delle aspettative degli utenti e che l'interfaccia utente rimanga moderna, intuitiva e coinvolgente nel tempo.
+
+\subsection{Glossario}
+
+\begin{itemize}
+\item \textbf{Natura}: attributo di un esemplare Pokémon che modifica le sue statistiche durante la battaglia. In questo contesto, ci interessa solo conoscere la natura, mentre le modifiche effettive delle statistiche verranno gestite nel gioco.
+\end{itemize}
+
+Il glossario fornisce definizioni chiare e concise dei termini utilizzati nel contesto del gioco Pokémon Crocoite, aiutando gli utenti a comprendere appieno il linguaggio e i concetti utilizzati nel gioco. Le definizioni sono scritte in modo chiaro e accessibile, con esempi e spiegazioni laddove necessario per chiarire il significato dei termini specifici utilizzati nel contesto del gioco. Il glossario è una risorsa utile per gli utenti che desiderano approfondire la propria comprensione del gioco e dei suoi meccanismi, fornendo loro un punto di riferimento rapido per consultare i termini e i concetti chiave utilizzati nel gioco.
+\end{document}
