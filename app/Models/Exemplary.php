@@ -20,7 +20,12 @@ class Exemplary extends Model
         'ps',
         'level',
         'catchDate',
-        'pokemon_id'
+        'pokemon_id',
+        'gender_id',
+        'nature_id',
+        'user_team_id',
+        'npc_id',
+        'holding_tools_id',
     ];
 
     public function pokemon()

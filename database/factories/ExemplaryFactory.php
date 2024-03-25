@@ -28,6 +28,7 @@ class ExemplaryFactory extends Factory
             'pokemon_id' => function (){
                 return \APP\Models\Pokemon::factory()->create()->id;
             }
+            
         ];
     }
 }
