@@ -16,7 +16,7 @@ return new class extends Migration
         });
 
         Schema::table('exemplaries', function (Blueprint $table) {
-            $table->foreignId('npc_id')->nullable()->cascadeOnDelete();
+            $table->foreignId('npc_id')->references('id')->on('npcs')->nullable()->cascadeOnDelete();
         });
     }
 
