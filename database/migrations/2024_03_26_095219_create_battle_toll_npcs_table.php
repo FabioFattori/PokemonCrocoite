@@ -15,8 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('battle_toll_id')->references('id')->on("battle_tools")->cascadeOnDelete();
             $table->foreignId('npc_id')->references('id')->on("npcs")->cascadeOnDelete();
-            $table->integer('amount')->default(1);
+            $table->unsignedInteger('amount')->default(1);
         });
+
+        DB::statement("ALTER TABLE battle_toll_npcs ADD CONSTRAINT amount_npc_not_less_than_zero CHECK (amount >= 1 AND amount <= 999)");
+
     }
 
     /**

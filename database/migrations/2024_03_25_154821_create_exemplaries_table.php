@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('exemplaries', function (Blueprint $table) {
             $table->id();
-            $table->integer('speed');
-            $table->integer('specialDefense');
-            $table->integer('defense');
-            $table->integer('attack');
-            $table->integer('specialAttack');
-            $table->integer('ps');
-            $table->integer('level');
+            $table->unsignedInteger('speed');
+            $table->unsignedInteger('specialDefense');
+            $table->unsignedInteger('defense');
+            $table->unsignedInteger('attack');
+            $table->unsignedInteger('specialAttack');
+            $table->unsignedInteger('ps');
+            $table->unsignedInteger('level');
             $table->date('catchDate');
             $table->foreignId('pokemon_id')->constrained()->cascadeOnDelete();
         });
