@@ -17,8 +17,8 @@ class NpcFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->name(),
-            'description' => $this->faker->text(),
+            //the NPC table only has the id
+            
         ];
     }
 }

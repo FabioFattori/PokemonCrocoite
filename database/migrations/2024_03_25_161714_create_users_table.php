@@ -18,7 +18,7 @@ return new class extends Migration
         });
 
         Schema::table('exemplaries', function (Blueprint $table) {
-            $table->foreignId('user_team_id')->references('id')->on('users')->nullable()->cascadeOnDelete();
+            $table->foreignId('user_team_id')->nullable()->references('id')->on('users')->cascadeOnDelete()->default(null);
         });
     }
 

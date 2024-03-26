@@ -18,7 +18,7 @@ return new class extends Migration
         });
 
         Schema::table('exemplaries', function (Blueprint $table) {
-            $table->foreignId('nature_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('nature_id')->references("id")->on("natures")->cascadeOnDelete();
         });
     }
 

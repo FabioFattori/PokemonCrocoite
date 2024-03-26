@@ -27,7 +27,21 @@ class ExemplaryFactory extends Factory
             'catchDate' => $this->faker->date(),
             'pokemon_id' => function (){
                 return \APP\Models\Pokemon::factory()->create()->id;
-            }
+            },
+            'nature_id' => function (){
+                return \APP\Models\Nature::factory()->create()->id;
+            } ,
+            'gender_id' => function (){
+                return \APP\Models\Gender::factory()->create()->id;
+            },
+            'holding_tools_id' => function (){
+                return \APP\Models\BattleTool::factory()->create()->id;
+            },
+            'box_id' => function (){
+                return \APP\Models\Box::factory()->create()->id;
+            },
+
+
             
         ];
     }
