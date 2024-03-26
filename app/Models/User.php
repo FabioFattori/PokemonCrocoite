@@ -17,4 +17,9 @@ class User extends Model
     {
         return $this->hasMany(Exemplary::class);
     }
+
+    public function getBoxes()
+    {
+        return $this->hasMany(Box::class);
+    }
 }
