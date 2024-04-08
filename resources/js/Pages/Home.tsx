@@ -8,12 +8,14 @@ import Divider from '@mui/material/Divider';
 
 export default function home() {
     let users: any[] = usePage().props.users as any[];
-    const userHeaders = ["id", "Name", "Email","buttons"];
+    const userfieldNames = ["id",  "email"];
+
+    const userHeaders = ["ID",  "Email"];
 
     const buttons = [{ icon: AddIcon, url: "/" },{icon: Edit, url: "/edit"}];
 
     let exemplaries : any[] = usePage().props.exemplaries as any[];
-    const exemplariesHeaders = ["id", 'speed',
+    const exemplariesfieldNames = ["id", 'speed',
     'specialDefense',
     'defense',
     'attack',
@@ -29,12 +31,29 @@ export default function home() {
     'holding_tools_id',
     'box_id',];
 
+    const exemplariesHeaders = ["ID", 'Speed',
+    'Special Defense',
+    'Defense',
+    'Attack',
+    'Special Attack',
+    'PS',
+    'Level',
+    'Catch Date',
+    'Pokemon ID',
+    "Gender ID",
+    "Nature ID",
+    "User Team ID",
+    "NPC ID",
+    "Holding Tools ID",
+    "Box ID",];
+
+
     return (
         <div>
             <h1>Home</h1>
-            <GeneralTable headers={userHeaders} data={users} buttons={buttons} />
+            <GeneralTable tableTitle="users" headers={userHeaders}  fieldNames={userfieldNames} data={users} buttons={buttons} />
             <Divider  />
-            <GeneralTable headers={exemplariesHeaders} data={exemplaries} buttons={[]} />
+            <GeneralTable tableTitle="Exemplaries" headers={exemplariesHeaders} fieldNames={exemplariesfieldNames} data={exemplaries} buttons={[]} />
         </div>
     );
 }
