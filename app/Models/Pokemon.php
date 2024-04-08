@@ -34,4 +34,19 @@ class Pokemon extends Model
     {
         return $this->belongsToMany(Type::class);
     }
+
+    public function rarity()
+    {
+        return $this->belongsTo(Rarity::class);
+    }
+
+    public function zone()
+    {
+        return $this->belongsToMany(Zone::class, 'can_be_found', 'pokemon_id', 'id');
+    }
+
+    public function encountered()
+    {
+        return $this->hasMany(PokemonEncountered::class);
+    }
 }
