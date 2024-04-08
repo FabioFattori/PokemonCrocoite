@@ -11,7 +11,7 @@ class User extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['email', 'password'];
+    protected $fillable = ['email', 'password', 'position_id'];
 
     public function getCurrentTeam()
     {
@@ -21,5 +21,25 @@ class User extends Model
     public function getBoxes()
     {
         return $this->hasMany(Box::class);
+    }
+
+    public function getEncounters()
+    {
+        return $this->hasMany(PokemonEncountered::class);
+    }
+
+    public function mnMt()
+    {
+        return $this->belongsToMany(MnMt::class, 'mn_mt_quantity')->withPivot('quantity');
+    }
+
+    public function storyTool()
+    {
+        return $this->belongsToMany(StoryTool::class, 'story_tool_user')->withPivot('quantity');
+    }
+
+    public function position()
+    {
+        return $this->belongsTo(Position::class);
     }
 }

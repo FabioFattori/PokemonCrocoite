@@ -5,28 +5,26 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Npc extends Model
+class Gym extends Model
 {
     use HasFactory;
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'description', 'position_id', 'gym_id'];
-
-    public function getCurrentTeam()
-    {
-        return $this->hasMany(Exemplary::class);
-    }
+    protected $fillable = ['position_id', 'zone_id'];
 
     public function position()
     {
         return $this->belongsTo(Position::class);
     }
 
-    public function gym()
+    public function zone()
     {
-        return $this->belongsTo(Gym::class);
+        return $this->belongsTo(Zone::class);
     }
 
-
+    public function npc()
+    {
+        return $this->hasMany(Npc::class);
+    }
 }

@@ -1,5 +1,5 @@
-
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('npcs', function (Blueprint $table) {
+        Schema::create('story_tool_user', function (Blueprint $table) {
             $table->id();
-        });
-
-        Schema::table('exemplaries', function (Blueprint $table) {
-            $table->foreignId('npc_id')->nullable()->references('id')->on('npcs')->cascadeOnDelete()->default(null);
+            $table->foreignId('story_tool_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->integer('quantity');
         });
     }
 
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('npcs');
+        Schema::dropIfExists('story_tool_user');
     }
 };
