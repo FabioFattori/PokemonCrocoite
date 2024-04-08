@@ -53,4 +53,9 @@ class Exemplary extends Model
             return "WARNING : Esemplare Fantasma - L'esemplare non è ne in una box , ne in nessuna squadra ";
         }
     }
+    
+    public function move()
+    {
+        return $this->belongsToMany(Move::class);
+    }
 }

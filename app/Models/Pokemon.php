@@ -17,6 +17,21 @@ class Pokemon extends Model
 
     public function exemplary()
     {
-        return $this->hasOne(Exemplary::class);
+        return $this->hasMany(Exemplary::class);
+    }
+
+    public function canLearnFromLeve()
+    {
+        return $this->belongsToMany(Move::class, "can_learn_level")->withPivot('level');
+    }
+
+    public function canLearnFromMachine()
+    {
+        return $this->belongsToMany(Move::class, "can_learn_from_mn_mt");
+    }
+
+    public function type()
+    {
+        return $this->belongsToMany(Type::class);
     }
 }
