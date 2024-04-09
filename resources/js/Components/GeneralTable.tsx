@@ -15,12 +15,11 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Switch from '@mui/material/Switch';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import { router } from '@inertiajs/react';
 import { visuallyHidden } from '@mui/utils';
-
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
+import DialogForm from './DialogForm';
 
 
 
@@ -82,11 +81,18 @@ interface EnhancedTableProps {
 interface EnhancedTableToolbarProps {
   numSelected: number;
   title: string;
+  buttons: { label:string, icon: any; url?: string }[];
+  openCreateDialog?: () => void;
+  openEditDialog?: () => void;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
   const { numSelected } = props;
   const { title } = props;
+  const { buttons } = props;
+
+  const { openCreateDialog } = props;
+  const { openEditDialog } = props;
 
   return (
     <Toolbar
@@ -118,19 +124,38 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
           {title}
         </Typography>
       )}
-      {numSelected > 0 ? (
+      {numSelected == 1 && buttons.filter((btn)=>btn.label == "Edit" || btn.label == "Delete").length != 0 ? 
+        
+          <>
+          <Tooltip title="Edit">
+            <IconButton onClick={()=>buttons[1].url != null ? router.post(buttons[1].url): openEditDialog != undefined ? openEditDialog() : console.log("create")} >
+              <Edit />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete">
+          <IconButton onClick={()=>buttons[2].url != null ? router.post(buttons[2].url):null} >
+            <Delete />
+          </IconButton>
+        </Tooltip>
+          </>
+        
+      : numSelected > 0 && buttons.length >= 3 ? (
         <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
+          <IconButton onClick={()=>buttons[1].url != null ? router.post(buttons[1].url): console.log("Delete Clicked")  } >
+            <Delete />
           </IconButton>
         </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
+      ) : null}
+
+
+        {buttons.filter((button)=>button.label != "Delete" && button.label != "Edit" ).map((button) => (
+          <Tooltip title={button.label}>
+            <IconButton onClick={()=>button.url != null ? router.post(button.url): openCreateDialog != undefined ? openCreateDialog() : console.log("create")} >
+              <button.icon />
+            </IconButton>
+          </Tooltip>))}
+        
+      
     </Toolbar>
   );
 }
@@ -145,7 +170,7 @@ export default function GeneralTable({
     fieldNames: string[];
     headers: string[];
     data: any[];
-    buttons: { icon: any; url: string }[];
+    buttons: { label:string, icon: any; url?: string }[];
 }) {
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<any>();
@@ -186,7 +211,7 @@ export default function GeneralTable({
               <TableSortLabel
                 active={false}
                 direction={ order}
-                onClick={createSortHandler(headCell as keyof any)}
+                onClick={createSortHandler(fieldNames[headers.findIndex((value)=>value==headCell)] as keyof any)}
               >
                 {headCell}
                 {orderBy === headCell ? (
@@ -267,10 +292,15 @@ export default function GeneralTable({
     [order, orderBy, page, rowsPerPage],
   );
 
+  
+const [openCreate, setOpenCreate] = React.useState(false);
+const [openEdit, setOpenEdit] = React.useState(false);
+
+
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} title={tableTitle} />
+        <EnhancedTableToolbar numSelected={selected.length} title={tableTitle} buttons={buttons} openCreateDialog={()=>setOpenCreate(true)} openEditDialog={()=>setOpenEdit(true)} />
         <TableContainer sx={{ minWidth: 1000,maxHeight: 440}}>
           <Table
             stickyHeader
@@ -341,7 +371,8 @@ export default function GeneralTable({
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-     
+      <DialogForm open={openCreate} openDialog={()=>setOpenCreate(true)} closeDialog={()=>setOpenCreate(false)} headers={headers} data={[]} />
+      <DialogForm open={openEdit} openDialog={()=>setOpenEdit(true)} closeDialog={()=>setOpenEdit(false)} headers={headers} data={data} />
     </Box>
   );
 }
