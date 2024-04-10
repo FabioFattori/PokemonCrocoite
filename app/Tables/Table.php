@@ -93,9 +93,9 @@ abstract class Table{
     protected function applyFilters(Builder|EloquentBuilder $query): Builder|EloquentBuilder{
         $this->filters->each(function(Filter $filter, $key) use ($query){
             $column = $this->getColumn($filter->getColumnName());
-            if($column !== null && $column->getSortable()){
+            if($column !== null && $column->getSearchable()){
                 if($column->getType()->isString()){
-                    $query->where($filter->getColumnName(), "like", "%" . $filter->getValue() . "%");
+                    $query->where($column->getDbName(), "like", "%" . $filter->getValue() . "%");
                 }
                 else {
                     $query->where($filter->getColumnName(), $filter->getValue());
@@ -139,14 +139,16 @@ abstract class Table{
         return $query;
     }
 
-    protected function getFullQuery(): Builder|EloquentBuilder{
+    protected function getFullQuery(bool $withPagination = true): Builder|EloquentBuilder{
         $query = $this->getQuery();
         $query = $this->applySelect($query);
         $query = $this->applyFilters($query);
         $query = $this->applyCustomFilters($query);
         $query = $this->applySort($query);
         $query = $this->applyCustomSort($query);
-        $query = $this->applyPagination($query);
+        if($withPagination){
+            $query = $this->applyPagination($query);
+        }
         return $query;
     }
 
@@ -155,7 +157,7 @@ abstract class Table{
     }
 
     protected function getCount(){
-        return $this->getFullQuery()->count();
+        return $this->getFullQuery(withPagination:false)->count();
     }
 
     public function get(){
@@ -163,6 +165,7 @@ abstract class Table{
         $data = $this->getData();
         $count = $this->getCount();
         return [
+            'sql' => $query->toRawSql(),
             'column' => $this->getColumns(),
             'filters' => $this->filters->values()->all(),
             'sorts' => $this->sorts->values()->all(),
