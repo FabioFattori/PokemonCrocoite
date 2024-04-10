@@ -19,7 +19,27 @@ Route::get("/seedUsers", [SeedController::class, "users"])->name("seed.users");
 Route::prefix("api")->group(function () {
     Route::get("/seed/pokemon", [SeedController::class, "basePokemon"])->name("api.seed.pokemon");
     Route::get("/pokemons", function () {
-        $table = new ExemplaryTable();        
+        $table = new ExemplaryTable();
+        $table->setConfigObject([
+            "sorts" => [
+                [
+                    "columnName" => "level",
+                    "direction" => "DESC"
+                ]
+            ],
+            "filters" => [
+                [
+                    "columnName" => "level",
+                    "value" => 1
+                ],
+                [
+                    "columnName" => "pokemonName",
+                    "value" => "1282279348"
+                ]
+            ],
+            "page" => 1,
+            "perPage" => 10
+        ]);
         return response()->json(["table" => $table->get()]);
     
     })->name("api.pokemon");

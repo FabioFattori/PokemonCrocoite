@@ -19,7 +19,7 @@ class ExemplaryTable extends Table{
         parent::__construct();
         $this->setColumns([
             "pokemonName" => Column::Visible("pokemonName", "pokemon.name", "Nome Pokemon", types: Types::STRING),
-            "level" => Column::Visible("level", "exemplaries.level", "Livello Pokemon", false, false, Types::INTEGER),
+            "level" => Column::Visible("level", "exemplaries.level", "Livello Pokemon", true, false, Types::INTEGER),
             "id" => Column::Hidden(name: "id", dbName: "exemplaries.id", types: Types::INTEGER),
         ]);
     }
