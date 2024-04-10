@@ -16,7 +16,6 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import { router } from '@inertiajs/react';
-import { visuallyHidden } from '@mui/utils';
 import Delete from '@mui/icons-material/Delete';
 import Edit from '@mui/icons-material/Edit';
 import DialogForm from './DialogForm';
@@ -25,45 +24,7 @@ import DialogForm from './DialogForm';
 
 
 
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
 
-type Order = 'asc' | 'desc';
-
-function getComparator<Key extends keyof any>(
-  order: Order,
-  orderBy: Key,
-): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string },
-) => number {
-  return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
-function stableSort<T>(array: readonly T[], comparator: (a: T, b: T) => number) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
 
 
 
@@ -71,8 +32,7 @@ interface EnhancedTableProps {
   numSelected: number;
   onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
   onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: string;
+
   rowCount: number;
 }
 
@@ -81,7 +41,7 @@ interface EnhancedTableProps {
 interface EnhancedTableToolbarProps {
   numSelected: number;
   title: string;
-  buttons: { label:string, icon: any; url?: string }[];
+  buttons: { label:string, icon: any; url?: string | null }[];
   openCreateDialog?: () => void;
   openEditDialog?: () => void;
 }
@@ -148,8 +108,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
       ) : null}
 
 
-        {buttons.filter((button)=>button.label != "Delete" && button.label != "Edit" ).map((button) => (
-          <Tooltip title={button.label}>
+        {buttons.filter((button)=>button.label != "Delete" && button.label != "Edit" ).map((button,key) => (
+          <Tooltip title={button.label} key={key}>
             <IconButton onClick={()=>button.url != null ? router.post(button.url): openCreateDialog != undefined ? openCreateDialog() : console.log("create")} >
               <button.icon />
             </IconButton>
@@ -170,17 +130,15 @@ export default function GeneralTable({
     fieldNames: string[];
     headers: string[];
     data: any[];
-    buttons: { label:string, icon: any; url?: string }[];
+    buttons: { label:string, icon: any; url?: string | null }[];
 }) {
-  const [order, setOrder] = React.useState<Order>('asc');
-  const [orderBy, setOrderBy] = React.useState<any>();
-  const [selected, setSelected] = React.useState<readonly number[]>([]);
+  
+  const [selected, setSelected] = React.useState<any[]>([]);
   const [page, setPage] = React.useState(0);
-  const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   function EnhancedTableHead(props: EnhancedTableProps) {
-    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
+    const { onSelectAllClick,  numSelected, rowCount, onRequestSort } =
       props;
     const createSortHandler =
       (property: any) => (event: React.MouseEvent<unknown>) => {
@@ -206,19 +164,13 @@ export default function GeneralTable({
               key={headCell}
               align={'right'}
               padding={'normal'}
-              sortDirection={order}
             >
               <TableSortLabel
                 active={false}
-                direction={ order}
                 onClick={createSortHandler(fieldNames[headers.findIndex((value)=>value==headCell)] as keyof any)}
               >
                 {headCell}
-                {orderBy === headCell ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Box>
-                ) : null}
+                
               </TableSortLabel>
             </TableCell>
           ))}
@@ -231,37 +183,27 @@ export default function GeneralTable({
     event: React.MouseEvent<unknown>,
     property: keyof any,
   ) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+    //TODO: Implement Sorting
   };
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = data.map((n) => n.id);
-      setSelected(newSelected);
+      
+      setSelected(data);
       return;
     }
     setSelected([]);
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, id: number) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly number[] = [];
+    const newSelected = data[id];
 
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1),
-      );
+    if(selected.filter((value)=>value["id"] == newSelected["id"]).length == 0){
+      
+      setSelected(oldSelected => [...oldSelected, newSelected]);
+    }else{
+      setSelected(oldSelected => oldSelected.filter((value)=>value["id"] != newSelected["id"]));
     }
-    setSelected(newSelected);
   };
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -273,24 +215,14 @@ export default function GeneralTable({
     setPage(0);
   };
 
-  const handleChangeDense = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDense(event.target.checked);
-  };
 
-  const isSelected = (id: number) => selected.indexOf(id) !== -1;
+  const isSelected = (row:any) => selected.filter((value)=>value["id"] == row["id"]).length != 0;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
 
-  const visibleRows = React.useMemo(
-    () =>
-      stableSort(data, getComparator(order, orderBy)).slice(
-        page * rowsPerPage,
-        page * rowsPerPage + rowsPerPage,
-      ),
-    [order, orderBy, page, rowsPerPage],
-  );
+  
 
   
 const [openCreate, setOpenCreate] = React.useState(false);
@@ -306,29 +238,28 @@ const [openEdit, setOpenEdit] = React.useState(false);
             stickyHeader
             
             aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
+            size={'medium'}
           >
             <EnhancedTableHead
               numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
+              
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={data.length}
             />
             <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id as number);
+              {data.map((row, index) => {
+                const isItemSelected = isSelected(row);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row["id"] as number)}
+                    onClick={(event) => handleClick(event, index)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
-                    key={row.id}
+                    key={index}
                     selected={isItemSelected}
                     sx={{ cursor: 'pointer' }}
                   >
@@ -341,9 +272,9 @@ const [openEdit, setOpenEdit] = React.useState(false);
                         }}
                       />
                     </TableCell>
-                    {fieldNames.map((header) => {
+                    {fieldNames.map((header,key) => {
                         return (
-                            <TableCell align="right">{row[header] != null ? row[header]:"NULL"}</TableCell>
+                            <TableCell key={key} align="right">{row[header] != null ? row[header]:"NULL"}</TableCell>
                         );
                     })}
                   </TableRow>
@@ -352,7 +283,7 @@ const [openEdit, setOpenEdit] = React.useState(false);
               {emptyRows > 0 && (
                 <TableRow
                   style={{
-                    height: (dense ? 33 : 53) * emptyRows,
+                    height: (53) * emptyRows,
                   }}
                 >
                   <TableCell colSpan={6} />
@@ -371,8 +302,8 @@ const [openEdit, setOpenEdit] = React.useState(false);
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
-      <DialogForm open={openCreate} openDialog={()=>setOpenCreate(true)} closeDialog={()=>setOpenCreate(false)} headers={headers} data={[]} />
-      <DialogForm open={openEdit} openDialog={()=>setOpenEdit(true)} closeDialog={()=>setOpenEdit(false)} headers={headers} data={data} />
+      <DialogForm open={openCreate} openDialog={()=>setOpenCreate(true)} closeDialog={()=>setOpenCreate(false)} fieldNames={fieldNames} headers={headers} data={[]} />
+      <DialogForm open={openEdit} openDialog={()=>setOpenEdit(true)} closeDialog={()=>setOpenEdit(false)} fieldNames={fieldNames} headers={headers} data={selected[0]} />
     </Box>
   );
 }

@@ -3,25 +3,14 @@ import GeneralTable from "../Components/GeneralTable";
 import { usePage } from "@inertiajs/react";
 import {buttons,setUp} from "../utils/buttons";
 import Divider from '@mui/material/Divider';
-import DialogForm from "../Components/DialogForm";
 
 
 export default function home() {
-    const [open, setOpen] = React.useState(false);
-
-    const toggleOpen = () => {
-        setOpen(!open);
-    }
-
-
-    React.useEffect(() => {
-        console.log(users[0]["id"])
-    },[]);
-
+    
     let users: any[] = usePage().props.users as any[] ?? [];
-    const userfieldNames = ["id",  "email"];
+    const userfieldNames = ["id",  "email" , "password" , "position_id"];
 
-    const userHeaders = ["ID",  "Email"];
+    const userHeaders = ["ID",  "Email" , "Password" , "Position ID"];
 
 
 
@@ -66,8 +55,7 @@ export default function home() {
             <h1>Home</h1>
             <GeneralTable tableTitle="users" headers={userHeaders}  fieldNames={userfieldNames} data={users} buttons={buttons} />
             <Divider  />
-            <GeneralTable tableTitle="Exemplaries" headers={exemplariesHeaders} fieldNames={exemplariesfieldNames} data={exemplaries} buttons={[]} />
-            <DialogForm open={open} openDialog={()=>setOpen(true)} closeDialog={()=>setOpen(false)} headers={userHeaders} data={users} />
+            <GeneralTable tableTitle="Exemplaries" headers={exemplariesHeaders} fieldNames={exemplariesfieldNames} data={exemplaries} buttons={buttons} />
         </div>
     );
 }
