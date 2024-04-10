@@ -9,6 +9,7 @@ class Pokemon extends Model
 {
     use HasFactory;
 
+    protected $table = 'pokemon';
     public $timestamps = false;
 
     protected $fillable = [
@@ -17,7 +18,7 @@ class Pokemon extends Model
 
     public function exemplary()
     {
-        return $this->hasMany(Exemplary::class);
+        return $this->hasMany(Exemplary::class, 'pokemon_id', 'id');
     }
 
     public function canLearnFromLeve()

@@ -24,22 +24,17 @@ class ExemplaryFactory extends Factory
             'specialAttack' => $this->faker->numberBetween(1, 100),
             'ps' => $this->faker->numberBetween(1, 100),
             'level' => $this->faker->numberBetween(1, 100),
-            'catchDate' => $this->faker->date(),
-            'pokemon_id' => function (){
-                return \APP\Models\Pokemon::factory()->create()->id;
-            },
+            'catchDate' => $this->faker->date(),            
             'nature_id' => function (){
-                return \APP\Models\Nature::factory()->create()->id;
+                return \App\Models\Nature::factory()->create()->id;
             } ,
             'gender_id' => function (){
-                return \APP\Models\Gender::factory()->create()->id;
+                return \App\Models\Gender::factory()->create()->id;
             },
             'holding_tools_id' => function (){
-                return \APP\Models\BattleTool::factory()->create()->id;
+                return \App\Models\BattleTool::factory()->create()->id;
             },
-            'box_id' => function (){
-                return \APP\Models\Box::factory()->create()->id;
-            },
+            'box_id' => null,
 
 
             
