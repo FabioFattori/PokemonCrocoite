@@ -31,7 +31,7 @@ class Exemplary extends Model
 
     public function pokemon()
     {
-        return $this->belongsTo(Pokemon::class);
+        return $this->belongsTo(Pokemon::class, 'pokemon_id', 'id');
     }
 
     public function getWhereTheExemplaryIs()
