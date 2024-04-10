@@ -19,6 +19,7 @@ class UserFactory extends Factory
         return [
             'email' => $this->faker->unique()->safeEmail(),
             'password' => $this->faker->password(),
+            'position_id' => \App\Models\Position::factory()->create()->id,
         ];
     }
 }

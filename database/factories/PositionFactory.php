@@ -17,7 +17,8 @@ class PositionFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'x' => $this->faker->numberBetween(1, 100),
+            'y' => $this->faker->numberBetween(1, 100),
         ];
     }
 }

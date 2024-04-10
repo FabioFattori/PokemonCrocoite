@@ -10,6 +10,10 @@ export default function home() {
     let users: any[] = usePage().props.users as any[] ?? [];
     const userfieldNames = ["id",  "email" , "password" , "position_id"];
 
+    React.useEffect(() => { 
+        console.log(users)
+    },[]);
+
     const userHeaders = ["ID",  "Email" , "Password" , "Position ID"];
 
 
@@ -53,7 +57,7 @@ export default function home() {
     return (
         <div style={{marginLeft:"10px",marginRight:"10px"}}>
             <h1>Home</h1>
-            <GeneralTable tableTitle="users" headers={userHeaders}  fieldNames={userfieldNames} data={users} buttons={buttons} />
+            {/* <GeneralTable tableTitle="users" headers={userHeaders}  fieldNames={userfieldNames} data={users} buttons={buttons} /> */}
             <Divider  />
             <GeneralTable tableTitle="Exemplaries" headers={exemplariesHeaders} fieldNames={exemplariesfieldNames} data={exemplaries} buttons={buttons} />
         </div>
