@@ -1,0 +1,47 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"command": "sh ${workspaceFolder}/vendor/bin/sail npm run dev",
+			"label": "npm: dev",
+			"problemMatcher": [],
+		},
+		{
+			"type": "shell",
+			"command": "sh ${workspaceFolder}/vendor/bin/sail npm install",
+			"label": "npm: install",
+			"problemMatcher": [],
+		},
+		{
+			"type": "shell",
+			"command": "sh ${workspaceFolder}/vendor/bin/sail up -d",
+			"label": "sail: up",
+			"problemMatcher": [],
+		},
+		{
+			"type": "shell",
+			"command": "sh ${workspaceFolder}/vendor/bin/sail down -d",
+			"label": "sail: down",
+			"problemMatcher": [],
+		},
+		{
+			"type": "shell",
+			"command": "docker compose up -d && docker compose exec laravel.test composer install && docker compose down",
+			"label": "Initialize",
+			"problemMatcher": [],
+			"options": {
+				"cwd": "${workspaceFolder}"
+			}
+		},
+		{
+			"type": "shell",
+			"dependsOn": ["sail: up", "npm: install", "npm: dev"],
+			"dependsOrder": "sequence",
+			"command": "echo Project running cycle ended",	
+			"problemMatcher": [],
+			"label": "run Server",
+			"runOptions": { "runOn": "folderOpen" }
+		}
+	]
+}
