@@ -1,19 +1,34 @@
 import React from "react";
 import GeneralTable from "../Components/GeneralTable";
 import { usePage } from "@inertiajs/react";
-import AddIcon from '@mui/icons-material/Add';
-import  Edit  from "@mui/icons-material/Edit";
+import {buttons,setUp} from "../utils/buttons";
 import Divider from '@mui/material/Divider';
+import DialogForm from "../Components/DialogForm";
 
 
 export default function home() {
-    let users: any[] = usePage().props.users as any[];
-    const userHeaders = ["id", "Name", "Email","buttons"];
+    const [open, setOpen] = React.useState(false);
 
-    const buttons = [{ icon: AddIcon, url: "/" },{icon: Edit, url: "/edit"}];
+    const toggleOpen = () => {
+        setOpen(!open);
+    }
 
-    let exemplaries : any[] = usePage().props.exemplaries as any[];
-    const exemplariesHeaders = ["id", 'speed',
+
+    React.useEffect(() => {
+        console.log(users[0]["id"])
+    },[]);
+
+    let users: any[] = usePage().props.users as any[] ?? [];
+    const userfieldNames = ["id",  "email"];
+
+    const userHeaders = ["ID",  "Email"];
+
+
+
+    
+
+    let exemplaries : any[] = usePage().props.exemplaries as any[] ?? [];
+    const exemplariesfieldNames = ["id", 'speed',
     'specialDefense',
     'defense',
     'attack',
@@ -29,12 +44,30 @@ export default function home() {
     'holding_tools_id',
     'box_id',];
 
+    const exemplariesHeaders = ["ID", 'Speed',
+    'Special Defense',
+    'Defense',
+    'Attack',
+    'Special Attack',
+    'PS',
+    'Level',
+    'Catch Date',
+    'Pokemon ID',
+    "Gender ID",
+    "Nature ID",
+    "User Team ID",
+    "NPC ID",
+    "Holding Tools ID",
+    "Box ID",];
+
+
     return (
-        <div>
+        <div style={{marginLeft:"10px",marginRight:"10px"}}>
             <h1>Home</h1>
-            <GeneralTable headers={userHeaders} data={users} buttons={buttons} />
+            <GeneralTable tableTitle="users" headers={userHeaders}  fieldNames={userfieldNames} data={users} buttons={buttons} />
             <Divider  />
-            <GeneralTable headers={exemplariesHeaders} data={exemplaries} buttons={[]} />
+            <GeneralTable tableTitle="Exemplaries" headers={exemplariesHeaders} fieldNames={exemplariesfieldNames} data={exemplaries} buttons={[]} />
+            <DialogForm open={open} openDialog={()=>setOpen(true)} closeDialog={()=>setOpen(false)} headers={userHeaders} data={users} />
         </div>
     );
 }
