@@ -18,7 +18,7 @@ class BoxFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'user_id' => \App\Models\User::first()->id ?? 0,
+            'user_id' => \App\Models\User::inRandomOrder()->first()->id,
         ];
     }
 }

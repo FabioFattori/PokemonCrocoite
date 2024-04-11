@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('natures', function (Blueprint $table) {
+        Schema::create('zones', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('description')->nullable();
-        });
-
-        Schema::table('exemplaries', function (Blueprint $table) {
-            $table->foreignId('nature_id')->references("id")->on("natures")->cascadeOnDelete();
+            $table->string('name');
+            $table->integer("length");
+            $table->integer("width");
+            $table->unique("name");
+            $table->foreignId('position_id')->constrained()->cascadeOnDelete();
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('natures');
+        Schema::dropIfExists('zones');
     }
 };

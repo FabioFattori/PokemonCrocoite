@@ -17,7 +17,8 @@ class MoveFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "description" => $this->faker->text(),
+            "name" => $this->faker->name(),
         ];
     }
 }

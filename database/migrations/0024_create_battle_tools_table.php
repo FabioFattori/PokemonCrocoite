@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('boxes', function (Blueprint $table) {
+        Schema::create('battle_tools', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId("user_id")->nullable()->references("id")->on("users")->cascadeOnDelete();
-        });
-
-        Schema::table("exemplaries", function (Blueprint $table) {
-            $table->foreignId("box_id")->nullable()->references("id")->on("boxes")->cascadeOnDelete();
+            $table->string('description');
+            $table->unsignedInteger('healthRecovery');
         });
     }
 
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('boxes');
+        Schema::dropIfExists('battle_tools');
     }
 };

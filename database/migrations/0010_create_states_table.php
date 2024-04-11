@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('genders', function (Blueprint $table) {
+        Schema::create('states', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-        });
-
-        Schema::table('exemplaries', function (Blueprint $table) {
-            $table->foreignId('gender_id')->references('id')->on('genders')->cascadeOnDelete();
+            $table->string('description')->default("");
         });
     }
 
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('genders');
+        Schema::dropIfExists('states');
     }
 };

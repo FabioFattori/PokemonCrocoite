@@ -13,7 +13,8 @@ class Move extends Model
     
     protected $fillable = [
         'description',
-        'name'
+        'name',
+        'type_id'
     ];
     
     public function exemplary()

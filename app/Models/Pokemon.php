@@ -21,7 +21,7 @@ class Pokemon extends Model
         return $this->hasMany(Exemplary::class, 'pokemon_id', 'id');
     }
 
-    public function canLearnFromLeve()
+    public function canLearnFromLevel()
     {
         return $this->belongsToMany(Move::class, "can_learn_level")->withPivot('level');
     }
