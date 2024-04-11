@@ -18,8 +18,8 @@ class UserTable extends Table
             "id" => Column::Hidden("id", "users.id", types: Types::INTEGER),
             "email" => Column::Visible("email", "users.email", "Email", types: Types::STRING),
             "password" => Column::Visible("password", "users.password", "Password", types: Types::STRING),
-            "x" => Column::Visible("x", "positions.x", "X", types: Types::INTEGER),
-            "y" => Column::Visible("y", "positions.y", "Y", types: Types::INTEGER),
+            "positions.x" => Column::Visible("positions.x", "positions.x", "X", types: Types::INTEGER),
+            "positions.y" => Column::Visible("positions.y", "positions.y", "Y", types: Types::INTEGER),
         ]);
     }
 

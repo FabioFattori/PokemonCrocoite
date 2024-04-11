@@ -11,20 +11,24 @@ use Inertia\Inertia;
 Route::get('/', function () {
     $table = new UserTable();
 
-    if(request()->has("page")){
-        $table->setPage(request()->get("page"));
-    }
-    if(request()->has("perPage")){
-        $table->setPerPage(request()->get("perPage"));
-    }
-    if(request()->has("sorts")){
-        $table->setSorts(request()->get("sorts"));
-    }
-    if(request()->has("filters")){
-        $table->setFilters(request()->get("filters"));
-    }
+    if (request()->all() != []) {
 
-    return Inertia::render('Home',['users' => $table->get(), 'exemplaries' => App\Models\Exemplary::all()]);
+        $table->setConfigObject(request()->all());
+    } else {
+        $table->setConfigObject([
+            "sorts" => [
+            ],
+            "filters" => [
+            ],
+            "page" => 1,
+            "perPage" => 5
+        ]);
+    }
+     
+    
+
+
+    return Inertia::render('Home', ['users' => $table->get(), 'exemplaries' => App\Models\Exemplary::all()]);
 });
 
 
@@ -57,6 +61,5 @@ Route::prefix("api")->group(function () {
             "perPage" => 10
         ]);
         return response()->json(["table" => $table->get()]);
-    
     })->name("api.pokemon");
 });

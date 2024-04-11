@@ -25,7 +25,7 @@ class Column implements \JsonSerializable {
     public static function Visible(string $name = "", string|null $dbName = null, string|null $label = null, bool $sortable = true, bool $searchable = true, Types|string $types = Types::STRING){
         return new Column($name, $dbName, $label, $sortable, $searchable, $types, false);
     }
-    public static function Hidden(string $name = "", string|null $dbName = null, string|null $label = null, bool $sortable = true, bool $searchable = true, Types|string $types = Types::STRING){
+    public static function Hidden(string $name = "", string|null $dbName = null, string|null $label = null, bool $sortable = false, bool $searchable = false, Types|string $types = Types::STRING){
         return new Column($name, $dbName, $label, $sortable, $searchable, $types, true);
     }
 
