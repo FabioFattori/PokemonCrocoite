@@ -44,6 +44,15 @@ abstract class Table{
         throw new \Exception("Not implemented");
     }
 
+    protected function checkPage(){
+        $maxPage = ceil($this->getCount() / $this->perPage);
+        if($this->page > $maxPage){
+            $this->page = $maxPage;
+            return true;
+        }
+        return false;
+    }
+
     protected function getColumns():Collection{
         return collect($this->columns);
     }
@@ -53,8 +62,8 @@ abstract class Table{
     }
 
     public function setFilters(array|Collection $filters){
-        $filters = collect($filters);
-        $this->filters = $filters->map(fn($value) => Filter::FromJson($value));
+        //$filters = collect($filters);
+        $this->filters = Filter::FromJson($filters);
     }
 
     public function setSorts(array|Collection $sorts) {
@@ -83,7 +92,7 @@ abstract class Table{
         }
         if($object->has("sorts")){
             $this->setSorts($object->get("sorts"));
-        }        
+        }
     }
 
     public function getColumn(string $name): Column|null{
@@ -164,6 +173,10 @@ abstract class Table{
         $query = $this->getFullQuery();
         $data = $this->getData();
         $count = $this->getCount();
+        if($this->checkPage()){
+            $data = $this->getData();
+            $count = $this->getCount();
+        }
         return [
             'sql' => $query->toRawSql(),
             'column' => $this->getColumns(),

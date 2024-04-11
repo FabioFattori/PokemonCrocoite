@@ -3,13 +3,37 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedController;
 use App\Tables\ExemplaryTable;
+use App\Tables\UserTable;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home',['users' => App\Models\User::all(), 'exemplaries' => App\Models\Exemplary::all()]);
+    $table = new UserTable();
+
+    if (request()->all() != []) {
+
+        $table->setConfigObject(request()->all());
+    } else {
+        $table->setConfigObject([
+            "sorts" => [
+            ],
+            "filters" => [
+            ],
+            "page" => 1,
+            "perPage" => 5
+        ]);
+    }
+     
+    
+
+
+    return Inertia::render('Home', ['users' => $table->get(), 'exemplaries' => App\Models\Exemplary::all()]);
 });
+
+
+
+Route::get("/seedUsers", [SeedController::class, "users"])->name("seed.users");
 
 
 Route::prefix("api")->group(function () {
@@ -37,6 +61,5 @@ Route::prefix("api")->group(function () {
             "perPage" => 10
         ]);
         return response()->json(["table" => $table->get()]);
-    
     })->name("api.pokemon");
 });

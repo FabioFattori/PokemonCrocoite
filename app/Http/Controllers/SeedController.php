@@ -14,4 +14,11 @@ class SeedController extends Controller
 
         return response()->json(["message" => "Pokemon and Exemplaries seeded", "pokemon" => $pkm]);
     }   
+
+    public function users(){
+        //create 5 users with the factory
+        $users = \App\Models\User::factory(5)->create();
+
+        return response()->json(["message" => "Users seeded", "users" => $users]);
+    }
 }
