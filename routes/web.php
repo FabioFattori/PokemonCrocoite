@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedController;
 use App\Tables\ExemplaryTable;
@@ -8,30 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    $table = new UserTable();
-
-    if (request()->all() != []) {
-
-        $table->setConfigObject(request()->all());
-    } else {
-        $table->setConfigObject([
-            "sorts" => [
-            ],
-            "filters" => [
-            ],
-            "page" => 1,
-            "perPage" => 5
-        ]);
-    }
-     
-    
-
-
-    return Inertia::render('Home', ['users' => $table->get(), 'exemplaries' => App\Models\Exemplary::all()]);
-});
-
-
+Route::match(['GET', 'POST'], '/', [HomeController::class, "index"])->name("home.get");
 
 Route::get("/seedUsers", [SeedController::class, "users"])->name("seed.users");
 

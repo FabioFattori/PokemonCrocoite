@@ -13,11 +13,11 @@ class Filter implements \JsonSerializable {
         $this->value = $value;
     }
 
-    public static function FromJson(array|Collection $array){
-        $array1 = collect($array);
+    public static function FromJson(array|Collection $array): Filter|null{
+        $array = collect($array);
         
-        if(!$array1->has("columnName") || !$array1->has("value")){
-            throw new \Exception("Invalid array".json_encode($array));
+        if(!$array->has("columnName") || !$array->has("value")){
+            return null;
         }else{
             return new Filter($array->get("columnName"), $array->get("value"));
         }

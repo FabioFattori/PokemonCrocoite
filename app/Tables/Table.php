@@ -62,13 +62,13 @@ abstract class Table{
     }
 
     public function setFilters(array|Collection $filters){
-        //$filters = collect($filters);
-        $this->filters = Filter::FromJson($filters);
+        $filters = collect($filters);
+        $this->filters = $filters->map(fn($value) => Filter::FromJson($value))->except(null);
     }
 
     public function setSorts(array|Collection $sorts) {
         $sorts = collect($sorts);
-        $this->sorts = $sorts->map(fn($value) => Sortable::FromJson($value));
+        $this->sorts = $sorts->map(fn($value) => Sortable::FromJson($value))->except(null);
     }
 
     public function setPage(int $page){

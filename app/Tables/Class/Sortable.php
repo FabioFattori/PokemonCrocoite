@@ -13,8 +13,11 @@ class Sortable implements \JsonSerializable{
         $this->direction = $direction;
     }
 
-    public static function FromJson(array|Collection $sortable){
+    public static function FromJson(array|Collection $sortable):Sortable|null{
         $sortable = collect($sortable);
+        if(!$sortable->has("columnName") || !$sortable->has("direction")){
+            return null;
+        }
         return new Sortable($sortable->get("columnName"), $sortable->get("direction"));
     }
 

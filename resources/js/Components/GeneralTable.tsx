@@ -325,7 +325,7 @@ export default function GeneralTable({
                 },
             ]);
             console.log(filterObj);
-            router.get(rootForPagination, filterObj);
+            router.post(rootForPagination, filterObj);
         } else {
             alert("Seleziona una colonna");
         }
