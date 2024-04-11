@@ -170,7 +170,7 @@ abstract class Table{
             'filters' => $this->filters->values()->all(),
             'sorts' => $this->sorts->values()->all(),
             'data' => $data,
-            'page' => $this->page,
+            'page' => $this->page == 0 ? 1 : $this->page,
             'perPage' => $this->perPage,
             'count' => $count
         ];

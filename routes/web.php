@@ -10,8 +10,24 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     $table = new UserTable();
+
+    if(request()->has("page")){
+        $table->setPage(request()->get("page"));
+    }
+    if(request()->has("perPage")){
+        $table->setPerPage(request()->get("perPage"));
+    }
+    if(request()->has("sorts")){
+        $table->setSorts(request()->get("sorts"));
+    }
+    if(request()->has("filters")){
+        $table->setFilters(request()->get("filters"));
+    }
+
     return Inertia::render('Home',['users' => $table->get(), 'exemplaries' => App\Models\Exemplary::all()]);
 });
+
+
 
 Route::get("/seedUsers", [SeedController::class, "users"])->name("seed.users");
 

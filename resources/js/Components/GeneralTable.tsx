@@ -15,10 +15,11 @@ import Paper from '@mui/material/Paper';
 import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import { router } from '@inertiajs/react';
 import Delete from '@mui/icons-material/Delete';
 import Edit from '@mui/icons-material/Edit';
 import DialogForm from './DialogForm';
+import translator from "../utils/EnemyType";
+import { router } from '@inertiajs/react';
 
 
 
@@ -121,21 +122,20 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 }
 export default function GeneralTable({
     tableTitle = "Table",
-    fieldNames = [],
-    headers = [],
-    data = [],
+    dbObject = {},
+    rootForPagination = "/",
     buttons = [],
 }: {
     tableTitle: string;
-    fieldNames: string[];
-    headers: string[];
-    data: any[];
+    rootForPagination?: string;
+    dbObject: any;
     buttons: { label:string, icon: any; url?: string | null }[];
 }) {
+
+  const {headers , fieldNames , data , page , dataPerPage , count} = translator({sennisTable: dbObject});
+
   
   const [selected, setSelected] = React.useState<any[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   function EnhancedTableHead(props: EnhancedTableProps) {
     const { onSelectAllClick,  numSelected, rowCount, onRequestSort } =
@@ -206,13 +206,22 @@ export default function GeneralTable({
     }
   };
 
+  const getReqObject = (key:any, value:any) => {
+    return {
+      ...dbObject,
+      data: undefined,
+      column: undefined,
+      count: undefined,
+      [key]: value,
+    }
+  }
+
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+    router.get(rootForPagination, getReqObject("page", newPage));
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    router.get(rootForPagination, getReqObject("perPage" , parseInt(event.target.value, 10)));
   };
 
 
@@ -220,7 +229,7 @@ export default function GeneralTable({
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * dataPerPage - count) : 0;
 
   
 
@@ -248,7 +257,7 @@ const [openEdit, setOpenEdit] = React.useState(false);
               rowCount={data.length}
             />
             <TableBody>
-              {data.map((row, index) => {
+              {data.map((row : any, index:number) => {
                 const isItemSelected = isSelected(row);
                 const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -295,8 +304,8 @@ const [openEdit, setOpenEdit] = React.useState(false);
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
+          count={count}
+          rowsPerPage={dataPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
