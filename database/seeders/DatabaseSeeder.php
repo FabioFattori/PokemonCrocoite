@@ -13,12 +13,14 @@ use App\Models\Move;
 use App\Models\Nature;
 use App\Models\Npc;
 use App\Models\Pokemon;
+use App\Models\Position;
 use App\Models\Rarity;
 use App\Models\State;
 use App\Models\StateBattleTool;
 use App\Models\StateExemplary;
 use App\Models\Type;
 use App\Models\User;
+use App\Models\Zone;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -39,8 +41,7 @@ class DatabaseSeeder extends Seeder
         //create 20 pokemon
         Pokemon::factory(30)->create();
         User::factory(10)->create();
-        Type::all()->each(function(Type $type){
-            //for each type 10 move
+        Type::all()->each(function(Type $type){            
             $type->moves()->saveMany(Move::factory(10)->make());
         });
         Box::factory(10)->create();
@@ -62,7 +63,25 @@ class DatabaseSeeder extends Seeder
                 'defending_type_id' => Type::inRandomOrder()->first()
             ]);
         });
-        
+        User::all()->each(function(User $user){
+            $user->boxes()->saveMany(Box::factory(10)->make());
+        });
+        Pokemon::all()->each(function (Pokemon $pokemon) {
+            $type1 = Type::inRandomOrder()->first();
+            $pokemon->types()->attach($type1);
+            if(rand(0, 1)){
+                $pokemon->types()->attach(Type::whereNot("id", $type1->id)->inRandomOrder()->first());
+            }
+        });        
+        Position::factory(10)->create()->each(function(Position $position){
+            $position->zones()->save(Zone::factory()->make());
+        });
+        //can be found logic
+        Zone::all()->each(function(Zone $zone){
+            collect(range(1, 10))->each(function($i) use ($zone){
+                $zone->pokemons()->attach(Pokemon::inRandomOrder()->first());
+            });
+        });
 
     }
 
@@ -175,3 +194,38 @@ class DatabaseSeeder extends Seeder
 
     
 }
+
+
+/*
+OK- rarities
+OK- pokemon
+OK- types
+OK- natures
+OK- admins
+- positions
+OK- users
+OK- genders
+OK- states
+OK- moves
+OK- boxes
+OK- can_learn_level
+OK- effectivness
+OK - pokemon_type
+OK- zones
+OK - can_be_found
+- pokemon_encountereds
+- mn_mts
+- mn_mt_quantity
+- story_tools
+- story_tool_user
+- battle_tools
+- state_battle_tools
+- gyms
+- battle_toll_users
+- npcs
+- battle_toll_npcs
+- can_learn_from
+- exemplaries
+- state_exemplaries
+- exemplary_move
+*/

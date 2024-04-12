@@ -42,3 +42,47 @@ L'applicazione avviata con docker tramite sail (o docker compose), consiste in u
 -   `./vendor/bin/sail up -d`
 -   `./vendor/bin/sail npm run dev`
 -   ora in `localhost/` ci sarò il sito ed in `localhost:81` PHPMYADMIN per visualizzare il database
+
+## Avvio tramite vscode task
+Per avviare l'applicazione tramite vscode task bisogna eseguire i task nel seguente ordine
+- Initialize (Va eseguito solo una volta, serve per installare le dipendenze all'interno del container)
+- Run Server (Va eseguito dopo Initialize, viene in seguito esegui ogni volta che viene aperta la cartella tramite vscode)
+
+# Database
+## Mantenimento
+Il database viene mantenuto tramite il sistema di migrazione di laravel, per ogni modifica al DB eseguire una migrazione su laravel
+## Tabelle
+E' molto importante eseguire le migrazioni nell'ordine prestabilito in modo da garantire una corretta creazione delle chiavi primarie.
+
+L'ordine è il seguente:
+- rarities
+- pokemon
+- types
+- natures
+- admins
+- positions
+- users
+- genders
+- states
+- moves
+- boxes
+- can_learn_level
+- effectivness
+- pokemon_type
+- zones
+- can_be_found
+- pokemon_encountereds
+- mn_mts
+- mn_mt_quantity
+- story_tools
+- story_tool_user
+- battle_tools
+- state_battle_tools
+- gyms
+- battle_toll_users
+- npcs
+- battle_toll_npcs
+- can_learn_from
+- exemplaries
+- state_exemplaries
+- exemplary_move
