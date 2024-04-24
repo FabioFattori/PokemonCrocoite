@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('catchDate');
             $table->foreignId('pokemon_id')->constrained()->cascadeOnDelete();
             $table->foreignId('nature_id')->references("id")->on("natures")->cascadeOnDelete();
-            $table->foreignId('user_team_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreignId('team_id')->references('id')->on('teams')->cascadeOnDelete();
             $table->foreignId('npc_id')->references('id')->on('npcs')->cascadeOnDelete();
             $table->foreignId('gender_id')->references('id')->on('genders')->cascadeOnDelete();
             $table->foreignId("box_id")->references("id")->on("boxes")->cascadeOnDelete();

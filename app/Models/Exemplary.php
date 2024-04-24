@@ -23,7 +23,7 @@ class Exemplary extends Model
         'pokemon_id',
         'gender_id',
         'nature_id',
-        'user_team_id',
+        'team_id',
         'npc_id',
         'holding_tools_id',
         'box_id',
