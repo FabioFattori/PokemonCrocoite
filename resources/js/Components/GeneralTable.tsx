@@ -31,7 +31,6 @@ import SearchIcon from "@mui/icons-material/Search";
 
 interface EnhancedTableProps {
     numSelected: number;
-    onRequestSort: (event: React.MouseEvent<unknown>, property: any) => void;
     onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
 
     rowCount: number;
@@ -187,13 +186,56 @@ export default function GeneralTable({
 
     const [selected, setSelected] = React.useState<any[]>([]);
 
+    function EnhancedTableCell({columnName}:{columnName: string}){
+        const [order, setOrder] = React.useState<"asc" | "desc">("asc");
+
+        interface Sort {
+            columnName: string;
+            direction: string;
+        }
+
+        const sort = (property:string) => {
+            console.log(dbObject)
+            let newOrder = "DESC";
+            if(dbObject["sorts"].lenght != 0){
+                newOrder = dbObject["sorts"].map((obj:Sort)=> obj["direction"])[0] == "ASC" ? "DESC" : "ASC";
+            }
+            console.log(newOrder)
+            router.post(
+                rootForPagination,
+                getReqObject("sorts", [{ columnName: property, direction: newOrder}])
+            );
+        }
+        
+        return <TableCell
+                    key={columnName}
+                    align={"right"}
+                    padding={"normal"}
+                >
+                    <TableSortLabel
+                        active={false}
+                        onClick={(e)=>{
+                            
+                            setOrder(order === "asc" ? "desc" : "asc");
+                            sort(
+                                fieldNames[
+                                    headers.findIndex(
+                                        (value) => value == columnName
+                                    )
+                                ] as string
+                            );
+                        }}
+                    >
+                        {columnName}
+                    </TableSortLabel>
+                </TableCell>
+            
+    }
+
+
     function EnhancedTableHead(props: EnhancedTableProps) {
-        const { onSelectAllClick, numSelected, rowCount, onRequestSort } =
+        const { onSelectAllClick, numSelected, rowCount } =
             props;
-        const createSortHandler =
-            (property: any) => (event: React.MouseEvent<unknown>) => {
-                onRequestSort(event, property);
-            };
 
         return (
             <TableHead>
@@ -215,37 +257,14 @@ export default function GeneralTable({
                         .filter(
                             (head, key) => !columns[fieldNames[key]]["hidden"]
                         )
-                        .map((headCell) => (
-                            <TableCell
-                                key={headCell}
-                                align={"right"}
-                                padding={"normal"}
-                            >
-                                <TableSortLabel
-                                    active={false}
-                                    onClick={createSortHandler(
-                                        fieldNames[
-                                            headers.findIndex(
-                                                (value) => value == headCell
-                                            )
-                                        ] as keyof any
-                                    )}
-                                >
-                                    {headCell}
-                                </TableSortLabel>
-                            </TableCell>
+                        .map((headCell,key) => (
+                                <EnhancedTableCell key={key} columnName={headCell} />
+                           
                         ))}
                 </TableRow>
             </TableHead>
         );
     }
-
-    const handleRequestSort = (
-        event: React.MouseEvent<unknown>,
-        property: keyof any
-    ) => {
-        //TODO: Implement Sorting
-    };
 
     const handleSelectAllClick = (
         event: React.ChangeEvent<HTMLInputElement>
@@ -283,13 +302,13 @@ export default function GeneralTable({
     };
 
     const handleChangePage = (event: unknown, newPage: number) => {
-        router.get(rootForPagination, getReqObject("page", newPage + 1));
+        router.post(rootForPagination, getReqObject("page", newPage + 1));
     };
 
     const handleChangeRowsPerPage = (
         event: React.ChangeEvent<HTMLInputElement>
     ) => {
-        router.get(
+        router.post(
             rootForPagination,
             getReqObject("perPage", parseInt(event.target.value, 10))
         );
@@ -312,18 +331,28 @@ export default function GeneralTable({
             : ""
     );
 
+    interface Filter {
+        columnName: string;
+        value: string;
+    }
+
+    const constructFilter = (columnName: string, value: string) => {
+        return {
+            columnName: columnName,
+            value: value,
+        };
+    };
+
     const handleSearch = () => {
         let text = (document.getElementById("searchInput") as HTMLInputElement)
             .value;
         if (columnName != "") {
             let filterObj = getReqObject("filters", [
-                {
-                    columnName: fieldNames[
-                        headers.indexOf(columnName) as number
-                    ] as string,
-                    value: text,
-                },
-            ]);
+                constructFilter(
+                    fieldNames[headers.indexOf(columnName) as number],
+                    text
+                ),
+            ] as Filter[]);
             console.log(filterObj);
             router.post(rootForPagination, filterObj);
         } else {
@@ -333,7 +362,13 @@ export default function GeneralTable({
 
     return (
         <Box sx={{ width: "100%" }}>
-            <div style={{ display: "flex", flexDirection: "row" }}>
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                }}
+            >
                 <Select
                     style={{ width: "20%", marginRight: "10px" }}
                     labelId="demo-select-small-label"
@@ -417,7 +452,7 @@ export default function GeneralTable({
                         <EnhancedTableHead
                             numSelected={selected.length}
                             onSelectAllClick={handleSelectAllClick}
-                            onRequestSort={handleRequestSort}
+                            
                             rowCount={data.length}
                         />
                         <TableBody>
@@ -480,11 +515,11 @@ export default function GeneralTable({
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
+                    rowsPerPageOptions={count > 25 ? [ 5 , 10, 25, count] : [5, 10, count]}
                     component="div"
                     count={count}
                     rowsPerPage={dataPerPage}
-                    page={page - 1}
+                    page={page <= 0 ? 0 : page - 1}
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />

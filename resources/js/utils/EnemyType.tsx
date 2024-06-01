@@ -1,5 +1,7 @@
 
 function translator({sennisTable}:{sennisTable: any}) {
+    console.log(sennisTable)
+
     const columns = sennisTable["column"];
     const headers = Object.keys(sennisTable["column"]).map((key: any) => sennisTable["column"][key]["label"]) as string[];
     const fieldNames = Object.keys(sennisTable["column"]).map((key: any) => sennisTable["column"][key]["name"]) as string[];
