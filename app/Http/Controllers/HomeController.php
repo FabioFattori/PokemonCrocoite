@@ -18,7 +18,6 @@ class HomeController extends Controller
         $table = new UserTable();
 
         if ($request->all() != []) {
-
             $table->setConfigObject($request->all());
         } else {
             $table->setConfigObject([
