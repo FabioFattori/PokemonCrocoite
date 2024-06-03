@@ -10,10 +10,14 @@ use Inertia\Inertia;
 class HomeController extends Controller
 {
     public function index(Request $request){
+        //check if the user is authenticated
+        if (!auth()->check()) {
+            return redirect()->route('login.log');
+        }
+
         $table = new UserTable();
 
         if ($request->all() != []) {
-
             $table->setConfigObject($request->all());
         } else {
             $table->setConfigObject([

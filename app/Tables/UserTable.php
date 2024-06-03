@@ -17,7 +17,7 @@ class UserTable extends Table
         $this->setColumns([
             "id" => Column::Hidden("id", "users.id", types: Types::INTEGER),
             "email" => Column::Visible("email", "users.email", "Email", types: Types::STRING),
-            "password" => Column::Visible("password", "users.password", "Password", types: Types::STRING),
+            "password" => Column::Hidden("password", "users.password", "Password", types: Types::STRING),
             "positions.x" => Column::Visible("positions.x", "positions.x", "X", types: Types::INTEGER),
             "positions.y" => Column::Visible("positions.y", "positions.y", "Y", types: Types::INTEGER),
         ]);
