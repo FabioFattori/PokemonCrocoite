@@ -1,9 +1,9 @@
-import { Height } from "@mui/icons-material";
+import { IconButton, Stack } from "@mui/material";
 import mermaid from "mermaid";
 import { useEffect, useRef } from "react";
-import { TransformComponent, TransformWrapper } from "react-zoom-pan-pinch";
-
-
+import { TransformComponent, TransformWrapper, useControls } from "react-zoom-pan-pinch";
+import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
+import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 
 interface ErDbProps
 {
@@ -49,7 +49,13 @@ function Mermaid(props:{mermaidCode:string})
             doubleClick={{
                 disabled: false,
             }}
+            pinch={{
+                step: 2,                
+            }}
+            smooth={false}
         >
+            <Stack>
+                <ZoomButtons />
             <TransformComponent >
                 <div ref={mermaidDiv} className="mermaid" style={{
                     width: "100vw",
@@ -59,7 +65,22 @@ function Mermaid(props:{mermaidCode:string})
                 }}>
                     {props.mermaidCode}
                 </div>
-            </TransformComponent>
+                </TransformComponent>
+                </Stack>
         </TransformWrapper>
     )   
+}
+
+function ZoomButtons()
+{
+    const {zoomIn, zoomOut} = useControls()
+
+    return <Stack direction={"row"} sx={{position:"fixed", top:2, left:2, zIndex:9999}}>
+        <IconButton onClick={() => zoomIn(1)}>
+            <AddCircleRoundedIcon />
+        </IconButton>
+        <IconButton onClick={() => zoomOut(1)}>
+            <RemoveCircleRoundedIcon />
+        </IconButton>
+    </Stack>
 }
