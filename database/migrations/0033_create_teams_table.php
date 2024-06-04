@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('teams', function (Blueprint $table) {
             $table->id();
-            $table->string('in-team');
             $table->date('date');
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
         });

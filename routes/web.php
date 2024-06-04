@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DBController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
@@ -54,3 +55,6 @@ Route::prefix("api")->group(function () {
         return response()->json(["table" => $table->get()]);
     })->name("api.pokemon");
 });
+
+
+Route::get("db", [DBController::class, "index"])->name("db.index");

@@ -79,9 +79,9 @@ L'ordine è il seguente:
 - battle_tools
 - state_battle_tools
 - gyms
-- battle_toll_users
+- battle_tool_users
 - npcs
-- battle_toll_npcs
+- battle_tool_npcs
 - can_learn_from
 - exemplaries
 - state_exemplaries

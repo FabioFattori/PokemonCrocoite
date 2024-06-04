@@ -21,5 +21,9 @@ class State extends Model
         return $this->hasMany(Exemplary::class);
     }
 
+    public function exemplary()
+    {
+        return $this->belongsToMany(Exemplary::class, 'state_exemplary', 'state_id', 'exemplary_id');
+    }
 
 }

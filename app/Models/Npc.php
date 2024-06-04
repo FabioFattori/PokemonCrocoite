@@ -28,5 +28,10 @@ class Npc extends Model
         return $this->belongsTo(Gym::class);
     }
 
+    public function battleTool()
+    {
+        return $this->belongsToMany(BattleTool::class, 'battle_tool_npc', 'npc_id', 'battle_tool_id')->withPivot('amount');
+    }
+
 
 }

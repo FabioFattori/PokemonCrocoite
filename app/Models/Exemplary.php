@@ -33,29 +33,22 @@ class Exemplary extends Model
     {
         return $this->belongsTo(Pokemon::class, 'pokemon_id', 'id');
     }
-
-    public function getWhereTheExemplaryIs()
-    {
-        if($this->user_team_id != null)
-        {
-            return 'Equipped in team of user ' . $this->user_team_id;
-        }
-        else if($this->npc_id != null)
-        {
-            return 'Equipped in team of NPC ' . $this->npc_id;
-        }
-        else if($this->box_id != null)
-        {
-            return 'Rests in box ' . $this->box_id;
-        }
-        else
-        {
-            return "WARNING : Esemplare Fantasma - L'esemplare non è ne in una box , ne in nessuna squadra ";
-        }
-    }
     
     public function move()
     {
         return $this->belongsToMany(Move::class);
     }
+
+    public function nature()
+    {
+        return $this->belongsTo(Nature::class);
+    }
+
+    public function state()
+    {
+        //is a n:N
+        return $this->belongsToMany(State::class, 'state_exemplary', 'exemplary_id', 'state_id');
+    }
+
+
 }

@@ -12,7 +12,7 @@ class BattleTollNpc extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'battle_toll_id',
+        'battle_tool_id',
         'npc_id',
         'amount',
     ];

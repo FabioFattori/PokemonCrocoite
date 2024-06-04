@@ -21,4 +21,9 @@ class BattleTool extends Model
     {
         return $this->hasMany(Exemplary::class);
     }
+
+    public function states()
+    {
+        return $this->hasOne(StateBattleTool::class);
+    }
 }

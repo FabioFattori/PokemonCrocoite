@@ -27,6 +27,12 @@
 		},
 		{
 			"type": "shell",
+			"command": "sh ${workspaceFolder}/vendor/bin/sail artisan migrate:fresh",
+			"label": "migrate reset",
+			"problemMatcher": [],
+		},
+		{
+			"type": "shell",
 			"command": "docker compose up -d && docker compose exec laravel.test composer install && docker compose down",
 			"label": "Initialize",
 			"problemMatcher": [],

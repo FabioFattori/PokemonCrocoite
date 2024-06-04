@@ -19,7 +19,7 @@ class BattleTollNpcFactory extends Factory
     public function definition(): array
     {
         return [
-            'battle_toll_id' => function () {
+            'battle_tool_id' => function () {
                 return BattleTool::factory()->create()->id;
             },
             'npc_id' => function () {

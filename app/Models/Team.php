@@ -11,9 +11,13 @@ class Team extends Model
 
     public $timestamps = false;
 
-    protected $fillable = [        
-        'in_team',
+    protected $fillable = [ 
         'date',
         'user_id',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

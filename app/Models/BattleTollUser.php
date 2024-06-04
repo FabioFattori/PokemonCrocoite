@@ -12,7 +12,7 @@ class BattleTollUser extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'battle_toll_id',
+        'battle_tool_id',
         'user_id',
         'amount',
     ];

@@ -15,4 +15,9 @@ class StateExemplary extends Model
         'exemplary_id',
         'state_id',
     ];
+
+    public function exemplary()
+    {
+        return $this->belongsTo(Exemplary::class);
+    }
 }

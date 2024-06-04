@@ -18,7 +18,7 @@ class BattleTollUserFactory extends Factory
     public function definition(): array
     {
         return [
-            'battle_toll_id' => BattleTool::first()->id,
+            'battle_tool_id' => BattleTool::first()->id,
             'user_id' => User::first()->id,
             'amount' => $this->faker->randomNumber(1,100),
         ];

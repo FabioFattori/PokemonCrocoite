@@ -16,5 +16,8 @@ class StateBattleTool extends Model
         'battle_tool_id',
     ];
 
-    
+    public function battleTool()
+    {
+        return $this->belongsTo(BattleTool::class);
+    }
 }

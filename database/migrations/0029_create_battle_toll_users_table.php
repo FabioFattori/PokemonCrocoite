@@ -12,14 +12,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('battle_toll_users', function (Blueprint $table) {
+        Schema::create('battle_tool_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('battle_toll_id')->references("id")->on("battle_tools")->cascadeOnDelete();
+            $table->foreignId('battle_tool_id')->references("id")->on("battle_tools")->cascadeOnDelete();
             $table->foreignId('user_id')->references("id")->on("users")->cascadeOnDelete();
             $table->unsignedInteger('amount')->default(1);
         });
 
-        DB::statement("ALTER TABLE battle_toll_users ADD CONSTRAINT amount_user_not_less_than_zero CHECK (amount >= 1 AND amount <= 999)");
+        DB::statement("ALTER TABLE battle_tool_users ADD CONSTRAINT amount_user_not_less_than_zero CHECK (amount >= 1 AND amount <= 999)");
 
     }
 
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('battle_toll_users');
+        Schema::dropIfExists('battle_tool_users');
     }
 };

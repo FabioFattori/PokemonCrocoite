@@ -14,17 +14,17 @@ class User extends Authenticatable
 
     protected $fillable = ['email', 'password', 'position_id'];
 
-    public function getCurrentTeam()
+    public function currentTeam()
     {
         return $this->hasMany(Exemplary::class);
     }
 
-    public function getBoxes()
+    public function boxes()
     {
         return $this->hasMany(Box::class);
     }
 
-    public function getEncounters()
+    public function pokemonsEncountered()
     {
         return $this->hasMany(PokemonEncountered::class);
     }
@@ -39,8 +39,18 @@ class User extends Authenticatable
         return $this->belongsToMany(StoryTool::class, 'story_tool_user')->withPivot('quantity');
     }
 
+    public function battleTool()
+    {
+        return $this->belongsToMany(BattleTool::class, 'battle_tool_users')->withPivot('amount');
+    }
+
     public function position()
     {
         return $this->belongsTo(Position::class);
+    }
+
+    public function team()
+    {
+        return $this->hasOne(Team::class, 'user_id');
     }
 }
