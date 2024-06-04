@@ -10,12 +10,16 @@ interface Button {
 
 }
 
-let buttons = [{ label:"Add", icon: AddIcon, url: null },{label:"Edit", icon: Edit, url: null },{label:"Delete", icon: Delete, url: null}] as Button[];
+let buttons = [{ label:"Add", icon: AddIcon, url: null },{label:"Edit", icon: Edit, url: null },{label:"Delete", icon: Delete, url: "/admin/users/Delete"}] as Button[];
 
 const setUp = (addUrl?:string , editUrl?:string , deleteUrl?:string ) =>{
     buttons = [{ label:"Add", icon: AddIcon, url: addUrl },{label:"Edit", icon: Edit, url: editUrl },{label:"Delete", icon: Delete, url: deleteUrl}];
 }
 
+const setTableToUse = (tableName:string) => {
+    buttons[2].url = "/admin/"+tableName+"/Delete";
+}
 
 
-export { buttons, setUp};
+
+export { buttons, setUp , setTableToUse};

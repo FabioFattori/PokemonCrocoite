@@ -9,10 +9,11 @@ class Column implements \JsonSerializable {
     private string $label;
     private bool $sortable;
     private bool $searchable;
+    private bool $isOriginal;
     private Types $type;
     private bool $hidden;
 
-    public function __construct(string $name, string|null $dbName, string|null $label, bool $sortable, bool $searchable, Types|string $type, bool $hidden = false){
+    public function __construct(string $name, string|null $dbName, string|null $label, bool $sortable, bool $searchable, Types|string $type, bool $hidden = false,bool $isOriginal = true){
         $this->name = $name;
         $this->dbName = $dbName ?? $name;
         $this->label = $label ?? $name;
@@ -20,13 +21,14 @@ class Column implements \JsonSerializable {
         $this->searchable = $searchable;
         $this->type = new Types($type);
         $this->hidden = $hidden;
+        $this->isOriginal = $isOriginal;
     }
 
-    public static function Visible(string $name = "", string|null $dbName = null, string|null $label = null, bool $sortable = true, bool $searchable = true, Types|string $types = Types::STRING){
-        return new Column($name, $dbName, $label, $sortable, $searchable, $types, false);
+    public static function Visible(string $name = "", string|null $dbName = null, string|null $label = null, bool $sortable = true, bool $searchable = true, Types|string $types = Types::STRING , bool $isOriginal = true){
+        return new Column($name, $dbName, $label, $sortable, $searchable, $types, false, $isOriginal);
     }
-    public static function Hidden(string $name = "", string|null $dbName = null, string|null $label = null, bool $sortable = false, bool $searchable = false, Types|string $types = Types::STRING){
-        return new Column($name, $dbName, $label, $sortable, $searchable, $types, true);
+    public static function Hidden(string $name = "", string|null $dbName = null, string|null $label = null, bool $sortable = false, bool $searchable = false, Types|string $types = Types::STRING , bool $isOriginal = false){
+        return new Column($name, $dbName, $label, $sortable, $searchable, $types, true, $isOriginal);
     }
 
     public function getName(): string{
@@ -43,6 +45,10 @@ class Column implements \JsonSerializable {
 
     public function setDbName(string $dbName): void{
         $this->dbName = $dbName;
+    }
+
+    public function getIsOriginal(): bool{
+        return $this->isOriginal;
     }
 
     public function getLabel(): string{
@@ -81,6 +87,10 @@ class Column implements \JsonSerializable {
         return $this->hidden;
     }
 
+    public function setIsOriginal(bool $isOriginal): void{
+        $this->isOriginal = $isOriginal;
+    }
+
     public function setHidden(bool $hidden): void{
         $this->hidden = $hidden;
     }
@@ -92,7 +102,8 @@ class Column implements \JsonSerializable {
             'sortable' => $this->getSortable(),
             'searchable' => $this->getSearchable(),
             'type' => $this->type->getType(),
-            'hidden' => $this->getHidden()
+            'hidden' => $this->getHidden(),
+            'isOriginal' => $this->getIsOriginal(),
         ];
     }
 

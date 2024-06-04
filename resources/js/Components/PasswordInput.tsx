@@ -5,11 +5,12 @@ import InputAdornment from '@mui/material/InputAdornment'
 import TextField from '@mui/material/TextField'
 import React from 'react'
 
-function PasswordInput({label="",data=""} : {label:string,data:string}) {
+function PasswordInput({label="",data="",onChange=()=>{}} : {label:string,data:string,onChange:(e:any)=>void}) {
     const [show,setShow] = React.useState(false)
 
   return (
     <TextField
+    onChange={(e)=>onChange(e)}
     key={"Password"+label}
     required
     type={show ? "text" : "password"}

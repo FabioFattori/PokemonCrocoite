@@ -140,6 +140,10 @@ abstract class Table{
         return $query;
     }
 
+    public function getDependencies():array{
+        return [];
+    }
+
     protected function applyCustomSort(Builder|EloquentBuilder $query): Builder|EloquentBuilder{
         return $query;
     }

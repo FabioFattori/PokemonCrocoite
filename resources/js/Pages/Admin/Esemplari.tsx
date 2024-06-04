@@ -1,11 +1,12 @@
 import { usePage } from "@inertiajs/react";
 import GeneralTable from "../../Components/GeneralTable";
-import { buttons } from "../../utils/buttons";
+import { buttons,setTableToUse } from "../../utils/buttons";
 import SideBar from "../../Components/SideBar";
 
 function Esemplari() {
     
     var exemplaries = (usePage().props.exemplaries as any[]) ?? null;
+    setTableToUse("exemplaries");
     return (
         <>
             <SideBar title={"Esemplari"} />

@@ -19,7 +19,7 @@ import Delete from "@mui/icons-material/Delete";
 import Edit from "@mui/icons-material/Edit";
 import DialogForm from "./DialogForm";
 import translator from "../utils/EnemyType";
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import {
     InputBase,
     InputLabel,
@@ -42,8 +42,10 @@ interface EnhancedTableToolbarProps {
     headers: string[];
     fieldNames: string[];
     columns: object[];
+    selected: any[];
     buttons: { label: string; icon: any; url?: string | null }[];
     openCreateDialog?: () => void;
+    setSelected: (value: any) => void;
     openEditDialog?: () => void;
     getReqObj: (key: any, value: any) => any;
 }
@@ -52,6 +54,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     const { numSelected } = props;
     const { title } = props;
     const { buttons } = props;
+    const { selected } = props;
+    const { setSelected } = props;
     const { headers } = props;
     const { fieldNames } = props;
     const { getReqObj } = props;
@@ -112,9 +116,11 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                     <Tooltip title="Delete">
                         <IconButton
                             onClick={() =>
-                                buttons[2].url != null
-                                    ? router.post(buttons[2].url)
+                                {buttons[2].url != null
+                                    ? router.post(buttons[2].url,{"id":selected[0]["id"]})
                                     : null
+                                    setSelected([]);
+                                }
                             }
                         >
                             <Delete />
@@ -125,8 +131,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 <Tooltip title="Delete">
                     <IconButton
                         onClick={() =>
-                            buttons[1].url != null
-                                ? router.post(buttons[1].url)
+                            buttons[2].url != null
+                                ? router.post(buttons[2].url,{"id":selected[0]["id"]})
                                 : console.log("Delete Clicked")
                         }
                     >
@@ -169,25 +175,20 @@ export default function GeneralTable({
     dbObject: any;
     buttons: { label: string; icon: any; url?: string | null }[];
 }) {
-    const { headers, fieldNames, data, page, dataPerPage, count, columns , tableId } =
-        translator({ sennisTable: dbObject });
-
-    React.useEffect(() => {
-        console.log(
-            page,
-            dataPerPage,
-            count,
-            data,
-            headers,
-            fieldNames,
-            columns,
-            tableId
-        );
-    }, []);
+    const {
+        headers,
+        fieldNames,
+        data,
+        page,
+        dataPerPage,
+        count,
+        columns,
+        tableId,
+    } = translator({ sennisTable: dbObject });
 
     const [selected, setSelected] = React.useState<any[]>([]);
 
-    function EnhancedTableCell({columnName}:{columnName: string}){
+    function EnhancedTableCell({ columnName }: { columnName: string }) {
         const [order, setOrder] = React.useState<"ASC" | "DESC">("ASC");
 
         interface Sort {
@@ -195,47 +196,47 @@ export default function GeneralTable({
             direction: string;
         }
 
-        const sort = (property:string) => {
-            console.log(dbObject)
+        const sort = (property: string) => {
+            console.log(dbObject);
             let newOrder = "DESC";
-            if(dbObject["sorts"].lenght != 0){
-                newOrder = dbObject["sorts"].map((obj:Sort)=> obj["direction"])[0] == "ASC" ? "DESC" : "ASC";
+            if (dbObject["sorts"].lenght != 0) {
+                newOrder =
+                    dbObject["sorts"].map((obj: Sort) => obj["direction"])[0] ==
+                    "ASC"
+                        ? "DESC"
+                        : "ASC";
             }
             router.post(
                 rootForPagination,
-                getReqObject("sorts", [{ columnName: property, direction: newOrder}] as Sort[])
+                getReqObject("sorts", [
+                    { columnName: property, direction: newOrder },
+                ] as Sort[])
             );
-        }
-        
-        return <TableCell
-                    key={columnName}
-                    align={"right"}
-                    padding={"normal"}
+        };
+
+        return (
+            <TableCell key={columnName} align={"right"} padding={"normal"}>
+                <TableSortLabel
+                    active={false}
+                    onClick={(e) => {
+                        setOrder(order === "ASC" ? "DESC" : "ASC");
+                        sort(
+                            fieldNames[
+                                headers.findIndex(
+                                    (value) => value == columnName
+                                )
+                            ] as string
+                        );
+                    }}
                 >
-                    <TableSortLabel
-                        active={false}
-                        onClick={(e)=>{
-                            
-                            setOrder(order === "ASC" ? "DESC" : "ASC");
-                            sort(
-                                fieldNames[
-                                    headers.findIndex(
-                                        (value) => value == columnName
-                                    )
-                                ] as string
-                            );
-                        }}
-                    >
-                        {columnName}
-                    </TableSortLabel>
-                </TableCell>
-            
+                    {columnName}
+                </TableSortLabel>
+            </TableCell>
+        );
     }
 
-
     function EnhancedTableHead(props: EnhancedTableProps) {
-        const { onSelectAllClick, numSelected, rowCount } =
-            props;
+        const { onSelectAllClick, numSelected, rowCount } = props;
 
         return (
             <TableHead>
@@ -257,9 +258,11 @@ export default function GeneralTable({
                         .filter(
                             (head, key) => !columns[fieldNames[key]]["hidden"]
                         )
-                        .map((headCell,key) => (
-                                <EnhancedTableCell key={key} columnName={headCell} />
-                           
+                        .map((headCell, key) => (
+                            <EnhancedTableCell
+                                key={key}
+                                columnName={headCell}
+                            />
                         ))}
                 </TableRow>
             </TableHead>
@@ -441,6 +444,8 @@ export default function GeneralTable({
                     numSelected={selected.length}
                     title={tableTitle}
                     buttons={buttons}
+                    selected={selected}
+                    setSelected={setSelected}
                     openCreateDialog={() => setOpenCreate(true)}
                     openEditDialog={() => setOpenEdit(true)}
                 />
@@ -453,7 +458,6 @@ export default function GeneralTable({
                         <EnhancedTableHead
                             numSelected={selected.length}
                             onSelectAllClick={handleSelectAllClick}
-                            
                             rowCount={data.length}
                         />
                         <TableBody>
@@ -516,7 +520,9 @@ export default function GeneralTable({
                     </Table>
                 </TableContainer>
                 <TablePagination
-                    rowsPerPageOptions={count > 25 ? [ 5 , 10, 25, count] : [5, 10, count]}
+                    rowsPerPageOptions={
+                        count > 25 ? [5, 10, 25, count] : [5, 10, count]
+                    }
                     component="div"
                     count={count}
                     rowsPerPage={dataPerPage}
@@ -529,16 +535,25 @@ export default function GeneralTable({
                 open={openCreate}
                 openDialog={() => setOpenCreate(true)}
                 closeDialog={() => setOpenCreate(false)}
-                fieldNames={fieldNames}
-                headers={headers}
+                fieldNames={fieldNames.filter(
+                    (field) => columns[field]["isOriginal"]
+                )}
+                headers={headers.filter(
+                    (header, key) => columns[fieldNames[key]]["isOriginal"]
+                )}
+                
                 data={[]}
+
             />
             <DialogForm
                 open={openEdit}
                 openDialog={() => setOpenEdit(true)}
                 closeDialog={() => setOpenEdit(false)}
-                fieldNames={fieldNames}
-                headers={headers}
+                fieldNames={fieldNames.filter(
+                    (field) => columns[field]["isOriginal"]
+                )}
+                headers={headers.filter(
+                    (header, key) => columns[fieldNames[key]]["isOriginal"])}
                 data={selected[0]}
             />
         </Box>

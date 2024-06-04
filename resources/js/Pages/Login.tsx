@@ -49,8 +49,7 @@ function Login() {
     };
 
     return (
-        <div>
-            <h1>{mode === "login" ? "Login" : "admin"}</h1>
+        <div className="login-form">
             <div>
                 <div>
                     <label>Email</label>
@@ -94,7 +93,7 @@ function Login() {
                             {mode === "login" ? "admin?" : "normal User?"}
                         </button>
                         <button onClick={login}>
-                            {mode === "login" ? "Login" : "admin"}
+                            Login
                         </button>
                     </div>
                 ) : (
@@ -103,7 +102,6 @@ function Login() {
                     <button onClick={()=>register(false)}>Register Admin</button>
                     </div>
                 )}
-                <div>{error}</div>
                 {mode !== "register" ? (
                     <button onClick={() => setMode("register")}>
                         Register
@@ -111,6 +109,8 @@ function Login() {
                 ) : (
                     <button onClick={() => setMode("login")}>Login</button>
                 )}
+                
+                <div className="error">{error}</div>
             </div>
         </div>
     );
