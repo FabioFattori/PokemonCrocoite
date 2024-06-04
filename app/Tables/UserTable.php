@@ -13,6 +13,7 @@ class UserTable extends Table
 {
     
     public function __construct() {
+        $this->setId(19823);
         parent::__construct();
         $this->setColumns([
             "id" => Column::Hidden("id", "users.id", types: Types::INTEGER),
@@ -23,7 +24,7 @@ class UserTable extends Table
         ]);
     }
 
-    protected function getQuery():Builder|EloquentBuilder{
+    public function getQuery():Builder|EloquentBuilder{
         // Implements the query to fetch data from the database
         $q = User::query()->join("positions", "users.position_id", "=", "positions.id");
         return $q;

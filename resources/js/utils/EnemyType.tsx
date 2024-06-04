@@ -9,8 +9,9 @@ function translator({sennisTable}:{sennisTable: any}) {
     const page = sennisTable["page"] as number ?? 1;
     const dataPerPage = sennisTable["perPage"] as number ?? 10;
     const count = sennisTable["count"] as number ?? 0;
+    const tableId = sennisTable["id"] as number ?? -1;
 
-    return {headers , fieldNames , data , page , dataPerPage , count , columns}
+    return {headers , fieldNames , data , page , dataPerPage , count , columns , tableId}
 }
 
 export default translator;

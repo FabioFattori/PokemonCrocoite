@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DBController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -58,3 +59,15 @@ Route::prefix("api")->group(function () {
 
 
 Route::get("db", [DBController::class, "index"])->name("db.index");
+
+
+Route::prefix("admin")->group(function () {
+    Route::match(['GET', 'POST'],"/users", [AdminController::class, "Users"])->name("admin.users");
+    // Route::get("/profile", [ProfileController::class, "index"])->name("admin.profile");
+    // Route::get("/profile/{id}", [ProfileController::class, "show"])->name("admin.profile.show");
+    // Route::get("/profile/{id}/edit", [ProfileController::class, "edit"])->name("admin.profile.edit");
+    // Route::post("/profile/{id}/edit", [ProfileController::class, "update"])->name("admin.profile.update");
+    //Route::get("/profile/{id}/delete", [ProfileController::class, "delete"])->name("admin.profile.delete");
+    Route::match(['GET', 'POST'],"/exemplaries",[AdminController::class, "Exemplaries"])->name("admin.exemplaries");
+});
+ 

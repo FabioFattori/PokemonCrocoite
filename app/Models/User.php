@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Team;
 
 class User extends Authenticatable
 {
@@ -16,7 +17,20 @@ class User extends Authenticatable
 
     public function currentTeam()
     {
-        return $this->hasMany(Exemplary::class);
+        $team= Team::where('user_id', $this->id)->get()->first();
+        if($team != null){
+            return $team->pokemons();
+        }
+        return null;
+    }
+
+    public function getTeamId()
+    {
+        $team= Team::where('user_id', $this->id)->get()->first();
+        if($team != null){
+            return $team->id;
+        }
+        return null;
     }
 
     public function boxes()

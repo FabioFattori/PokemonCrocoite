@@ -161,7 +161,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 export default function GeneralTable({
     tableTitle = "Table",
     dbObject = {},
-    rootForPagination = "/",
+    rootForPagination = window.location.pathname,
     buttons = [],
 }: {
     tableTitle: string;
@@ -169,7 +169,7 @@ export default function GeneralTable({
     dbObject: any;
     buttons: { label: string; icon: any; url?: string | null }[];
 }) {
-    const { headers, fieldNames, data, page, dataPerPage, count, columns } =
+    const { headers, fieldNames, data, page, dataPerPage, count, columns , tableId } =
         translator({ sennisTable: dbObject });
 
     React.useEffect(() => {
@@ -180,14 +180,15 @@ export default function GeneralTable({
             data,
             headers,
             fieldNames,
-            columns
+            columns,
+            tableId
         );
     }, []);
 
     const [selected, setSelected] = React.useState<any[]>([]);
 
     function EnhancedTableCell({columnName}:{columnName: string}){
-        const [order, setOrder] = React.useState<"asc" | "desc">("asc");
+        const [order, setOrder] = React.useState<"ASC" | "DESC">("ASC");
 
         interface Sort {
             columnName: string;
@@ -200,10 +201,9 @@ export default function GeneralTable({
             if(dbObject["sorts"].lenght != 0){
                 newOrder = dbObject["sorts"].map((obj:Sort)=> obj["direction"])[0] == "ASC" ? "DESC" : "ASC";
             }
-            console.log(newOrder)
             router.post(
                 rootForPagination,
-                getReqObject("sorts", [{ columnName: property, direction: newOrder}])
+                getReqObject("sorts", [{ columnName: property, direction: newOrder}] as Sort[])
             );
         }
         
@@ -216,7 +216,7 @@ export default function GeneralTable({
                         active={false}
                         onClick={(e)=>{
                             
-                            setOrder(order === "asc" ? "desc" : "asc");
+                            setOrder(order === "ASC" ? "DESC" : "ASC");
                             sort(
                                 fieldNames[
                                     headers.findIndex(
@@ -297,6 +297,7 @@ export default function GeneralTable({
             data: undefined,
             column: undefined,
             count: undefined,
+            id: tableId,
             [key]: value,
         };
     };
@@ -361,7 +362,7 @@ export default function GeneralTable({
     };
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%" }} marginTop={10} marginBottom={10}>
             <div
                 style={{
                     display: "flex",

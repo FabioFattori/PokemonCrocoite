@@ -14,6 +14,16 @@ use Illuminate\Support\Facades\DB;
 
 abstract class Table{
 
+    private int $id;
+
+    protected function setId(int $id){
+        $this->id = $id;
+    }
+
+    public function getId():int{
+        return $this->id;
+    }
+
     protected bool $useAutomaticSelect = false;
     /**
      * @var Collection<string, Column>
@@ -40,7 +50,7 @@ abstract class Table{
         $this->sorts = collect();
     }
 
-    protected function getQuery():Builder|EloquentBuilder{
+    public function getQuery():Builder|EloquentBuilder{
         throw new \Exception("Not implemented");
     }
 
@@ -148,7 +158,7 @@ abstract class Table{
         return $query;
     }
 
-    protected function getFullQuery(bool $withPagination = true): Builder|EloquentBuilder{
+    public function getFullQuery(bool $withPagination = true): Builder|EloquentBuilder{
         $query = $this->getQuery();
         $query = $this->applySelect($query);
         $query = $this->applyFilters($query);
@@ -185,7 +195,16 @@ abstract class Table{
             'data' => $data,
             'page' => $this->page,
             'perPage' => $this->perPage,
-            'count' => $count
+            'count' => $count,
+            'id' => $this->getId()    
         ];
+    }
+
+    public function equals(Table $table): bool{
+        return $this->getId() == $table->getId();
+    }
+
+    public function equalsByID(int $id):bool{
+        return $this->getId() == $id;
     }
 }
