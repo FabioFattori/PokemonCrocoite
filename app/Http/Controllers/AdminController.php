@@ -81,33 +81,42 @@ class AdminController extends Controller
             'dependenciesName' => $tb->getDependencies(),
         ]);
     }
-
+    
     public function addEmplaries(Request $request){
         $request->validate([
             "level" => "required|integer",
-            "user_id" => "required|integer",
             "speed" => "required|integer",
             "attack" => "required|integer",
             "defense" => "required|integer",
             "specialAttack" => "required|integer",
             "specialDefense" => "required|integer",
-            "ps" => "required|integer",
+            "hp" => "required|integer",
             "catchDate" => "required|date",
+            "pokemon_id" => "required|integer",
+            "nature_id" => "required|integer",
+            "gender_id" => "required|integer",
         ]);
 
+        
         Exemplary::create([
             "level" => $request->input("level"),
-            "user_id" => $request->input("user_id"),
             "speed" => $request->input("speed"),
             "attack" => $request->input("attack"),
             "defense" => $request->input("defense"),
             "specialAttack" => $request->input("specialAttack"),
             "specialDefense" => $request->input("specialDefense"),
-            "ps" => $request->input("ps"),
-            "catchDate" => $request->input("catchDate"),
+            "ps" => $request->input("hp"),
+            "catchDate" => $this->resolveDate($request->input("catchDate")),
             "pokemon_id" => $request->input("pokemon_id"),
+            "nature_id" => $request->input("nature_id"),
+            "gender_id" => $request->input("gender_id"),
         ]);
         
         return redirect()->route("admin.exemplaries");
+    }
+
+
+    private function resolveDate($date){
+        return explode("T", $date)[0];
     }
 }

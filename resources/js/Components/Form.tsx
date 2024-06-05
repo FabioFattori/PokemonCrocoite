@@ -34,6 +34,9 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
 
   React.useEffect(() => {
     console.log(dependencies)
+    console.log(dependenciesNames)
+    console.log(headers)
+    console.log(fieldNames)
   }
   , [dependencies])
 
@@ -42,6 +45,7 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
     request["id"] = data.length != 0 ? data["id" as unknown as number] : null
     fieldNames.filter((field)=>field!="id").map((field, index) => {
       request[field] = inputs[index]
+      console.log(request)
     })
     dependenciesNames.forEach(name => {
       request[name] = inputs[headers.indexOf(name)]
@@ -68,7 +72,7 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
           </Select>
         </FormControl> : header.toLowerCase().includes("password") ? <PasswordInput label={header} data={data.length != 0 ? data[fieldNames.filter((value) => value != "id")[index] as unknown as number]:inputs[index]} onChange={(e)=>changeInput(index,e.target.value)} />:
 
-           fieldNames[index].toLowerCase().includes("date") ? <DatePicker label={header} value={data.length != 0 ?dayjs((data[fieldNames.filter((value) => value != "id")[index]as unknown as number] as string)):inputs[index]} onChange={(date)=>changeInput(date,index)} /> : <TextField
+           fieldNames[index].toLowerCase().includes("date") ? <DatePicker label={header} value={data.length != 0 ?dayjs((data[fieldNames.filter((value) => value != "id")[index]as unknown as number] as string)):inputs[index]} onChange={(e)=>changeInput(index,e)} /> : <TextField
           key={index}
           required
           type={Number.isInteger(data[fieldNames.filter((value) => value != "id")[index]as unknown as number]) ? "number" : "text"}

@@ -50,8 +50,8 @@ class ExemplaryTable extends Table{
             "pokemon_id" => Column::Hidden("pokemon_id", "exemplaries.pokemon_id", "Pokemon", types: Types::INTEGER,isOriginal: true),
             "team_id" => Column::Hidden("team_id", "exemplaries.team_id", "Team", types: Types::INTEGER,isOriginal: true),
             "npc_id" => Column::Hidden("npc_id", "exemplaries.npc_id", "Npc", types: Types::INTEGER,isOriginal: true),
-            "nature_id" => Column::Hidden("nature_id", "exemplaries.nature_id", "Natura", types: Types::INTEGER,isOriginal: true),
-            "gender_id" => Column::Hidden("gender_id", "exemplaries.gender_id", "Sesso", types: Types::INTEGER,isOriginal: true),
+            "nature_id" => Column::Hidden("nature_id", "exemplaries.nature_id", "Nature", types: Types::INTEGER,isOriginal: true),
+            "gender_id" => Column::Hidden("gender_id", "exemplaries.gender_id", "Gender", types: Types::INTEGER,isOriginal: true),
             "id" => Column::Hidden(name: "id", dbName: "exemplaries.id", types: Types::INTEGER,isOriginal: true),
         ]);
     }
