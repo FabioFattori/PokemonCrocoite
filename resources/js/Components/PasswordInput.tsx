@@ -14,7 +14,7 @@ function PasswordInput({label="",data="",onChange=()=>{}} : {label:string,data:s
     key={"Password"+label}
     required
     type={show ? "text" : "password"}
-    id="outlined-required"
+    id={"outlined-required "+label}
     label={label}
     defaultValue={data != "" ? data : ""}
     InputProps={{

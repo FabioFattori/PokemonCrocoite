@@ -24,6 +24,11 @@ class User extends Authenticatable
         return null;
     }
 
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getTeamId()
     {
         $team= Team::where('user_id', $this->id)->get()->first();

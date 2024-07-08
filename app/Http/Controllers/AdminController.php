@@ -10,7 +10,11 @@ use Inertia\Inertia;
 use App\Tables\UserTable;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Exemplary;
+use App\Models\Gender;
+use App\Models\Move;
 use App\Tables\Class\DependeciesResolver;
+use App\Tables\GendersTable;
+use App\Tables\MovesTable;
 
 class AdminController extends Controller
 {
@@ -97,7 +101,6 @@ class AdminController extends Controller
             "gender_id" => "required|integer",
         ]);
 
-        
         Exemplary::create([
             "level" => $request->input("level"),
             "speed" => $request->input("speed"),
@@ -110,9 +113,127 @@ class AdminController extends Controller
             "pokemon_id" => $request->input("pokemon_id"),
             "nature_id" => $request->input("nature_id"),
             "gender_id" => $request->input("gender_id"),
+            "npc_id" => $request->input("npc_id"),
+            "team_id" => $request->input("team_id"),
+            "box_id" => $request->input("box_id"),
         ]);
         
         return redirect()->route("admin.exemplaries");
+    }
+
+    public  function deleteEmplaries(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Exemplary::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->route("admin.exemplaries");
+    }
+
+    public function moves(Request $request){
+        $tb = new MovesTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render('Admin/Mosse', [
+            'moves' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addMove(Request $request){
+        $request->validate([
+            "name" => "required",
+            "description" => "required",
+            "type_id" => "required|integer",
+        ]);
+
+        Move::create([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+            "type_id" => $request->input("type_id"),
+        ]);
+
+        return redirect()->route("admin.moves");
+    }
+
+    public function editMove(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "description" => "required",
+            "type_id" => "required|integer",
+        ]);
+
+        Move::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+            "type_id" => $request->input("type_id"),
+        ]);
+
+        return redirect()->route("admin.moves");
+    }
+
+    public function deleteMove(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Move::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->route("admin.moves");
+    }
+
+    public function Genders(Request $request){
+        $tb = new GendersTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Generi",[
+            'genders' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+
+    public function addGender(Request $request){
+        $request->validate([
+            "name" => "required",
+        ]);
+
+        Gender::create([
+            "name" => $request->input("name"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editGender(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+        ]);
+
+        Gender::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteGender(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Gender::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
     }
 
 

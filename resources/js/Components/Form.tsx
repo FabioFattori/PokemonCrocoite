@@ -9,11 +9,17 @@ import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 
 function resolveDependecieName(row:any){
   let result = ""
+  
+  //console.log(row)
   Object.keys(row).forEach((key)=>{
-    if(key.toLowerCase().includes("name")||key.toLowerCase().includes("title")||key.toLowerCase().includes("id")){
+    //console.log(key)
+    if(key.toLowerCase().includes("name")||key.toLowerCase().includes("title")){
       result = row[key]
     }
   })
+  if(result == ""){
+    result = row["id"]
+  }
   return result
 }
 
@@ -33,12 +39,15 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
   const dependenciesNames = usePage().props.dependenciesName as any[] ?? [];
 
   React.useEffect(() => {
-    console.log(dependencies)
-    console.log(dependenciesNames)
-    console.log(headers)
-    console.log(fieldNames)
+    //  console.log(dependencies)
+    //  console.log(dependenciesNames)
+    //  console.log(headers)
+    //  console.log(fieldNames)
+    //  console.log(headers.filter((header)=>header.toLowerCase() != "id"))
+    //  console.log(headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
+    //   return dependenciesNames.length!=0&&dependenciesNames.includes(header)}))
   }
-  , [dependencies])
+  , [inputs])
 
   const createRequest = () => {
     let request:any = {}
@@ -47,9 +56,10 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
       request[field] = inputs[index]
       console.log(request)
     })
-    dependenciesNames.forEach(name => {
-      request[name] = inputs[headers.indexOf(name)]
-    });
+    // dependenciesNames.forEach(name => {
+    //   request[name] = inputs[headers.indexOf(name)]
+    // });
+    console.log(request)
     return request
   }
 
@@ -62,7 +72,7 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
           <Select
             labelId="demo-simple-select-label"
             id="demo-simple-select"
-            value={inputs[index]}
+            value={inputs[index] != undefined ? inputs[index] : ""}
             label={header}
             onChange={(e)=>{changeInput(index,e.target.value)}}
           >

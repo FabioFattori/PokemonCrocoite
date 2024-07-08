@@ -1,8 +1,6 @@
-import { router, usePage } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import Divider from "@mui/material/Divider";
-import AdminView from "./AdminComponents/AdminView";
-import UserView from "../Components/UserView";
-import { Button, Drawer, Icon, Toolbar, Typography } from "@mui/material";
+import { Drawer, Icon, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import List from "@mui/material/List";
@@ -13,15 +11,16 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar, { AppBarProps } from "@mui/material/AppBar";
 import AdminRoutes from "./AdminComponents/AdminRoutes";
+import userMode from "./userMode";
+import UserRoutes from "./UserComponents/UserRoutes";
 
-function SideBar({ title }: { title: string }) {
+function SideBar({ title,mode }: { title: string,mode:userMode }) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
+    const [Mode, setMode] = React.useState(mode);
     let drawerWidth = 240;
     const AppBar = styled(MuiAppBar, {
         shouldForwardProp: (prop) => prop !== "open",
@@ -97,7 +96,18 @@ function SideBar({ title }: { title: string }) {
                 </DrawerHeader>
                 <Divider />
                 <List>
-                    {AdminRoutes.map((singleRoute, id) => (
+                    {Mode == userMode.admin ? AdminRoutes.map((singleRoute, id) => (
+                        <ListItem key={id} disablePadding>
+                            <ListItemButton
+                                onClick={() => router.get(singleRoute["Path"])}
+                            >
+                                <ListItemIcon>
+                                    <Icon component={singleRoute["Icon"]} />
+                                </ListItemIcon>
+                                <ListItemText primary={singleRoute["Title"]} />
+                            </ListItemButton>
+                        </ListItem>
+                    )) : UserRoutes.map((singleRoute, id) => (
                         <ListItem key={id} disablePadding>
                             <ListItemButton
                                 onClick={() => router.get(singleRoute["Path"])}

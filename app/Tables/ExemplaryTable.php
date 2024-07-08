@@ -14,21 +14,40 @@ final class Mode
     public const TEAM = 1;
     public const ADMIN = 2;
     public const Box = 3;   
+    public const USER = 4;   
 }
 
 
 class ExemplaryTable extends Table{
 
     private int $currentMode;
+    private array $dependencies = ["Pokemon","Nature","Team","Npc","Gender","User"];
 
     public function getDependencies():array{
-        return ["Pokemon","Nature","Team","Npc","Gender"];
+        return $this->dependencies;
+    }
+
+    private function addElementToDependencies($element){
+        if (!in_array($element, $this->dependencies)) {
+            array_push($this->dependencies, $element);
+        }
     }
 
     public function getQuery():Builder|EloquentBuilder{
         $q = Exemplary::query()->join("pokemon", "exemplaries.pokemon_id", "=", "pokemon.id");
         if($this->currentMode == Mode::TEAM){
             $q->where("team_id", "=", auth()->user()->getTeamId());
+        }
+
+        if($this->currentMode == Mode::ADMIN){
+            $q = Exemplary::query()->join("pokemon", "exemplaries.pokemon_id", "=", "pokemon.id")->join("boxes", "exemplaries.box_id", "=", "boxes.id");
+            $this->addElementToDependencies("Box");
+        }
+
+        if($this->currentMode == Mode::USER){
+            $q = Exemplary::query()->join("pokemon", "exemplaries.pokemon_id", "=", "pokemon.id")->join("boxes", "exemplaries.box_id", "=", "boxes.id");
+            $q->where("boxes.user_id", "=", auth()->user()->getId())->where("team_id", "=", auth()->user()->getTeamId());
+            $this->addElementToDependencies("Box");
         }
         return $q;
     }
@@ -52,6 +71,7 @@ class ExemplaryTable extends Table{
             "npc_id" => Column::Hidden("npc_id", "exemplaries.npc_id", "Npc", types: Types::INTEGER,isOriginal: true),
             "nature_id" => Column::Hidden("nature_id", "exemplaries.nature_id", "Nature", types: Types::INTEGER,isOriginal: true),
             "gender_id" => Column::Hidden("gender_id", "exemplaries.gender_id", "Gender", types: Types::INTEGER,isOriginal: true),
+            "box_id" => Column::Hidden("box_id", "exemplaries.box_id", "Box", types: Types::INTEGER,isOriginal: true),
             "id" => Column::Hidden(name: "id", dbName: "exemplaries.id", types: Types::INTEGER,isOriginal: true),
         ]);
     }

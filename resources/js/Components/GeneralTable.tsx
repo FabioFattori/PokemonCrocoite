@@ -27,6 +27,7 @@ import {
     Select,
     TextField,
 } from "@mui/material";
+import type {MethodButton} from "../utils/buttons";
 import SearchIcon from "@mui/icons-material/Search";
 
 interface EnhancedTableProps {
@@ -43,7 +44,7 @@ interface EnhancedTableToolbarProps {
     fieldNames: string[];
     columns: object[];
     selected: any[];
-    buttons: { label: string; icon: any; url?: string | null }[];
+    buttons: { label: string; icon: any; url?: string | null ,method : ({props}:{props:any})=>{}}[];
     openCreateDialog?: () => void;
     setSelected: (value: any) => void;
     openEditDialog?: () => void;
@@ -97,7 +98,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             )}
             {numSelected == 1 &&
             buttons.filter(
-                (btn) => btn.label == "Edit" || btn.label == "Delete"
+                (btn) => btn.label == "Edit" || btn.label == "Delete" || btn.method != undefined
             ).length != 0 ? (
                 <>
                     <Tooltip title="Edit">
@@ -126,6 +127,22 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                             <Delete />
                         </IconButton>
                     </Tooltip>
+                    {buttons.filter(
+                        (button) =>
+                            button.label != "Delete" && button.label != "Edit" && button.label != "Add"
+                    ).map((button, key) => (
+                        <Tooltip title={button.label} key={key}>
+                            <IconButton
+                                onClick={() =>{
+                                    console.log(buttons)
+                                    button.method({props:selected})
+                                }
+                                }
+                            >
+                                <button.icon />
+                            </IconButton>
+                        </Tooltip>
+                    ))}
                 </>
             ) : numSelected > 0 && buttons.length >= 3 ? (
                 <Tooltip title="Delete">
@@ -144,7 +161,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             {buttons
                 .filter(
                     (button) =>
-                        button.label != "Delete" && button.label != "Edit"
+                        button.label != "Delete" && button.label != "Edit" && button.method == undefined
                 )
                 .map((button, key) => (
                     <Tooltip title={button.label} key={key}>

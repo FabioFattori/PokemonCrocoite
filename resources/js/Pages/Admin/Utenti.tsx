@@ -1,13 +1,17 @@
 import GeneralTable from '../../Components/GeneralTable'
 import SideBar from '../../Components/SideBar';
-import { buttons } from '../../utils/buttons';
+import { buttons,setTableToUse} from '../../utils/buttons';
 import { usePage } from '@inertiajs/react';
+import userMode from '../../Components/userMode';
+import React from 'react';
 
 function Utenti() {
     var users = (usePage().props.users as any[]) ?? null;
+    setTableToUse("users");
+
   return (
     <>
-    <SideBar title={"Utenti"}/>
+    <SideBar title={"Utenti"} mode={userMode.admin}/>
     <GeneralTable tableTitle='Utenti' dbObject={users} buttons={buttons} />
     </>
   )

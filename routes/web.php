@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedController;
+use App\Http\Controllers\UserController;
 use App\Tables\ExemplaryTable;
 use App\Tables\UserTable;
 use Illuminate\Foundation\Application;
@@ -21,6 +22,8 @@ Route::get('/logAdmin',[LoginController::class, "admin"])->name('login.admin');
 Route::get('/tryLogin', [LoginController::class, "tryLogin"])->name("login.try");
 
 Route::get('/logout', [LoginController::class, "logout"])->name("logout");
+
+
 
 Route::post('/register', [LoginController::class, "register"])->name("register");
 
@@ -68,7 +71,15 @@ Route::prefix("admin")->group(function () {
     Route::post("/users/Delete", [AdminController::class, "deleteUser"])->name("admin.users.delete");
     Route::post("/exemplaries/Add", [AdminController::class, "addEmplaries"])->name("admin.exemplaries.add");
     Route::post("/exemplaries/Edit", [AdminController::class, "editEmplaries"])->name("admin.exemplaries.edit");
-    Route::post("/exemplaries/Delete", [AdminController::class, "deleteexEmplaries"])->name("admin.exemplaries.delete");
+    Route::post("/exemplaries/Delete", [AdminController::class, "deleteEmplaries"])->name("admin.exemplaries.delete");
+    Route::post("/moves/Add", [AdminController::class, "addMove"])->name("admin.moves.add");
+    Route::post("/moves/Edit", [AdminController::class, "editMove"])->name("admin.moves.edit");
+    Route::post("/moves/Delete", [AdminController::class, "deleteMove"])->name("admin.moves.delete");
+    Route::match(['GET', 'POST'],"/moves",[AdminController::class, "Moves"])->name("admin.moves");
+    Route::post("/genders/Add", [AdminController::class, "addGender"])->name("genders.add");
+    Route::post("/genders/Edit", [AdminController::class, "editGender"])->name("genders.edit");
+    Route::post("/genders/Delete", [AdminController::class, "deleteGender"])->name("genders.delete");
+    Route::match(['GET', 'POST'],"/genders",[AdminController::class, "Genders"])->name("admin.genders");
     // Route::get("/profile", [ProfileController::class, "index"])->name("admin.profile");
     // Route::get("/profile/{id}", [ProfileController::class, "show"])->name("admin.profile.show");
     // Route::get("/profile/{id}/edit", [ProfileController::class, "edit"])->name("admin.profile.edit");
@@ -77,3 +88,9 @@ Route::prefix("admin")->group(function () {
     Route::match(['GET', 'POST'],"/exemplaries",[AdminController::class, "Exemplaries"])->name("admin.exemplaries");
 });
  
+
+Route::prefix("user")->group(function () {
+    Route::get("exemplaries",[UserController::class, "exemplaries"])->name("user.exemplaries");
+    Route::get("userTeam",[UserController::class, "teams"])->name("user.userTeam");
+
+});

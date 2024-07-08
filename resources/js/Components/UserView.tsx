@@ -13,8 +13,8 @@ function UserView() {
     },[team]);
   return (
     <div>
-        <GeneralTable tableTitle="Team" dbObject={team} buttons={[]} /> 
-        <Divider />
+        {/* <GeneralTable tableTitle="Team" dbObject={team} buttons={[]} /> */}
+        <Divider /> 
         <h1>Posizione</h1>
         <p>{JSON.stringify(position)}</p>
     </div>

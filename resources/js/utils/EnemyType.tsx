@@ -10,7 +10,6 @@ function translator({sennisTable}:{sennisTable: any}) {
     const dataPerPage = sennisTable["perPage"] as number ?? 10;
     const count = sennisTable["count"] as number ?? 0;
     const tableId = sennisTable["id"] as number ?? -1;
-
     return {headers , fieldNames , data , page , dataPerPage , count , columns , tableId}
 }
 
