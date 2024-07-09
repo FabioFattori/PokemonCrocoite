@@ -12,9 +12,12 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\Exemplary;
 use App\Models\Gender;
 use App\Models\Move;
+use App\Models\Pokemon;
+use App\Models\Type;
 use App\Tables\Class\DependeciesResolver;
 use App\Tables\GendersTable;
 use App\Tables\MovesTable;
+use App\Tables\PokemonTable;
 
 class AdminController extends Controller
 {
@@ -79,6 +82,9 @@ class AdminController extends Controller
         if($request->all() != [] && $tb->equalsById($request->all()["id"])){
             $tb->setConfigObject($request->all());
         }
+
+        
+        
         return Inertia::render('Admin/Esemplari', [
             'exemplaries' => $tb->get(),
             'dependencies' => DependeciesResolver::resolve($tb),
@@ -232,6 +238,70 @@ class AdminController extends Controller
         ]);
 
         Gender::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function Pokemons(Request $request){
+        $tb = new PokemonTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        # first chart
+        $pokemonForType = [];
+        $types = Type::all();
+        // select from the types only the name of the type
+        foreach($types as $type){
+            array_push($pokemonForType,$type->pokemons()->get()->count());
+        }  
+        $types = $types->map(function($type){
+            return $type->name;
+        });
+
+        return Inertia::render("Admin/Razze",[
+            'pokemon' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+            'pokemonForType' => $pokemonForType,
+            'types' => $types,
+        ]);
+    }
+
+    public function addPokemon(Request $request){
+        $request->validate([
+            "name" => "required",
+            "type_id" => "required|integer",
+        ]);
+
+        $pokemon = Pokemon::create([
+            "name" => $request->input("name"),
+        ]);
+
+        $pokemon->type()->attach($request->input("type_id"));
+
+        return redirect()->back();
+    }
+
+    public function editPokemon(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+        ]);
+
+        Pokemon::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deletePokemon(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Pokemon::where("id", "=", $request->input("id"))->delete();
 
         return redirect()->back();
     }

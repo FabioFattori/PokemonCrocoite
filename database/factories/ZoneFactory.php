@@ -22,6 +22,7 @@ class ZoneFactory extends Factory
             "length" => $this->faker->numberBetween(1, 200),
             //width is a random int
             "width" => $this->faker->numberBetween(1, 200),
+            "position_id" => \App\Models\Position::inRandomOrder()->first()->id,
         ];
     }
 }

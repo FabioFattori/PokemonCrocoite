@@ -11,7 +11,7 @@ class Npc extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'description', 'position_id', 'gym_id'];
+    protected $fillable = ['name', 'position_id', 'gym_id'];
 
     public function getCurrentTeam()
     {

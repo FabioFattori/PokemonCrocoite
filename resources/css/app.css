@@ -71,3 +71,9 @@
     border: 1px solid #f5c6cb;
     border-radius: 5px;
 }
+
+.chart{
+    width: 80%;
+    height: 500px;
+    margin: 50px auto;
+}

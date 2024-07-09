@@ -1,5 +1,5 @@
-
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('npcs', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('position_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('gym_id')->nullable()->constrained()->cascadeOnDelete();
+        Schema::table('pokemon', function (Blueprint $table) {
+            $table->unsignedBigInteger('rarity_id')->nullable();
+            $table->foreign('rarity_id')->references('id')->on('rarities');
         });
     }
 
@@ -23,6 +22,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('npcs');
     }
 };

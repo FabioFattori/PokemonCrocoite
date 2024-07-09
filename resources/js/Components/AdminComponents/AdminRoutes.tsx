@@ -4,6 +4,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import LogoutIcon from '@mui/icons-material/Logout';
 import SignLanguageIcon from '@mui/icons-material/SignLanguage';
 import TransgenderIcon from '@mui/icons-material/Transgender';
+import BiotechIcon from '@mui/icons-material/Biotech';
 interface Route{
     Title: string;
     Path: string;
@@ -36,6 +37,11 @@ export default [
         Title: "Genere Pokemon",
         Path: "/admin/genders",
         Icon: TransgenderIcon,
+    },
+    {
+        Title: "Razze Pokemon",
+        Path: "/admin/pokemons",
+        Icon: BiotechIcon,
     },
     {
         Title: "Logout",

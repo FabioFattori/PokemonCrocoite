@@ -5,6 +5,7 @@ import SideBar from "../../Components/SideBar";
 import userMode from "../../Components/userMode";
 import RadarIcon from '@mui/icons-material/Radar';
 import React from "react";
+import ChartManager from "../../Components/ChartManager";
 
 enum DependeciesToSolve {
     box_id = "box_id",
@@ -74,6 +75,8 @@ function Esemplari() {
                 {selectedRow["npc_id"] != null ? "in possesso di : "+resolveDependencies(DependeciesToSolve.npc_id,selectedRow["box_id"]) : null}
                 {selectedRow["team_id"] != null ? "nel team di : "+resolveDependencies(DependeciesToSolve.team_id,selectedRow["team_id"]) : null}
             </div> : null}
+
+            
         </>
     );
 }

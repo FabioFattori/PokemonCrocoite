@@ -58,6 +58,8 @@ Route::prefix("api")->group(function () {
         ]);
         return response()->json(["table" => $table->get()]);
     })->name("api.pokemon");
+
+    Route::get("/seed/all", [SeedController::class, "all"])->name("api.seed.all");
 });
 
 
@@ -80,6 +82,10 @@ Route::prefix("admin")->group(function () {
     Route::post("/genders/Edit", [AdminController::class, "editGender"])->name("genders.edit");
     Route::post("/genders/Delete", [AdminController::class, "deleteGender"])->name("genders.delete");
     Route::match(['GET', 'POST'],"/genders",[AdminController::class, "Genders"])->name("admin.genders");
+    Route::post("/pokemons/Add", [AdminController::class, "addPokemon"])->name("pokemons.add");
+    Route::post("/pokemons/Edit", [AdminController::class, "editPokemon"])->name("pokemons.edit");
+    Route::post("/pokemons/Delete", [AdminController::class, "deletePokemon"])->name("pokemons.delete");
+    Route::match(['GET', 'POST'],"/pokemons",[AdminController::class, "Pokemons"])->name("admin.pokemons");
     // Route::get("/profile", [ProfileController::class, "index"])->name("admin.profile");
     // Route::get("/profile/{id}", [ProfileController::class, "show"])->name("admin.profile.show");
     // Route::get("/profile/{id}/edit", [ProfileController::class, "edit"])->name("admin.profile.edit");

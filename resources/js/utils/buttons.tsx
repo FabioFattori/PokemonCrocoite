@@ -28,7 +28,6 @@ const addNewInterractableButton = (label:string, icon:any, method:({props}:{prop
     let toAdd:MethodButton = {label:label, icon:icon, method:method};
     if(buttons.filter((button) => button.label == label).length == 0){
         buttons.push(toAdd);
-        console.log(buttons)
     }
 }
 
