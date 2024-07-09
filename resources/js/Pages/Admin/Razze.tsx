@@ -9,12 +9,7 @@ import ChartManager from "../../Components/ChartManager";
 function Mosse() {
     var pokemon = (usePage().props.pokemon as any[]) ?? null;
     setTableToUse("pokemons");
-    // first chart
-    let x = usePage().props.pokemonForType as any[] ?? [];
-    let y = usePage().props.types as any[] ?? [];
-    React.useEffect(() => {
-        console.log(pokemon);
-    }, []);
+    
 
     return (
         <>
@@ -24,7 +19,7 @@ function Mosse() {
                 dbObject={pokemon}
                 buttons={buttons}
             />
-            <ChartManager title="Quanti pokemon per tipo esistono?" label="Disposizione pokemon per Tipo" x={y} y = {x}/> 
+            
         </>
     );
 }

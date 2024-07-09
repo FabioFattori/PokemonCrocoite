@@ -13,6 +13,7 @@ use App\Models\Exemplary;
 use App\Models\Gender;
 use App\Models\Move;
 use App\Models\Pokemon;
+use App\Models\Team;
 use App\Models\Type;
 use App\Tables\Class\DependeciesResolver;
 use App\Tables\GendersTable;
@@ -248,23 +249,12 @@ class AdminController extends Controller
             $tb->setConfigObject($request->all());
         }
 
-        # first chart
-        $pokemonForType = [];
-        $types = Type::all();
-        // select from the types only the name of the type
-        foreach($types as $type){
-            array_push($pokemonForType,$type->pokemons()->get()->count());
-        }  
-        $types = $types->map(function($type){
-            return $type->name;
-        });
+        
 
         return Inertia::render("Admin/Razze",[
             'pokemon' => $tb->get(),
             'dependencies' => DependeciesResolver::resolve($tb),
             'dependenciesName' => $tb->getDependencies(),
-            'pokemonForType' => $pokemonForType,
-            'types' => $types,
         ]);
     }
 
