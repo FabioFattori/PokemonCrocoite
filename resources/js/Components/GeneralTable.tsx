@@ -101,7 +101,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                 (btn) => btn.label == "Edit" || btn.label == "Delete" || btn.method != undefined
             ).length != 0 ? (
                 <>
-                    <Tooltip title="Edit">
+                    {buttons.filter(btn => btn.label == "Edit").length != 0 ? (
+                        <Tooltip title="Edit">
                         <IconButton
                             onClick={() =>
                                 buttons[1].url != null
@@ -114,7 +115,9 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                             <Edit />
                         </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    ) : null}
+                    {buttons.filter((btn) => btn.label == "Delete").length != 0 ? (
+                        <Tooltip title="Delete">
                         <IconButton
                             onClick={() =>
                                 {buttons[2].url != null
@@ -126,7 +129,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                         >
                             <Delete />
                         </IconButton>
-                    </Tooltip>
+                    </Tooltip>):null}
                     {buttons.filter(
                         (button) =>
                             button.label != "Delete" && button.label != "Edit" && button.label != "Add"
@@ -134,7 +137,6 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                         <Tooltip title={button.label} key={key}>
                             <IconButton
                                 onClick={() =>{
-                                    console.log(buttons)
                                     button.method({props:selected})
                                 }
                                 }
@@ -214,7 +216,6 @@ export default function GeneralTable({
         }
 
         const sort = (property: string) => {
-            console.log(dbObject);
             let newOrder = "DESC";
             if (dbObject["sorts"].lenght != 0) {
                 newOrder =
@@ -374,7 +375,6 @@ export default function GeneralTable({
                     text
                 ),
             ] as Filter[]);
-            console.log(filterObj);
             router.post(rootForPagination, filterObj);
         } else {
             alert("Seleziona una colonna");
@@ -382,13 +382,9 @@ export default function GeneralTable({
     };
 
     return (
-        <Box sx={{ width: "100%" }} marginTop={10} marginBottom={10}>
+        <Box sx={{ maxWidth: "99%",minWidth:"400px" }} marginTop={10} marginBottom={10} marginLeft={5} marginRight={5}>
             <div
-                style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                }}
+                className="searchBar"
             >
                 <Select
                     style={{ width: "20%", marginRight: "10px" }}
@@ -415,10 +411,10 @@ export default function GeneralTable({
                     </MenuItem>
                 </Select>
 
-                <div style={{ width: "74%" }}>
+                <div  style={{ width: "80%", display:"flex",height:"100%" }}>
                     <InputBase
                         id="searchInput"
-                        style={{ width: "74%" }}
+                        style={{ width: "100%" }}
                         sx={{ ml: 1, flex: 1 }}
                         placeholder={"Cerca tra " + tableTitle}
                         type={
@@ -442,6 +438,7 @@ export default function GeneralTable({
                         }}
                     />
                     <IconButton
+                        color="primary"
                         onClick={handleSearch}
                         type="button"
                         sx={{ p: "10px" }}
@@ -452,7 +449,7 @@ export default function GeneralTable({
                 </div>
             </div>
 
-            <Paper sx={{ width: "100%", mb: 2 }}>
+            <Paper sx={{maxWidth: "100%",minWidth:"400px" }}>
                 <EnhancedTableToolbar
                     getReqObj={getReqObject}
                     columns={columns}
@@ -466,7 +463,7 @@ export default function GeneralTable({
                     openCreateDialog={() => setOpenCreate(true)}
                     openEditDialog={() => setOpenEdit(true)}
                 />
-                <TableContainer sx={{ minWidth: 1000, maxHeight: 440 }}>
+                <TableContainer sx={{ maxWidth: "100%",minWidth:"400px", maxHeight: 440 }}>
                     <Table
                         stickyHeader
                         aria-labelledby="tableTitle"

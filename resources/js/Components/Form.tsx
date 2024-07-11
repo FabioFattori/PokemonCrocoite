@@ -45,8 +45,8 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
   React.useEffect(() => {
     //  console.log(dependencies)
     //  console.log(dependenciesNames)
-    //  console.log(headers)
-    //  console.log(fieldNames)
+      console.log(headers)
+      console.log(fieldNames)
     //  console.log(headers.filter((header)=>header.toLowerCase() != "id"))
     //  console.log(headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
     //   return dependenciesNames.length!=0&&dependenciesNames.includes(header)}))
@@ -58,12 +58,15 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
     request["id"] = data.length != 0 ? data["id" as unknown as number] : null
     fieldNames.filter((field)=>field!="id").map((field, index) => {
       request[field] = inputs[index]
-      console.log(request)
     })
+    if(Object.entries(request).length-1 < inputs.length){
+      if(Object.entries(request).map(key => key == "attacking_id").length != 0){
+        request["defending_id"] = inputs[0]
+      }
+    }
     // dependenciesNames.forEach(name => {
     //   request[name] = inputs[headers.indexOf(name)]
     // });
-    console.log(request)
     return request
   }
 

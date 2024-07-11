@@ -14,6 +14,7 @@ use App\Models\Exemplary;
 use App\Models\Gender;
 use App\Models\Gym;
 use App\Models\Move;
+use App\Models\Nature;
 use App\Models\Npc;
 use App\Models\Pokemon;
 use App\Models\Position;
@@ -25,11 +26,15 @@ use App\Tables\Class\DependeciesResolver;
 use App\Tables\EffectivnessTable;
 use App\Tables\GendersTable;
 use App\Tables\GymsTable;
+use App\Tables\MovesMode;
 use App\Tables\MovesTable;
+use App\Tables\NatureTable;
 use App\Tables\PokemonTable;
 use App\Tables\PositionTable;
 use App\Tables\ZonesTable;
+use Illuminate\Support\Facades\DB;
 use Mockery\Undefined;
+use PhpParser\Node\Stmt\Return_;
 
 class AdminController extends Controller
 {
@@ -54,10 +59,20 @@ class AdminController extends Controller
             "position_id" => "required|integer",
         ]);
 
-        User::create([
+        $user = User::create([
             "email" => $request->input("email"),
             "password" => Hash::make($request->input("password")),
             "position_id" => $request->input("position_id"),
+        ]);
+
+        Box::create([
+            "name" => "Box di ".$user->email,
+            "user_id" => $user->id,
+        ]);
+
+        Team::create([
+            "date" => now(),
+            "user_id" => $user->id,
         ]);
 
         return redirect()->route("admin.users");
@@ -92,8 +107,21 @@ class AdminController extends Controller
     public function Exemplaries(Request $request){
         $tb = new ExemplaryTable(mode:Mode::ADMIN);
 
-        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+        if($request->all() != [] && key_exists("id",$request->all()) && $tb->equalsById($request->all()["id"])){
             $tb->setConfigObject($request->all());
+        }
+
+        if($request->all() != [] && key_exists("exemplary_id",$request->all()) &&$request->all()["exemplary_id"] != null){
+            $moves = new MovesTable(mode:MovesMode::getMovesFromExemplaryId, exemplaryId:$request->all()["exemplary_id"]);
+            $pokemon = Exemplary::find($request->all()["exemplary_id"])->pokemon()->get()->first();
+            $allLearnableMoves = $pokemon->allLearnableMoves();
+            return Inertia::render('Admin/Esemplari', [
+                'exemplaries' => $tb->get(),
+                'dependencies' => DependeciesResolver::resolve($tb),
+                'dependenciesName' => $tb->getDependencies(),
+                'moves' => $moves->get(),
+                'allLearnableMoves' => $allLearnableMoves,
+            ]);
         }
 
         
@@ -204,6 +232,23 @@ class AdminController extends Controller
         Move::where("id", "=", $request->input("id"))->delete();
 
         return redirect()->route("admin.moves");
+    }
+
+    public function changeMove(Request $request){
+        $request->validate([
+            "exemplary_id" => "required|integer",
+            "moveOld_id" => "required|integer",
+            "moveNew_id" => "required|integer",
+        ]);
+
+        if($request->all()["moveNew_id"] == -1 || $request->all()["moveOld_id"] == -1 || $request->all()["moveNew_id"] == $request->all()["moveOld_id"]){
+            return redirect()->back();
+        }
+
+        $exemplary = Exemplary::find($request->all()["exemplary_id"]);
+        $exemplary->move()->detach($request->all()["moveOld_id"]);
+        $exemplary->move()->attach($request->all()["moveNew_id"]);
+        return redirect()->back();
     }
 
     public function Genders(Request $request){
@@ -388,36 +433,48 @@ class AdminController extends Controller
     }
 
     public function addEffectivness(Request $request){
+
         $request->validate([
-            "attacking_type_id" => "required|integer",
-            "defending_type_id" => "required|integer",
+            "attacking_id" => "required|integer",
+            "defending_id" => "required|integer",
             "multiplier" => "required|numeric",
         ]);
 
-        Type::find($request->input("attacking_type_id"))->effectiveness()->attach($request->input("defending_type_id"), ["multiplier" => $request->input("multiplier")]);
+        // do the attach method to add the new effectiveness
+        // the effectiveness table has id , attacking_type_id, defending_type_id, multiplier
+        $attackingType = Type::find($request->input("attacking_id"));
+        $attackingType->effectivenessOnAttack()->attach($request->input("defending_id"), ["multiplier" => $request->input("multiplier")]);
 
         return redirect()->back();
     }
 
     public function editEffectivness(Request $request){
         $request->validate([
-            "attacking_type_id" => "required|integer",
-            "defending_type_id" => "required|integer",
+            "id" => "required|integer",
             "multiplier" => "required|numeric",
+            "attacking_id" => "required|integer",
+            "defending_id" => "required|integer",
         ]);
 
-        Type::find($request->input("attacking_type_id"))->effectiveness()->updateExistingPivot($request->input("defending_type_id"), ["multiplier" => $request->input("multiplier")]);
+
+        DB::table("effectiveness")->where("id", "=", $request->input("id"))->update([
+            "multiplier" => $request->input("multiplier"),
+            "attacking_type_id" => $request->input("attacking_id"),
+            "defending_type_id" => $request->input("defending_id"),
+        ]);
 
         return redirect()->back();
     }
 
     public function deleteEffectivness(Request $request){
         $request->validate([
-            "attacking_type_id" => "required|integer",
-            "defending_type_id" => "required|integer",
+            "id" => "required|integer",
         ]);
 
-        Type::find($request->input("attacking_type_id"))->effectiveness()->detach($request->input("defending_type_id"));
+        //check if id is an array
+        
+        DB::table("effectiveness")->where("id", "=", $request->input("id"))->delete();
+        
 
         return redirect()->back();
     }
@@ -597,6 +654,60 @@ class AdminController extends Controller
 
         return redirect()->back();
     }
+
+    public function nature(Request $request){
+        $tb = new NatureTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Nature",[
+            'natures' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addNature(Request $request){
+        $request->validate([
+            "name" => "required",
+            "description" => "required",
+        ]);
+
+        Nature::create([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editNature(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "description" => "required",
+        ]);
+
+        Nature::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+        ]);
+
+        return redirect()->back();
+    }   
+
+    public function deleteNature(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Nature::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    
 
 
 

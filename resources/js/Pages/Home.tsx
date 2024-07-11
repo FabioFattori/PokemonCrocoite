@@ -14,9 +14,6 @@ export default function home() {
     let currentMode: userMode = (usePage().props.mode as userMode) ?? "ERROR";
     let user: any = usePage().props.user as any;
 
-    React.useEffect(() => {
-        console.log(currentMode);
-    }, [currentMode]);
 
     return (
         <div style={{ marginLeft: "10px", marginRight: "10px" }}>

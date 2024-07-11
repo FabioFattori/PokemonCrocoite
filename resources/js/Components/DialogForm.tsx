@@ -22,7 +22,6 @@ export default function DialogForm({open,openDialog,closeDialog,headers=[],field
             const formData = new FormData(event.currentTarget);
             const formJson = Object.fromEntries((formData as any).entries());
             const email = formJson.email;
-            console.log(email);
             closeDialog();
           },
         }}

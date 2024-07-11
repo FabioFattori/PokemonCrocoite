@@ -16,7 +16,6 @@ function Login() {
             {
                 onError: (e) => {
                     setError(e.email);
-                    console.log(e);
                 },
             }
         );
@@ -32,7 +31,6 @@ function Login() {
                 {
                     onError: (e) => {
                         setError(e.email);
-                        console.log(e);
                     },
                 }
             ):router.post(
@@ -41,7 +39,6 @@ function Login() {
                 {
                     onError: (e) => {
                         setError(e.email);
-                        console.log(e);
                     },
                 }
             );

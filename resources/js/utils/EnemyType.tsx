@@ -11,7 +11,6 @@ function translator({sennisTable}:{sennisTable: any}) {
     const count = sennisTable["count"] as number ?? 0;
     const tableId = sennisTable["id"] as number ?? -1;
 
-    console.log(headers , fieldNames , data , columns )
     return {headers , fieldNames , data , page , dataPerPage , count , columns , tableId}
 }
 

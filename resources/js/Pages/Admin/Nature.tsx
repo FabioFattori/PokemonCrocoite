@@ -5,19 +5,20 @@ import userMode from '../../Components/userMode';
 import SideBar from '../../Components/SideBar';
 import GeneralTable from '../../Components/GeneralTable';
 
-function Effectivnesses() {
-    var eff = (usePage().props.effectivnesses as any[]) ?? null;
-    setTableToUse("effectivnesses");
+function Nature() {
+    var nature = (usePage().props.natures as any[]) ?? null;
+    setTableToUse("natures");
 
     React.useEffect(() => {
+        console.log(nature);
     },[]);
 
     return (
         <>
-        <SideBar title={"Effetti Pokemon"} mode={userMode.admin}/>
-        <GeneralTable tableTitle='Effetti' dbObject={eff} buttons={buttons} />
+        <SideBar title={"Nature Pokemon"} mode={userMode.admin}/>
+        <GeneralTable tableTitle='Nature' dbObject={nature} buttons={buttons} />
         </>
     )
 }
 
-export default Effectivnesses
+export default Nature

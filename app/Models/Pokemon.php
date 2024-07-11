@@ -31,6 +31,14 @@ class Pokemon extends Model
         return $this->belongsToMany(Move::class, "can_learn_from_mn_mt");
     }
 
+    public function allLearnableMoves()
+    {
+        $learnableMoves = [];
+        $learnableMoves['level'] = $this->canLearnFromLevel()->get();
+        $learnableMoves['machine'] = $this->canLearnFromMachine()->get();
+        return $learnableMoves;
+    }
+
     public function type()
     {
         return $this->belongsToMany(Type::class);

@@ -16,7 +16,6 @@ function Box() {
     React.useEffect(() => {
         addNewInterractableButton("Show Pokemon Inside",UnarchiveIcon,({props}:{props:any}) => {
             let selection = props[0];
-            console.log(selection["id"])
             //do a fetch to get all the exemplaries inside the box
             router.get("/admin/boxes",{id:selection["id"]});
         });

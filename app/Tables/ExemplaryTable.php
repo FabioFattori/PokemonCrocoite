@@ -41,7 +41,7 @@ class ExemplaryTable extends Table{
         }
 
         if($this->currentMode == Mode::ADMIN){
-            $q = Exemplary::query()->join("pokemon", "exemplaries.pokemon_id", "=", "pokemon.id")->join("boxes", "exemplaries.box_id", "=", "boxes.id");
+            $q = Exemplary::query()->join("pokemon", "exemplaries.pokemon_id", "=", "pokemon.id")->leftJoin("boxes", "exemplaries.box_id", "=", "boxes.id");
             $this->addElementToDependencies("Box");
         }
 

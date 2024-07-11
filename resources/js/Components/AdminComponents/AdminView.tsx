@@ -18,8 +18,6 @@ function AdminView() {
     let d = usePage().props.movesNames as any[] ?? [];
 
     React.useEffect(() => {
-        console.log(c);
-        console.log(d);
     }, []);
 
     return (

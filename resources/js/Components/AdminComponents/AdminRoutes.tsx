@@ -10,6 +10,7 @@ import WifiProtectedSetupIcon from '@mui/icons-material/WifiProtectedSetup';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MapIcon from '@mui/icons-material/Map';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
+import EmojiNatureIcon from '@mui/icons-material/EmojiNature';
 
 interface Route{
     Title: string;
@@ -43,6 +44,11 @@ export default [
         Title: "Genere Pokemon",
         Path: "/admin/genders",
         Icon: TransgenderIcon,
+    },
+    {
+        Title: "Nature Pokemon",
+        Path: "/admin/natures",
+        Icon: EmojiNatureIcon,
     },
     {
         Title: "Razze Pokemon",

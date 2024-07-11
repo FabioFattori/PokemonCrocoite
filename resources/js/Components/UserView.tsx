@@ -9,7 +9,6 @@ function UserView() {
     var position: any[] = (usePage().props.position as any[]) ?? [];
 
     React.useEffect(() => {
-        console.log(team)
     },[team]);
   return (
     <div>
