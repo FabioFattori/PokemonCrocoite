@@ -22,6 +22,7 @@ class ExemplaryTable extends Table{
 
     private int $currentMode;
     private array $dependencies = ["Pokemon","Nature","Team","Npc","Gender","User"];
+    private int $boxId;
 
     public function getDependencies():array{
         return $this->dependencies;
@@ -44,6 +45,10 @@ class ExemplaryTable extends Table{
             $this->addElementToDependencies("Box");
         }
 
+        if($this->currentMode == Mode::Box){
+            $q->where("box_id", "=", $this->boxId);
+        }
+
         if($this->currentMode == Mode::USER){
             $q = Exemplary::query()->join("pokemon", "exemplaries.pokemon_id", "=", "pokemon.id")->join("boxes", "exemplaries.box_id", "=", "boxes.id");
             $q->where("boxes.user_id", "=", auth()->user()->getId())->where("team_id", "=", auth()->user()->getTeamId());
@@ -52,9 +57,10 @@ class ExemplaryTable extends Table{
         return $q;
     }
 
-    public function __construct($mode = Mode::ADMIN) {
+    public function __construct($mode = Mode::ADMIN, $boxId = -1) {
         $this->setId(90);
         $this->currentMode = $mode;
+        $this->boxId = $boxId;
         parent::__construct();
         $this->setColumns([
             "pokemonName" => Column::Visible("pokemonName", "pokemon.name", "Nome Pokemon", types: Types::STRING,isOriginal: false),

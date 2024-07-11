@@ -17,6 +17,7 @@ L'applicazione avviata con docker tramite sail (o docker compose), consiste in u
 ## Preambolo
 
 -   Installare Docker ([Sito ufficiale docker](https://www.docker.com/))
+-   fare una copia del file `.env.example` e rinominarlo in `.env`
 
 ## Avvio tramite docker
 

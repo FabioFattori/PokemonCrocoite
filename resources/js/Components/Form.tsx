@@ -13,10 +13,14 @@ function resolveDependecieName(row:any){
   //console.log(row)
   Object.keys(row).forEach((key)=>{
     //console.log(key)
-    if(key.toLowerCase().includes("name")||key.toLowerCase().includes("title")){
+    if(key.toLowerCase().includes("name")||key.toLowerCase().includes("title")||key.toLowerCase().includes("email")){
       result = row[key]
     }
   })
+
+  if(row["x"]!=undefined && row["y"]!=undefined){
+    result = "x: "+row["x"] + ", y: " + row["y"]
+  }
   if(result == ""){
     result = row["id"]
   }
@@ -66,7 +70,7 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
   return (
     <div  style={{ display:"flex" , flexDirection:"column" , gap:"30px 10px" , marginTop:"10px" , minWidth:"300px" , width:"70%" }}>
         {headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
-          return dependenciesNames.length!=0&&dependenciesNames.includes(header)? 
+          return dependenciesNames.length!=0&&dependenciesNames.includes(header.split(' ')[0])? 
           <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">{header}</InputLabel>
           <Select
@@ -76,7 +80,7 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
             label={header}
             onChange={(e)=>{changeInput(index,e.target.value)}}
           >
-            {dependencies.length!=0?dependencies[header as unknown as number].map((item: any) => {
+            {dependencies.length!=0?dependencies[header.split(' ')[0] as unknown as number].map((item: any) => {
               return <MenuItem value={item.id}>{resolveDependecieName(item)}</MenuItem>
             }):null}
           </Select>

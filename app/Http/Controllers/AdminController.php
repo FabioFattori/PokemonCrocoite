@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Box;
 use App\Models\User;
 use App\Tables\ExemplaryTable;
 use App\Tables\Mode;
@@ -11,14 +12,24 @@ use App\Tables\UserTable;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Exemplary;
 use App\Models\Gender;
+use App\Models\Gym;
 use App\Models\Move;
+use App\Models\Npc;
 use App\Models\Pokemon;
+use App\Models\Position;
 use App\Models\Team;
 use App\Models\Type;
+use App\Models\Zone;
+use App\Tables\BoxTable;
 use App\Tables\Class\DependeciesResolver;
+use App\Tables\EffectivnessTable;
 use App\Tables\GendersTable;
+use App\Tables\GymsTable;
 use App\Tables\MovesTable;
 use App\Tables\PokemonTable;
+use App\Tables\PositionTable;
+use App\Tables\ZonesTable;
+use Mockery\Undefined;
 
 class AdminController extends Controller
 {
@@ -40,8 +51,9 @@ class AdminController extends Controller
         $request->validate([
             "email" => "required|email",
             "password" => "required",
-            
+            "position_id" => "required|integer",
         ]);
+
         User::create([
             "email" => $request->input("email"),
             "password" => Hash::make($request->input("password")),
@@ -295,6 +307,297 @@ class AdminController extends Controller
 
         return redirect()->back();
     }
+
+    public function boxes(Request $request){
+        $tb = new BoxTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        $exemplaries = null;
+
+        if($request->all() != [] && $request->all()["id"] != null){
+            $exemplaries = new ExemplaryTable(mode:Mode::Box, boxId:$request->all()["id"]);
+            return Inertia::render("Admin/Box",[
+                'boxes' => $tb->get(),
+                'dependencies' => DependeciesResolver::resolve($tb),
+                'dependenciesName' => $tb->getDependencies(),
+                'exemplaries' => $exemplaries->get(),
+    
+            ]);
+        }
+
+        return Inertia::render("Admin/Box",[
+            'boxes' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addBox(Request $request){
+        $request->validate([
+            "name" => "required",
+            "user_id" => "required|integer",
+        ]);
+
+        Box::create([
+            "name" => $request->input("name"),
+            "user_id" => $request->input("user_id"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    
+
+    public function editBox(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "user_id" => "required|integer",
+        ]);
+
+        Box::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "user_id" => $request->input("user_id"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteBox(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Box::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function effectivnesses(Request $request){
+        $tb = new EffectivnessTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+        return Inertia::render("Admin/Effectivnesses",[
+            'effectivnesses' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addEffectivness(Request $request){
+        $request->validate([
+            "attacking_type_id" => "required|integer",
+            "defending_type_id" => "required|integer",
+            "multiplier" => "required|numeric",
+        ]);
+
+        Type::find($request->input("attacking_type_id"))->effectiveness()->attach($request->input("defending_type_id"), ["multiplier" => $request->input("multiplier")]);
+
+        return redirect()->back();
+    }
+
+    public function editEffectivness(Request $request){
+        $request->validate([
+            "attacking_type_id" => "required|integer",
+            "defending_type_id" => "required|integer",
+            "multiplier" => "required|numeric",
+        ]);
+
+        Type::find($request->input("attacking_type_id"))->effectiveness()->updateExistingPivot($request->input("defending_type_id"), ["multiplier" => $request->input("multiplier")]);
+
+        return redirect()->back();
+    }
+
+    public function deleteEffectivness(Request $request){
+        $request->validate([
+            "attacking_type_id" => "required|integer",
+            "defending_type_id" => "required|integer",
+        ]);
+
+        Type::find($request->input("attacking_type_id"))->effectiveness()->detach($request->input("defending_type_id"));
+
+        return redirect()->back();
+    }
+
+    public function positions(Request $request){
+        $tb = new PositionTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Posizioni",[
+            'positions' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addPosition(Request $request){
+        $request->validate([
+            "x" => "required|integer",
+            "y" => "required|integer",
+        ]);
+
+        Position::create([
+            "x" => $request->input("x"),
+            "y" => $request->input("y"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editPosition(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "x" => "required|integer",
+            "y" => "required|integer",
+        ]);
+
+        Position::where("id", "=", $request->input("id"))->update([
+            "x" => $request->input("x"),
+            "y" => $request->input("y"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deletePosition(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Position::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function zones(Request $request){
+        $tb = new ZonesTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Zone",[
+            'zones' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addZone(Request $request){
+        $request->validate([
+            "name" => "required",
+            "length" => "required|integer",
+            "width" => "required|integer",
+            "position_id" => "required|integer",
+        ]);
+
+        Zone::create([
+            "name" => $request->input("name"),
+            "length" => $request->input("length"),
+            "width" => $request->input("width"),
+            "position_id" => $request->input("position_id"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editZone(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "length" => "required|integer",
+            "width" => "required|integer",
+            "position_id" => "required|integer",
+        ]);
+
+        Zone::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "length" => $request->input("length"),
+            "width" => $request->input("width"),
+            "position_id" => $request->input("position_id"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteZone(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Zone::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function gyms(Request $request){
+        $tb = new GymsTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Palestre",[
+            'gyms' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addGym(Request $request){
+        $request->validate([
+            "zone_id" => "required|integer",
+            "npc_id" => "required|integer",
+            "position_id" => "required|integer",
+        ]);
+
+        $gym = Gym::create([
+            "zone_id" => $request->input("zone_id"),
+            "position_id" => $request->input("position_id"),
+        ]);
+
+        Npc::where("id", "=", $request->input("npc_id"))->update([
+            "gym_id" => $gym->id,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editGym(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "zone_id" => "required|integer",
+            "npc_id" => "required|integer",
+            "position_id" => "required|integer",
+        ]);
+
+        Gym::where("id", "=", $request->input("id"))->update([
+            "zone_id" => $request->input("zone_id"),
+            "position_id" => $request->input("position_id"),
+        ]);
+
+        Npc::where("id", "=", $request->input("npc_id"))->update([
+            "gym_id" => $request->input("id"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteGym(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+
+
+        Gym::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
 
 
     private function resolveDate($date){

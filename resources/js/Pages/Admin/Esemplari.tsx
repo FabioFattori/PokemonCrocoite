@@ -5,7 +5,6 @@ import SideBar from "../../Components/SideBar";
 import userMode from "../../Components/userMode";
 import RadarIcon from '@mui/icons-material/Radar';
 import React from "react";
-import ChartManager from "../../Components/ChartManager";
 
 enum DependeciesToSolve {
     box_id = "box_id",
