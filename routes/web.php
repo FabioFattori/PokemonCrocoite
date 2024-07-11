@@ -116,7 +116,8 @@ Route::prefix("admin")->group(function () {
  
 
 Route::prefix("user")->group(function () {
-    Route::get("exemplaries",[UserController::class, "exemplaries"])->name("user.exemplaries");
-    Route::get("userTeam",[UserController::class, "teams"])->name("user.userTeam");
+
+    Route::match(['GET', 'POST'],"/exemplaries", [UserController::class, "exemplaries"])->name("user.exemplaries");
+    Route::match(['GET', 'POST'],"/userTeam", [UserController::class, "teams"])->name("user.userTeam");
 
 });

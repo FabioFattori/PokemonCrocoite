@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Box;
+use App\Models\Position;
+use App\Models\Team;
 use App\Models\User;
 use ErrorException;
 use Illuminate\Http\Request;
@@ -44,7 +46,15 @@ class LoginController extends Controller
         $user = User::create([
             'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'position_id' => Position::random()->id,
         ]);
+
+        Team::create([
+            'user_id' => $user->id,
+            'date' => now(),
+        ]);
+
+        
 
         Box::create([
             'user_id' => $user->id,

@@ -9,7 +9,7 @@ use App\Tables\Mode;
 use App\Tables\Class\DependeciesResolver;
 use TeamTable;
 
-class UserController extends Controller
+class  UserController extends Controller
 {
     public function exemplaries(Request $request){
         $tb = new ExemplaryTable(mode:Mode::USER);

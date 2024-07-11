@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Team;
+use ErrorException;
 
 class User extends Authenticatable
 {
@@ -35,7 +36,7 @@ class User extends Authenticatable
         if($team != null){
             return $team->id;
         }
-        return null;
+        throw new ErrorException("User has no team");
     }
 
     public function boxes()
