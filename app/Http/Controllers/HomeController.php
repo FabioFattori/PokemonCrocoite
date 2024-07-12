@@ -53,8 +53,9 @@ class HomeController extends Controller
             #second chart
             $pokemon = Pokemon::join("exemplaries", "pokemon.id", "=", "exemplaries.pokemon_id")->where("exemplaries.team_id", "!=", null);
             $toReturn = [];
-            $toIterate = $pokemon->select("pokemon.id","pokemon.name","pokemon.rarity_id")->groupBy("pokemon.name")->get();
             
+            $toIterate = $pokemon->select("pokemon.id","pokemon.name","pokemon.rarity_id")->groupBy("pokemon.name")->get();
+
             foreach ($toIterate as $key => $pk) {
                 $count = Pokemon::select("pokemon.name")->join("exemplaries", "pokemon.id", "=", "exemplaries.pokemon_id")->where("exemplaries.team_id", "!=", null)->where("pokemon.name", "=", $pk->name)->count();
                 array_push($toReturn, $count);
@@ -117,7 +118,9 @@ class HomeController extends Controller
             'types' => $types,
             # second chart
             'pokemonsMostUsed' => $toReturn,
-            'pokemonNames' => $Pokemon,
+            'pokemonNames' => $toIterate->map(function($p){
+                return $p->name;
+            }),
             # third chart
             'nUsersInZone' => $nUsersInZone,
             'zones' => $zones,

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Battles;
 use App\Models\BattleTool;
 use App\Models\Box;
 use App\Models\User;
+use App\Tables\BattleTable;
 use App\Tables\ExemplaryTable;
 use App\Tables\Mode;
+use App\Tables\SinglePokemonBattleTable;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Tables\UserTable;
@@ -800,7 +803,84 @@ class AdminController extends Controller
         return redirect()->back();
     }
     
+    public function battles(Request $request){
+        $tb = new BattleTable();
+        if($request->all() != [] &&key_exists("id",$request->all())&& $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
 
+        if(key_exists("battle_id", $request->all()) && $request->all()["battle_id"] != null){
+            $singlePokemonBattle = new SinglePokemonBattleTable();
+            return Inertia::render("Admin/Battaglie",[
+                'battles' => $tb->get(),
+                'dependencies' => DependeciesResolver::resolve($tb),
+                'dependenciesName' => $tb->getDependencies(),
+                'singlePokemonBattle' => $singlePokemonBattle->get(),
+            ]);
+        }   
+
+        return Inertia::render("Admin/Battaglie",[
+            'battles' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addBattle(Request $request){
+        $request->validate([
+            "date" => "required|date",
+            "winner" => "required|integer",
+            "user_1" => "required|integer",
+            "user_2" => "required|integer",
+        ]);
+
+        if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
+            return redirect()->back();
+        }
+
+        $battle = Battles::create([
+            "date" => $this->resolveDate($request->input("date")),
+            "winner" => $request->input("winner"),
+            "user_1" => $request->input("user_1"),
+            "user_2" => $request->input("user_2"),
+
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editBattle(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "date" => "required|date",
+            "winner" => "required|integer",
+            "user_1" => "required|integer",
+            "user_2" => "required|integer",
+        ]);
+
+        if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
+            return redirect()->back();
+        }
+
+        Battles::where("id", "=", $request->input("id"))->update([
+            "date" => $this->resolveDate($request->input("date")),
+            "winner" => $request->input("winner"),
+            "user_1" => $request->input("user_1"),
+            "user_2" => $request->input("user_2"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteBattle(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Battles::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
 
 
     private function resolveDate($date){

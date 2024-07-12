@@ -18,7 +18,10 @@ function ChartManager({title,label,x,y}:{title:string,label:string,x:any[],y:any
             setData(data)
 
         }else{
-            throw new Error("x and y must have the same length")
+            console.log(title)
+            console.log(x)
+            console.log(y)
+            throw new Error("x and y must have the same length, received instead x=>"+x+"\n y=>"+y)
         }
     },[x, y]) // Added 'y' to the dependency array to ensure useEffect runs when either 'x' or 'y' changes.
 

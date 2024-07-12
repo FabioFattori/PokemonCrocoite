@@ -12,6 +12,7 @@ import MapIcon from '@mui/icons-material/Map';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import EmojiNatureIcon from '@mui/icons-material/EmojiNature';
 import PlumbingIcon from '@mui/icons-material/Plumbing';
+import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 
 interface Route{
     Title: string;
@@ -35,6 +36,11 @@ export default [
         Title: "Utenti",
         Path: "/admin/users",
         Icon: PersonIcon,
+    },
+    {
+        Title: "Battaglie tra allenatori",
+        Path: "/admin/battles",
+        Icon: SportsKabaddiIcon,
     },
     {
         Title: "Mosse",
