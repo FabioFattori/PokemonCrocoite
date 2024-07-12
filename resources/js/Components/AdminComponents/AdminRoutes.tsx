@@ -11,6 +11,7 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import MapIcon from '@mui/icons-material/Map';
 import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import EmojiNatureIcon from '@mui/icons-material/EmojiNature';
+import PlumbingIcon from '@mui/icons-material/Plumbing';
 
 interface Route{
     Title: string;
@@ -64,6 +65,11 @@ export default [
         Title: "Effeti Pokemon",
         Path: "/admin/effectivnesses",
         Icon: WifiProtectedSetupIcon,
+    },
+    {
+        Title: "Oggetti da Battaglia",
+        Path:"/admin/tools",
+        Icon: PlumbingIcon,
     },
     {
         Title:"Zone",

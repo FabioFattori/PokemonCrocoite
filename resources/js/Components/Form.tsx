@@ -45,8 +45,8 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
   React.useEffect(() => {
     //  console.log(dependencies)
     //  console.log(dependenciesNames)
-      console.log(headers)
-      console.log(fieldNames)
+    // console.log(headers)
+    // console.log(fieldNames)
     //  console.log(headers.filter((header)=>header.toLowerCase() != "id"))
     //  console.log(headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
     //   return dependenciesNames.length!=0&&dependenciesNames.includes(header)}))

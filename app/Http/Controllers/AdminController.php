@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BattleTool;
 use App\Models\Box;
 use App\Models\User;
 use App\Tables\ExemplaryTable;
@@ -18,9 +19,12 @@ use App\Models\Nature;
 use App\Models\Npc;
 use App\Models\Pokemon;
 use App\Models\Position;
+use App\Models\State;
+use App\Models\StateBattleTool;
 use App\Models\Team;
 use App\Models\Type;
 use App\Models\Zone;
+use App\Tables\BattleToolTable;
 use App\Tables\BoxTable;
 use App\Tables\Class\DependeciesResolver;
 use App\Tables\EffectivnessTable;
@@ -707,6 +711,94 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function tools(Request $request){
+        $tb = new BattleToolTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/OggettiDaBattaglia",[
+            'tools' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addTool(Request $request){
+        if(key_exists("state_id", $request->all()) && !key_exists("prefabbricato", $request->all())){
+            $request->validate([
+                "name" => "required",
+                "description" => "required",
+                "healthRecovery" => "required|integer",
+                "state_id" => "required|integer",
+            ]);
+            StateBattleTool::create([
+                "battle_tool_id" => BattleTool::create([
+                    "name" => $request->input("name"),
+                    "description" => $request->input("description"),
+                    "healthRecovery" => $request->input("healthRecovery"),
+                ])->id,
+                "state_id" => $request->input("state_id"),
+            ]);
+        }else if(key_exists("prefabbricato", $request->all()) && key_exists("state_id", $request->all())){
+            $request->validate([
+                "prefabbricato" => "required|integer",
+                "state_id" => "required|integer",
+            ]);
+            StateBattleTool::create([
+                "battle_tool_id" => $request->input("prefabbricato"),
+                "state_id" => $request->input("state_id"),
+            ]);
+        }else{
+            $request->validate([
+                "name" => "required",
+                "description" => "required",
+                "healthRecovery" => "required|integer",
+            ]);
+            BattleTool::create([
+                "name" => $request->input("name"),
+                "description" => $request->input("description"),
+                "healthRecovery" => $request->input("healthRecovery"),
+            ]);
+            return $request->all();
+        }
+
+
+        return redirect()->back();
+    }
+
+    public function editTool(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "description" => "required",
+            "healthRecovery" => "required|integer",
+        ]);
+
+        BattleTool::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+            "healthRecovery" => $request->input("healthRecovery"),
+        ]);
+
+        if(key_exists("state_id", $request->all())){
+            StateBattleTool::where("battle_tool_id", "=", $request->input("id"))->update([
+                "state_id" => $request->input("state_id"),
+            ]);
+        }
+
+        return redirect()->back();
+    }
+
+    public function deleteTool(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        BattleTool::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
     
 
 
