@@ -802,6 +802,34 @@ class AdminController extends Controller
 
         return redirect()->back();
     }
+
+    private function putTogheterDepencencies($table1,$table2){
+        //return a object with the dependencies of the two tables
+        $dp1 = DependeciesResolver::resolve($table1);
+        $dp2 = DependeciesResolver::resolve($table2);
+        $dependencies = [];
+        foreach($dp1 as $key => $value){
+            $dependencies[$key] = $value;
+        }
+        foreach($dp2 as $key => $value){
+            $dependencies[$key] = $value;
+        }
+        return $dependencies;
+    }
+
+    private function putTogheterDepencenciesNames($table1,$table2){
+        //return a object with the dependencies of the two tables
+        $dp1 = $table1->getDependencies();
+        $dp2 = $table2->getDependencies();
+        $dependencies = [];
+        foreach($dp1 as $key => $value){
+            array_push($dependencies,$value);
+        }
+        foreach($dp2 as $key => $value){
+            array_push($dependencies,$value);
+        }
+        return $dependencies;
+    }
     
     public function battles(Request $request){
         $tb = new BattleTable();
@@ -811,11 +839,21 @@ class AdminController extends Controller
 
         if(key_exists("battle_id", $request->all()) && $request->all()["battle_id"] != null){
             $singlePokemonBattle = new SinglePokemonBattleTable();
+            if(key_exists("exemplary_id", $request->all()) && $request->all()["exemplary_id"] != null){
+                $exemplary = new ExemplaryTable(mode:Mode::SingleExemplary, SingleExemplaryId:$request->all()["exemplary_id"]);
+                return Inertia::render("Admin/Battaglie",[
+                    'battles' => $tb->get(),
+                    'dependencies' => $this->putTogheterDepencencies($tb, $singlePokemonBattle),
+                    'dependenciesName' => $this->putTogheterDepencenciesNames($tb, $singlePokemonBattle),
+                    'pokemonBattles' => $singlePokemonBattle->get(),
+                    'exemplary' => $exemplary->get(),
+                ]);
+            }
             return Inertia::render("Admin/Battaglie",[
                 'battles' => $tb->get(),
-                'dependencies' => DependeciesResolver::resolve($tb),
-                'dependenciesName' => $tb->getDependencies(),
-                'singlePokemonBattle' => $singlePokemonBattle->get(),
+                'dependencies' => $this->putTogheterDepencencies($tb, $singlePokemonBattle),
+                'dependenciesName' => $this->putTogheterDepencenciesNames($tb, $singlePokemonBattle),
+                'pokemonBattles' => $singlePokemonBattle->get(),
             ]);
         }   
 
@@ -827,6 +865,7 @@ class AdminController extends Controller
     }
 
     public function addBattle(Request $request){
+        return $request->all();
         $request->validate([
             "date" => "required|date",
             "winner" => "required|integer",

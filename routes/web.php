@@ -119,6 +119,7 @@ Route::prefix("admin")->group(function () {
     Route::post("/battles/Edit", [AdminController::class, "editBattle"])->name("battles.edit");
     Route::post("/battles/Delete", [AdminController::class, "deleteBattle"])->name("battles.delete");
     Route::match(['GET', 'POST'],"/battles", [AdminController::class, "battles"])->name("admin.battles");
+
     // Route::get("/profile", [ProfileController::class, "index"])->name("admin.profile");
     // Route::get("/profile/{id}", [ProfileController::class, "show"])->name("admin.profile.show");
     // Route::get("/profile/{id}/edit", [ProfileController::class, "edit"])->name("admin.profile.edit");

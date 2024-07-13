@@ -14,7 +14,7 @@ interface MethodButton extends Button {
     method: ({props}:{props:any}) => void;
 }
 
-let buttons = [{ label:"Add", icon: AddIcon, url: null },{label:"Edit", icon: Edit, url: null },{label:"Delete", icon: Delete, url: "/admin/users/Delete"}] as Button[];
+let buttons = [{ label:"Add", icon: AddIcon, url: null },{label:"Edit", icon: Edit, url: null },{label:"Delete", icon: Delete, url: window.location.href+"/Delete"}] as Button[];
 
 const setUp = (addUrl?:string , editUrl?:string , deleteUrl?:string ) =>{
     buttons = [{ label:"Add", icon: AddIcon, url: addUrl },{label:"Edit", icon: Edit, url: editUrl },{label:"Delete", icon: Delete, url: deleteUrl}];

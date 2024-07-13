@@ -231,26 +231,37 @@ export default function GeneralTable({
                 ] as Sort[])
             );
         };
-
-        return (
-            <TableCell key={columnName} align={"right"} padding={"normal"}>
-                <TableSortLabel
-                    active={false}
-                    onClick={(e) => {
-                        setOrder(order === "ASC" ? "DESC" : "ASC");
-                        sort(
-                            fieldNames[
-                                headers.findIndex(
-                                    (value) => value == columnName
-                                )
-                            ] as string
-                        );
-                    }}
-                >
+        // check if the column is sortable
+        if (columns[fieldNames[headers.indexOf(columnName) as number]]["sortable"]) {
+            return (
+                <TableCell key={columnName} align={"right"} padding={"normal"}>
+                    <TableSortLabel
+                        active={
+                            dbObject["sorts"].length != 0 &&
+                            dbObject["sorts"].map(
+                                (obj: Sort) => obj["columnName"]
+                            )[0] == fieldNames[headers.indexOf(columnName) as number]
+                        }
+                        direction={
+                            dbObject["sorts"].length != 0 &&
+                            dbObject["sorts"].map(
+                                (obj: Sort) => obj["direction"]
+                            )[0] == "ASC" ? "desc" : "asc"
+                        }
+                        onClick={() => sort(fieldNames[headers.indexOf(columnName) as number])}
+                    >
+                        {columnName}
+                    </TableSortLabel>
+                </TableCell>
+            );
+        }else{
+            return (
+                <TableCell key={columnName} align={"right"} padding={"normal"}>
                     {columnName}
-                </TableSortLabel>
-            </TableCell>
-        );
+                </TableCell>
+            );
+        }
+        
     }
 
     function EnhancedTableHead(props: EnhancedTableProps) {

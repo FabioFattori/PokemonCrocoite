@@ -14,7 +14,8 @@ final class Mode
     public const TEAM = 1;
     public const ADMIN = 2;
     public const Box = 3;   
-    public const USER = 4;   
+    public const USER = 4; 
+    public const SingleExemplary = 5;  
 }
 
 
@@ -23,6 +24,7 @@ class ExemplaryTable extends Table{
     private int $currentMode;
     private array $dependencies = ["Pokemon","Nature","Team","Npc","Gender","User"];
     private int $boxId;
+    private int $SingleExemplaryId;
 
     public function getDependencies():array{
         return $this->dependencies;
@@ -54,13 +56,18 @@ class ExemplaryTable extends Table{
             $q->where("boxes.user_id", "=", auth()->user()->getId())->where("team_id", "=", auth()->user()->getTeamId());
             $this->addElementToDependencies("Box");
         }
+
+        if($this->currentMode == Mode::SingleExemplary){
+            $q->where("exemplaries.id", "=", $this->SingleExemplaryId);
+        }
         return $q;
     }
 
-    public function __construct($mode = Mode::ADMIN, $boxId = -1) {
+    public function __construct($mode = Mode::ADMIN, $boxId = -1, $SingleExemplaryId = -1) {
         $this->setId(90);
         $this->currentMode = $mode;
         $this->boxId = $boxId;
+        $this->SingleExemplaryId = $SingleExemplaryId;
         parent::__construct();
         $this->setColumns([
             "pokemonName" => Column::Visible("pokemonName", "pokemon.name", "Nome Pokemon", types: Types::STRING,isOriginal: false),

@@ -17,9 +17,11 @@ function resolveDependecieName(row:any){
       result = row[key]
     }
   })
-
   if(row["x"]!=undefined && row["y"]!=undefined){
     result = "x: "+row["x"] + ", y: " + row["y"]
+  }
+  if(result == "" && row["level"]!=undefined){
+    result = row["level"]
   }
   if(result == ""){
     result = row["id"]
@@ -43,14 +45,14 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
   const dependenciesNames = usePage().props.dependenciesName as any[] ?? [];
 
   React.useEffect(() => {
-    //  console.log(dependencies)
-    //  console.log(dependenciesNames)
-     console.log(headers)
-     console.log(fieldNames)
-    //  console.log(headers.filter((header)=>header.toLowerCase() != "id"))
-    //  console.log(headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
+    //   console.log(dependencies)
+    //   console.log(dependenciesNames)
+    //  console.log(headers)
+    //  console.log(fieldNames)
+    //   console.log(headers.filter((header)=>header.toLowerCase() != "id"))
+    //   console.log(headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
     //   return dependenciesNames.length!=0&&dependenciesNames.includes(header)}))
-    //console.log(fieldNames.map((field) => field.toLowerCase().includes("date")))
+    // console.log(fieldNames.map((field) => field.toLowerCase().includes("date")))
   }
   , [inputs])
 
