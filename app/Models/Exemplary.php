@@ -12,6 +12,7 @@ class Exemplary extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'name',
         'speed',
         'specialDefense',
         'defense',
@@ -19,7 +20,7 @@ class Exemplary extends Model
         'specialAttack',
         'ps',
         'level',
-        'catchDate',
+        'exemplary_id',
         'pokemon_id',
         'gender_id',
         'nature_id',
@@ -48,6 +49,16 @@ class Exemplary extends Model
     {
         //is a n:N
         return $this->belongsToMany(State::class, 'state_exemplary', 'exemplary_id', 'state_id');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function captured()
+    {
+        return $this->hasOne(Captured::class);
     }
 
 

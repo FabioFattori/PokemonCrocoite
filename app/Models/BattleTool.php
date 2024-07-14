@@ -22,8 +22,13 @@ class BattleTool extends Model
         return $this->hasMany(Exemplary::class);
     }
 
-    public function states()
+    public function statesRecovery()
     {
-        return $this->hasOne(StateBattleTool::class);
+        return $this->belongsToMany(State::class, 'state_battle_tools', 'battle_tool_id', 'state_id');
+    }
+
+    public function npcs()
+    {
+        return $this->belongsToMany(Npc::class, 'battle_tool_npcs', 'battle_tool_id', 'npc_id')->withPivot('amount');
     }
 }

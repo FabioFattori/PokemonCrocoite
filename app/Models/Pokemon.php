@@ -13,7 +13,8 @@ class Pokemon extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'name'   
+        'name',
+        'rarity_id'
     ];
 
     public function exemplary()
@@ -43,7 +44,7 @@ class Pokemon extends Model
 
     public function zone()
     {
-        return $this->belongsToMany(Zone::class, 'can_be_found', 'pokemon_id', 'id');
+        return $this->belongsToMany(Zone::class, 'can_be_found', 'pokemon_id', 'zone_id');
     }
 
     public function encountered()

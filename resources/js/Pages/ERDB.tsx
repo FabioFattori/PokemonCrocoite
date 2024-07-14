@@ -1,9 +1,10 @@
-import { IconButton, Stack } from "@mui/material";
+import { CircularProgress, Fade, IconButton, Stack } from "@mui/material";
 import mermaid from "mermaid";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TransformComponent, TransformWrapper, useControls } from "react-zoom-pan-pinch";
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
+import { TrendingUp } from "@mui/icons-material";
 
 interface ErDbProps
 {
@@ -29,12 +30,14 @@ export default function ErDb(props:ErDbProps)
 function Mermaid(props:{mermaidCode:string})
 {
     const mermaidDiv = useRef(null);
+    const [mermaidReady, setMermaidReady] = useState(false)
 
     useEffect(() =>
     {
-        mermaid.initialize({ startOnLoad: true, darkMode:true })
+        mermaid.initialize({
+            startOnLoad: true, darkMode: true, theme: "dracula"})
         mermaid.contentLoaded()
-        mermaid.mermaidAPI.setConfig({})
+        setMermaidReady(true)
     }, [props.mermaidCode])
 
     return (
@@ -56,15 +59,22 @@ function Mermaid(props:{mermaidCode:string})
         >
             <Stack>
                 <ZoomButtons />
-            <TransformComponent >
-                <div ref={mermaidDiv} className="mermaid" style={{
-                    width: "100vw",
-                    height: "100vh",
-                    border: "1px solid black",
-                    padding:"10px"
-                }}>
-                    {props.mermaidCode}
-                </div>
+                <TransformComponent >
+                    <Fade in={mermaidReady} >
+                        <div ref={mermaidDiv} className="mermaid" style={{
+                            width: "100vw",
+                            height: "100vh",
+                            padding:"10px"
+                        }}>
+                            {props.mermaidCode}
+                        </div>
+                    </Fade>
+                    {
+                        !mermaidReady && (
+                            <CircularProgress />
+                        )
+                    }
+                
                 </TransformComponent>
                 </Stack>
         </TransformWrapper>

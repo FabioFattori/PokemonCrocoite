@@ -15,12 +15,12 @@ class Type extends Model
 
     public function effectivenessOnAttack()
     {
-        return $this->belongsToMany(Type::class, 'effectiveness', 'attacking_type_id', 'id')->withPivot('multiplier');
+        return $this->belongsToMany(Type::class, 'effectiveness', 'attacking_type_id', 'defending_type_id')->withPivot('multiplier');
     }
 
     public function effectivenessOnDefense()
     {
-        return $this->belongsToMany(Type::class, 'effectiveness', 'defending_type_id', 'id')->withPivot('multiplier');
+        return $this->belongsToMany(Type::class, 'effectiveness', 'defending_type_id', 'attacking_type_id')->withPivot('multiplier');
     }
 
     public function moves()

@@ -26,4 +26,9 @@ class State extends Model
         return $this->belongsToMany(Exemplary::class, 'state_exemplary', 'state_id', 'exemplary_id');
     }
 
+    public function battleTool()
+    {
+        return $this->belongsToMany(BattleTool::class, 'state_battle_tools', 'state_id', 'battle_tool_id');
+    }
+
 }

@@ -11,7 +11,11 @@ class Npc extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'description', 'position_id', 'gym_id'];
+    protected $casts = [
+        'is_gym_leader' => 'boolean',
+    ];
+
+    protected $fillable = ['name', 'position_id', 'gym_id', 'is_gym_leader'];
 
     public function getCurrentTeam()
     {
@@ -28,9 +32,9 @@ class Npc extends Model
         return $this->belongsTo(Gym::class);
     }
 
-    public function battleTool()
+    public function battleTools()
     {
-        return $this->belongsToMany(BattleTool::class, 'battle_tool_npc', 'npc_id', 'battle_tool_id')->withPivot('amount');
+        return $this->belongsToMany(BattleTool::class, 'battle_tool_npcs', 'npc_id', 'battle_tool_id')->withPivot('amount');
     }
 
 

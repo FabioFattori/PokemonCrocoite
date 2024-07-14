@@ -34,12 +34,12 @@ class User extends Authenticatable
         return $this->belongsToMany(MnMt::class, 'mn_mt_quantity')->withPivot('quantity');
     }
 
-    public function storyTool()
+    public function storyTools()
     {
         return $this->belongsToMany(StoryTool::class, 'story_tool_user')->withPivot('quantity');
     }
 
-    public function battleTool()
+    public function battleTools()
     {
         return $this->belongsToMany(BattleTool::class, 'battle_tool_users')->withPivot('amount');
     }
@@ -52,5 +52,11 @@ class User extends Authenticatable
     public function team()
     {
         return $this->hasOne(Team::class, 'user_id');
+    }
+
+    public function exemplaries(){
+        return $this->join('teams', 'teams.user_id', '=', 'users.id')
+            ->join('exemplaries', 'teams.id', '=', 'exemplaries.team_id')
+            ->select('exemplaries.*');
     }
 }

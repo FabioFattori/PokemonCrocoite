@@ -14,7 +14,6 @@ class Move extends Model
     protected $fillable = [
         'description',
         'name',
-        'type_id'
     ];
     
     public function exemplary()
@@ -32,7 +31,7 @@ class Move extends Model
         return $this->belongsToMany(Pokemon::class, "can_learn_from_mn_mt");
     }
 
-    public function type()
+    public function types()
     {
         return $this->belongsTo(Type::class);
     }

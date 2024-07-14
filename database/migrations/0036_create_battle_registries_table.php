@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('battle_registries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pokemon1_id')->constrained('exemplaries')->cascadeOnDelete();
-            $table->foreignId('pokemon2_id')->constrained('exemplaries')->cascadeOnDelete();
+            $table->foreignId('exemplary1_id')->constrained('exemplaries')->cascadeOnDelete();
+            $table->foreignId('exemplary2_id')->constrained('exemplaries')->cascadeOnDelete();
             //1 if winner is pokemon 1, 2 if winner is pokemon 2
             $table->tinyInteger('winner');
             $table->foreignId('battle_id')->constrained('battles')->cascadeOnDelete();

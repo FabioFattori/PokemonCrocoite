@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('exemplaries', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->unsignedInteger('speed');
             $table->unsignedInteger('specialDefense');
             $table->unsignedInteger('defense');
@@ -20,14 +21,14 @@ return new class extends Migration
             $table->unsignedInteger('specialAttack');
             $table->unsignedInteger('ps');
             $table->unsignedInteger('level');
-            $table->date('catchDate');
+            $table->foreignId('exemplary_id')->nullable()->constrained()->cascadeOnDelete();     
             $table->foreignId('pokemon_id')->constrained()->cascadeOnDelete();
             $table->foreignId('nature_id')->references("id")->on("natures")->cascadeOnDelete();
-            $table->foreignId('team_id')->references('id')->on('teams')->cascadeOnDelete();
-            $table->foreignId('npc_id')->references('id')->on('npcs')->cascadeOnDelete();
+            $table->foreignId('team_id')->nullable()->references('id')->on('teams')->cascadeOnDelete();
+            $table->foreignId('npc_id')->nullable()->references('id')->on('npcs')->cascadeOnDelete();
             $table->foreignId('gender_id')->references('id')->on('genders')->cascadeOnDelete();
-            $table->foreignId("box_id")->references("id")->on("boxes")->cascadeOnDelete();
-            $table->foreignId('holding_tools_id')->references('id')->on("battle_tools")->cascadeOnDelete();
+            $table->foreignId("box_id")->nullable()->references("id")->on("boxes")->cascadeOnDelete();
+            $table->foreignId('holding_tools_id')->nullable()->references('id')->on("battle_tools")->cascadeOnDelete();
         });
     }
 

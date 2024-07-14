@@ -15,7 +15,7 @@ class Zone extends Model
 
     public function pokemons()
     {
-        return $this->belongsToMany(Pokemon::class, 'can_be_found', 'zone_id', 'id');
+        return $this->belongsToMany(Pokemon::class, 'can_be_found', 'zone_id', 'pokemon_id');
     }
 
     public function pokemonEncounteredInZone()

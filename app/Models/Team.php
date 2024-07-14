@@ -20,4 +20,9 @@ class Team extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function exemplary()
+    {
+        return $this->hasMany(Exemplary::class, 'team_id');
+    }
 }

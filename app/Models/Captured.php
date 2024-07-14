@@ -11,10 +11,26 @@ class Captured extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
     protected $fillable = [
         'date',
-        'pokemon_id',
+        'exemplary_id',
         'user_id',
         'zone_id',
     ];
+
+    public function exemplary(){
+        return $this->belongsTo(Exemplary::class);
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function zone(){
+        return $this->belongsTo(Zone::class);
+    }
 }
