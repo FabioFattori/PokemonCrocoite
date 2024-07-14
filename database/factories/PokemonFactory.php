@@ -17,7 +17,7 @@ class PokemonFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->numberBetween(),
+            'name' => $this->faker->name(),
         ];
     }
 }

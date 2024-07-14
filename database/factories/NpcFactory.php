@@ -17,8 +17,9 @@ class NpcFactory extends Factory
     public function definition(): array
     {
         return [
-            //the NPC table only has the id
-            
+            "name" => $this->faker->name,
+            "position_id" => \App\Models\Position::inRandomOrder()->first()->id,
+            "gym_id" => rand(0,1) == 1 ? \App\Models\Zone::inRandomOrder()->first()->id : null,
         ];
     }
 }

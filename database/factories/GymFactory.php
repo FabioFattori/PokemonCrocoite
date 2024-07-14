@@ -17,7 +17,8 @@ class GymFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            "position_id" => \App\Models\Position::inRandomOrder()->first()->id,
+            "zone_id" => \App\Models\Zone::inRandomOrder()->first()->id,
         ];
     }
 }
