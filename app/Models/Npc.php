@@ -11,15 +11,11 @@ class Npc extends Model
 
     public $timestamps = false;
 
-<<<<<<< HEAD
     protected $casts = [
         'is_gym_leader' => 'boolean',
     ];
 
     protected $fillable = ['name', 'position_id', 'gym_id', 'is_gym_leader'];
-=======
-    protected $fillable = ['name', 'position_id', 'gym_id'];
->>>>>>> 120c944852877aeddea04fc99a3a25ad7ba871f5
 
     public function getCurrentTeam()
     {
