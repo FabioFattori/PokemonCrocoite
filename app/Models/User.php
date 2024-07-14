@@ -51,17 +51,17 @@ class User extends Authenticatable
 
     public function mnMt()
     {
-        return $this->belongsToMany(MnMt::class, 'mn_mt_quantity')->withPivot('quantity');
+        return $this->belongsToMany(MnMt::class, 'mn_mt_quantity', 'user_id', 'mn_mt_id')->withPivot('quantity');
     }
 
     public function storyTools()
     {
-        return $this->belongsToMany(StoryTool::class, 'story_tool_user')->withPivot('quantity');
+        return $this->belongsToMany(StoryTool::class, 'story_tool_user', 'user_id', 'story_tool_id')->withPivot('quantity');
     }
 
     public function battleTools()
     {
-        return $this->belongsToMany(BattleTool::class, 'battle_tool_users')->withPivot('amount');
+        return $this->belongsToMany(BattleTool::class, 'battle_tool_users', 'user_id', 'battle_tool_id')->withPivot('amount');
     }
 
     public function position()

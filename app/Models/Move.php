@@ -18,17 +18,17 @@ class Move extends Model
     
     public function exemplary()
     {
-        return $this->belongsToMany(Exemplary::class);
+        return $this->belongsToMany(Exemplary::class, 'exemplary_move', 'move_id', 'exemplary_id');
     }
 
     public function canLearnFromLevel()
     {
-        return $this->belongsToMany(Pokemon::class, "can_learn_level")->withPivot('level');
+    return $this->belongsToMany(Pokemon::class, "can_learn_level", 'move_id', 'pokemon_id')->withPivot('level');
     }
 
     public function canLearnFromMachine()
     {
-        return $this->belongsToMany(Pokemon::class, "can_learn_from_mn_mt");
+        return $this->belongsToMany(Pokemon::class, "can_learn_from_mn_mt", 'move_id', 'pokemon_id');
     }
 
     public function types()

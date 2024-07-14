@@ -31,6 +31,6 @@ class Type extends Model
     //pokemon n:n relation
     public function pokemons()
     {
-        return $this->belongsToMany(Pokemon::class);
+        return $this->belongsToMany(Pokemon::class, 'pokemon_type', 'type_id', 'pokemon_id');
     }
 }

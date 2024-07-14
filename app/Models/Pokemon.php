@@ -24,12 +24,12 @@ class Pokemon extends Model
 
     public function canLearnFromLevel()
     {
-        return $this->belongsToMany(Move::class, "can_learn_level")->withPivot('level');
+        return $this->belongsToMany(Move::class, "can_learn_level", 'pokemon_id', "move_id")->withPivot('level');
     }
 
     public function canLearnFromMachine()
     {
-        return $this->belongsToMany(Move::class, "can_learn_from_mn_mt");
+        return $this->belongsToMany(Move::class, "can_learn_from_mn_mt", 'pokemon_id', "move_id");
     }
 
     public function allLearnableMoves()
@@ -42,7 +42,7 @@ class Pokemon extends Model
 
     public function type()
     {
-        return $this->belongsToMany(Type::class);
+        return $this->belongsToMany(Type::class, 'pokemon_type', 'pokemon_id', 'type_id');
     }
 
     public function rarity()

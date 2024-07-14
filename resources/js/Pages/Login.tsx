@@ -1,6 +1,7 @@
 import { usePage } from "@inertiajs/react";
 import { useState } from "react";
 import { router } from "@inertiajs/react";
+import landingImage from "./../../img/landing.jpg";
 
 function Login() {
     const [mode, setMode] = useState(usePage().props.mode ?? "login");
@@ -21,27 +22,29 @@ function Login() {
         );
     };
 
-    const register = (mode:boolean) => {
+    const register = (mode: boolean) => {
         if (password !== confirmPassword) {
             setError("Passwords do not match");
         } else {
-            mode?router.post(
-                "/register",
-                { email: email, password: password },
-                {
-                    onError: (e) => {
-                        setError(e.email);
-                    },
-                }
-            ):router.post(
-                "/registerAdmin",
-                { email: email, password: password },
-                {
-                    onError: (e) => {
-                        setError(e.email);
-                    },
-                }
-            );
+            mode
+                ? router.post(
+                      "/register",
+                      { email: email, password: password },
+                      {
+                          onError: (e) => {
+                              setError(e.email);
+                          },
+                      }
+                  )
+                : router.post(
+                      "/registerAdmin",
+                      { email: email, password: password },
+                      {
+                          onError: (e) => {
+                              setError(e.email);
+                          },
+                      }
+                  );
         }
     };
 
@@ -49,6 +52,7 @@ function Login() {
         <div className="login-form">
             <div>
                 <div>
+                    <img src={landingImage} alt="landing" />
                     <label>Email</label>
                     <input
                         type="email"
@@ -89,14 +93,14 @@ function Login() {
                         >
                             {mode === "login" ? "admin?" : "normal User?"}
                         </button>
-                        <button onClick={login}>
-                            Login
-                        </button>
+                        <button onClick={login}>Login</button>
                     </div>
                 ) : (
                     <div>
-                        <button onClick={()=>register(true)}>Register</button>
-                    <button onClick={()=>register(false)}>Register Admin</button>
+                        <button onClick={() => register(true)}>Register</button>
+                        <button onClick={() => register(false)}>
+                            Register Admin
+                        </button>
                     </div>
                 )}
                 {mode !== "register" ? (
@@ -106,7 +110,7 @@ function Login() {
                 ) : (
                     <button onClick={() => setMode("login")}>Login</button>
                 )}
-                
+
                 <div className="error">{error}</div>
             </div>
         </div>

@@ -21,6 +21,6 @@ class MnMt extends Model
     public function user()
     {
         //has many user, mn_mt_quantity as pivot table
-        return $this->belongsToMany(User::class, 'mn_mt_quantity')->withPivot('quantity');
+        return $this->belongsToMany(User::class, 'mn_mt_quantity', 'mn_mt_id', 'user_id')->withPivot('quantity');
     }
 }

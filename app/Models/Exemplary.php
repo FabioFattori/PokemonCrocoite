@@ -37,7 +37,7 @@ class Exemplary extends Model
     
     public function move()
     {
-        return $this->belongsToMany(Move::class);
+        return $this->belongsToMany(Move::class, 'exemplary_move', 'exemplary_id', 'move_id');
     }
 
     public function nature()

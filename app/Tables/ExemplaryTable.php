@@ -38,6 +38,8 @@ class ExemplaryTable extends Table{
 
     public function getQuery():Builder|EloquentBuilder{
         $q = Exemplary::query()->join("pokemon", "exemplaries.pokemon_id", "=", "pokemon.id");
+        //! if want catch date use this below
+        //->join("captured", "captured.exemplary_id", "=", "exemplaries.id");
         if($this->currentMode == Mode::TEAM){
             $q->where("team_id", "=", auth()->user()->getTeamId());
         }
@@ -77,7 +79,7 @@ class ExemplaryTable extends Table{
             "defense" => Column::Visible("defense", "exemplaries.defense", "Difesa", true, true, Types::INTEGER),
             "speed" => Column::Visible("speed", "exemplaries.speed", "Velocità", true, true, Types::INTEGER),
             "specialAttack" => Column::Visible("specialAttack", "exemplaries.specialAttack", "Attacco Speciale", true, true, Types::INTEGER),
-            "catchDate" => Column::Visible("catchDate", "exemplaries.catchDate", "Data Cattura", true, true, Types::DATE),
+            //"catchDate" => Column::Visible("catchDate", "captured.date", "Data Cattura", true, true, Types::DATE),
             "specialDefense" => Column::Visible("specialDefense", "exemplaries.specialDefense", "Difesa Speciale", true, true, Types::INTEGER),
             "pokemon_id" => Column::Hidden("pokemon_id", "exemplaries.pokemon_id", "Pokemon", types: Types::INTEGER,isOriginal: true),
             "team_id" => Column::Hidden("team_id", "exemplaries.team_id", "Team", types: Types::INTEGER,isOriginal: true),

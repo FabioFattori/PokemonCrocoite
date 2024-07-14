@@ -23,7 +23,7 @@ class State extends Model
 
     public function exemplary()
     {
-        return $this->belongsToMany(Exemplary::class, 'state_exemplary', 'state_id', 'exemplary_id');
+        return $this->belongsToMany(Exemplary::class, 'state_exemplaries', 'state_id', 'exemplary_id');
     }
 
     public function battleTool()

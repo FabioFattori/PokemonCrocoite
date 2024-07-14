@@ -44,7 +44,7 @@ class HomeController extends Controller
             $types = Type::all();
             // select from the types only the name of the type
             foreach($types as $type){
-                array_push($pokemonForType,$type->pokemons()->get()->count());
+                array_push($pokemonForType,$type->pokemons()->count());
             }  
             $types = $types->map(function($type){
                 return $type->name;

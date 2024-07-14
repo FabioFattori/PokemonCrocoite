@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pokemon_id')->constrained()->cascadeOnDelete();
             $table->foreignId('type_id')->constrained()->cascadeOnDelete();
-            $table->unique(['pokemon_id', 'type_id']);
+            //$table->unique(['pokemon_id', 'type_id']);
         });
     }
 

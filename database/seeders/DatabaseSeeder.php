@@ -47,10 +47,10 @@ class DatabaseSeeder extends Seeder
     {
         if(Rarity::count() < 1)
             $this->seedRarity();
-        if(Pokemon::count() < 1)
-            $this->seedPokemon();
         if(Type::count() < 1)
             $this->seedTypes();
+        if(Pokemon::count() < 1)
+            $this->seedPokemon();        
         if(Nature::count() < 1)
             $this->seedNature();
         if(User::count() < 1)
@@ -118,25 +118,27 @@ class DatabaseSeeder extends Seeder
         $Butterfree = Pokemon::create(['name' => 'Butterfree', 'rarity_id' => $rare]);
         $Pidgey = Pokemon::create(['name' => 'Pidgey', 'rarity_id' => $common]);
 
-        $Bulbasaur->type()->attach(Type::where('name', 'Grass')->first());
-        $Bulbasaur->type()->attach(Type::where('name', 'Poison')->first());
-        $Ivysaur->type()->attach(Type::where('name', 'Grass')->first());
-        $Ivysaur->type()->attach(Type::where('name', 'Poison')->first());
-        $Venusaur->type()->attach(Type::where('name', 'Grass')->first());
-        $Venusaur->type()->attach(Type::where('name', 'Poison')->first());
-        $Charmander->type()->attach(Type::where('name', 'Fire')->first());
-        $Charmeleon->type()->attach(Type::where('name', 'Fire')->first());
-        $Charizard->type()->attach(Type::where('name', 'Fire')->first());
-        $Charizard->type()->attach(Type::where('name', 'Flying')->first());
-        $Squirtle->type()->attach(Type::where('name', 'Water')->first());
-        $Wartortle->type()->attach(Type::where('name', 'Water')->first());
-        $Blastoise->type()->attach(Type::where('name', 'Water')->first());
-        $Caterpie->type()->attach(Type::where('name', 'Bug')->first());
-        $Metapod->type()->attach(Type::where('name', 'Bug')->first());
-        $Butterfree->type()->attach(Type::where('name', 'Bug')->first());
-        $Butterfree->type()->attach(Type::where('name', 'Flying')->first());
-        $Pidgey->type()->attach(Type::where('name', 'Normal')->first());
-        $Pidgey->type()->attach(Type::where('name', 'Flying')->first());
+        //DIO PORCO VEDI DI INIZIARE AD ANDARE O INVADO IL CAUCASO DIO PORCO
+        $grass = Type::where('name', 'Grass')->first()->id;
+        $Bulbasaur->type()->attach(Type::where('name', 'Grass')->first()->id);
+        $Bulbasaur->type()->attach(Type::where('name', 'Poison')->first()->id);
+        $Ivysaur->type()->attach(Type::where('name', 'Grass')->first()->id);
+        $Ivysaur->type()->attach(Type::where('name', 'Poison')->first()->id);
+        $Venusaur->type()->attach(Type::where('name', 'Grass')->first()->id);
+        $Venusaur->type()->attach(Type::where('name', 'Poison')->first()->id);
+        $Charmander->type()->attach(Type::where('name', 'Fire')->first()->id);
+        $Charmeleon->type()->attach(Type::where('name', 'Fire')->first()->id);
+        $Charizard->type()->attach(Type::where('name', 'Fire')->first()->id);
+        $Charizard->type()->attach(Type::where('name', 'Flying')->first()->id);
+        $Squirtle->type()->attach(Type::where('name', 'Water')->first()->id);
+        $Wartortle->type()->attach(Type::where('name', 'Water')->first()->id);
+        $Blastoise->type()->attach(Type::where('name', 'Water')->first()->id);
+        $Caterpie->type()->attach(Type::where('name', 'Bug')->first()->id);
+        $Metapod->type()->attach(Type::where('name', 'Bug')->first()->id);
+        $Butterfree->type()->attach(Type::where('name', 'Bug')->first()->id);
+        $Butterfree->type()->attach(Type::where('name', 'Flying')->first()->id);
+        $Pidgey->type()->attach(Type::where('name', 'Normal')->first()->id);
+        $Pidgey->type()->attach(Type::where('name', 'Flying')->first()->id);
     }
 
     private function seedTypes(){
@@ -159,48 +161,48 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        Type::where('name', 'Water')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fire')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Water')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Ground')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Water')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fire')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Water')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Ground')->first(), ['multiplier' => 2]);
+        Type::where('name', 'Water')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fire')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Water')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Ground')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Water')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fire')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Water')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Ground')->first()->id, ['multiplier' => 2]);
 
-        Type::where('name', 'Fire')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Water')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Fire')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Fire')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Water')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Fire')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 2]);
+        Type::where('name', 'Fire')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Water')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Fire')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Fire')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Water')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Fire')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 2]);
 
-        Type::where('name', 'Grass')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fire')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Grass')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Water')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Grass')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fire')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Grass')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Water')->first(), ['multiplier' => 2]);
+        Type::where('name', 'Grass')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fire')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Grass')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Water')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Grass')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fire')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Grass')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Water')->first()->id, ['multiplier' => 2]);
 
-        Type::where('name', 'Ice')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Ice')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Ground')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Ice')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Ice')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Ground')->first(), ['multiplier' => 0.5]);
+        Type::where('name', 'Ice')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Ice')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Ground')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Ice')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Ice')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Ground')->first()->id, ['multiplier' => 0.5]);
 
-        Type::where('name', 'Fighting')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Normal')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Fighting')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Ice')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Fighting')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Normal')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Fighting')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Ice')->first(), ['multiplier' => 0.5]);
+        Type::where('name', 'Fighting')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Normal')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Fighting')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Ice')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Fighting')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Normal')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Fighting')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Ice')->first()->id, ['multiplier' => 0.5]);
 
-        Type::where('name', 'Poison')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Poison')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fighting')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Poison')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Poison')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fighting')->first(), ['multiplier' => 2]);
+        Type::where('name', 'Poison')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Poison')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fighting')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Poison')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Poison')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fighting')->first()->id, ['multiplier' => 2]);
 
-        Type::where('name', 'Ground')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Poison')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Ground')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Poison')->first(), ['multiplier' => 2]);
+        Type::where('name', 'Ground')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Poison')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Ground')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Poison')->first()->id, ['multiplier' => 2]);
 
-        Type::where('name', 'Flying')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Flying')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fighting')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Flying')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Flying')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fighting')->first(), ['multiplier' => 2]);
+        Type::where('name', 'Flying')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Flying')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fighting')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Flying')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Flying')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fighting')->first()->id, ['multiplier' => 2]);
 
-        Type::where('name', 'Bug')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Bug')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fighting')->first(), ['multiplier' => 0.5]);
-        Type::where('name', 'Bug')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first(), ['multiplier' => 2]);
-        Type::where('name', 'Bug')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fighting')->first(), ['multiplier' => 2]);
+        Type::where('name', 'Bug')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Bug')->first()->effectivenessOnDefense()->attach(Type::where('name', 'Fighting')->first()->id, ['multiplier' => 0.5]);
+        Type::where('name', 'Bug')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Grass')->first()->id, ['multiplier' => 2]);
+        Type::where('name', 'Bug')->first()->effectivenessOnAttack()->attach(Type::where('name', 'Fighting')->first()->id, ['multiplier' => 2]);
     }
 
     private function seedNature(){
@@ -250,17 +252,17 @@ class DatabaseSeeder extends Seeder
         $users = [
             [
                 "email" => "red@pokemon.com",
-                "password" => "password",
+                "password" => bcrypt("password"),
                 "position_id" => $position1->id
             ],
             [
                 "email" => "yellow@pokemon.com",
-                "password" => "password",
+                "password" => bcrypt("password"),
                 "position_id" => $position2->id
             ],
             [
                 "email" => "green@pokemon.com",
-                "password" => "password",
+                "password" => bcrypt("password"),
                 "position_id" => $position3->id
             ]
         ];
@@ -321,37 +323,37 @@ class DatabaseSeeder extends Seeder
         Move::create(["name" => "Blade Leaves", "description" => "Lorem Ipsum", "type_id" => Type::where("name", "Grass")->first()->id]);
 
         //Add can learn level
-        Move::where("name", "Tackle")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Bulbasaur")->first(), ['level' => 1]);
-        Move::where("name", "Scratch")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Charmander")->first(), ['level' => 1]);
-        Move::where("name", "Ember")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Charmander")->first(), ['level' => 5]);
-        Move::where("name", "Water Gun")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Squirtle")->first(), ['level' => 7]);
-        Move::where("name", "Vine Whip")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Bulbasaur")->first(), ['level' => 7]);
-        Move::where("name", "Fly")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first(), ['level' => 25]);
-        Move::where("name", "Quick Attack")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first(), ['level' => 7]);
-        Move::where("name", "Gust")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first(), ['level' => 20]);
-        Move::where("name", "Poison Sting")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Caterpie")->first(), ['level' => 10]);
-        Move::where("name", "Bug Bite")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Caterpie")->first(), ['level' => 15]);
-        Move::where("name", "Peck")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first(), ['level' => 10]);
-        Move::where("name", "EarthQuake")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Charmeleon")->first(), ['level' => 30]);
-        Move::where("name", "Ice Beam")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Ivysaur")->first(), ['level' => 33]);
-        Move::where("name", "Fire Blast")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Wartortle")->first(), ['level' => 45]);
-        Move::where("name", "Blade Leaves")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Butterfree")->first(), ['level' => 20]);
+        Move::where("name", "Tackle")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Bulbasaur")->first()->id, ['level' => 1]);
+        Move::where("name", "Scratch")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Charmander")->first()->id, ['level' => 1]);
+        Move::where("name", "Ember")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Charmander")->first()->id, ['level' => 5]);
+        Move::where("name", "Water Gun")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Squirtle")->first()->id, ['level' => 7]);
+        Move::where("name", "Vine Whip")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Bulbasaur")->first()->id, ['level' => 7]);
+        Move::where("name", "Fly")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first()->id, ['level' => 25]);
+        Move::where("name", "Quick Attack")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first()->id, ['level' => 7]);
+        Move::where("name", "Gust")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first()->id, ['level' => 20]);
+        Move::where("name", "Poison Sting")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Caterpie")->first()->id, ['level' => 10]);
+        Move::where("name", "Bug Bite")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Caterpie")->first()->id, ['level' => 15]);
+        Move::where("name", "Peck")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Pidgey")->first()->id, ['level' => 10]);
+        Move::where("name", "EarthQuake")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Charmeleon")->first()->id, ['level' => 30]);
+        Move::where("name", "Ice Beam")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Ivysaur")->first()->id, ['level' => 33]);
+        Move::where("name", "Fire Blast")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Wartortle")->first()->id, ['level' => 45]);
+        Move::where("name", "Blade Leaves")->first()->canLearnFromLevel()->attach(Pokemon::where("name", "Butterfree")->first()->id, ['level' => 20]);
         //other 
-        Move::where("name", "Tackle")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Bulbasaur")->first());
-        Move::where("name", "Scratch")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Charmander")->first());
-        Move::where("name", "Ember")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Charmander")->first());
-        Move::where("name", "Water Gun")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Squirtle")->first());
-        Move::where("name", "Vine Whip")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Bulbasaur")->first());
-        Move::where("name", "Fly")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first());
-        Move::where("name", "Quick Attack")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first());
-        Move::where("name", "Gust")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first());
-        Move::where("name", "Poison Sting")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Caterpie")->first());
-        Move::where("name", "Bug Bite")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Caterpie")->first());
-        Move::where("name", "Peck")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first());
-        Move::where("name", "EarthQuake")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Charmeleon")->first());
-        Move::where("name", "Ice Beam")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Ivysaur")->first());
-        Move::where("name", "Fire Blast")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Wartortle")->first());
-        Move::where("name", "Blade Leaves")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Butterfree")->first());
+        Move::where("name", "Tackle")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Bulbasaur")->first()->id);
+        Move::where("name", "Scratch")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Charmander")->first()->id);
+        Move::where("name", "Ember")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Charmander")->first()->id);
+        Move::where("name", "Water Gun")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Squirtle")->first()->id);
+        Move::where("name", "Vine Whip")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Bulbasaur")->first()->id);
+        Move::where("name", "Fly")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first()->id);
+        Move::where("name", "Quick Attack")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first()->id);
+        Move::where("name", "Gust")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first()->id);
+        Move::where("name", "Poison Sting")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Caterpie")->first()->id);
+        Move::where("name", "Bug Bite")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Caterpie")->first()->id);
+        Move::where("name", "Peck")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Pidgey")->first()->id);
+        Move::where("name", "EarthQuake")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Charmeleon")->first()->id);
+        Move::where("name", "Ice Beam")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Ivysaur")->first()->id);
+        Move::where("name", "Fire Blast")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Wartortle")->first()->id);
+        Move::where("name", "Blade Leaves")->first()->canLearnFromMachine()->attach(Pokemon::where("name", "Butterfree")->first()->id);
         
     }
 
@@ -380,12 +382,12 @@ class DatabaseSeeder extends Seeder
             "width" => 10,
             "position_id" => Position::factory()->create()->id
         ]);
-        $dreamForest->pokemons()->attach(Pokemon::where("name", "Bulbasaur")->first());
-        $dreamForest->pokemons()->attach(Pokemon::where("name", "Caterpie")->first());
-        $dreamForest->pokemons()->attach(Pokemon::where("name", "Pidgey")->first());
-        $dreamForest->pokemons()->attach(Pokemon::where("name", "Butterfree")->first());
-        $dreamForest->pokemons()->attach(Pokemon::where("name", "Ivysaur")->first());
-        $dreamForest->pokemons()->attach(Pokemon::where("name", "Venusaur")->first());
+        $dreamForest->pokemons()->attach(Pokemon::where("name", "Bulbasaur")->first()->id);
+        $dreamForest->pokemons()->attach(Pokemon::where("name", "Caterpie")->first()->id);
+        $dreamForest->pokemons()->attach(Pokemon::where("name", "Pidgey")->first()->id);
+        $dreamForest->pokemons()->attach(Pokemon::where("name", "Butterfree")->first()->id);
+        $dreamForest->pokemons()->attach(Pokemon::where("name", "Ivysaur")->first()->id);
+        $dreamForest->pokemons()->attach(Pokemon::where("name", "Venusaur")->first()->id);
 
         $fireMountain = Zone::create([
             "name" => "Fire Mountain",
@@ -393,10 +395,10 @@ class DatabaseSeeder extends Seeder
             "width" => 10,
             "position_id" => Position::factory()->create()->id
         ]);
-        $fireMountain->pokemons()->attach(Pokemon::where("name", "Charmander")->first());
-        $fireMountain->pokemons()->attach(Pokemon::where("name", "Charmeleon")->first());
-        $fireMountain->pokemons()->attach(Pokemon::where("name", "Charizard")->first());
-        $fireMountain->pokemons()->attach(Pokemon::where("name", "Blastoise")->first());
+        $fireMountain->pokemons()->attach(Pokemon::where("name", "Charmander")->first()->id);
+        $fireMountain->pokemons()->attach(Pokemon::where("name", "Charmeleon")->first()->id);
+        $fireMountain->pokemons()->attach(Pokemon::where("name", "Charizard")->first()->id);
+        $fireMountain->pokemons()->attach(Pokemon::where("name", "Blastoise")->first()->id);
         
         $waterCave = Zone::create([
             "name" => "Water Cave",
@@ -404,11 +406,11 @@ class DatabaseSeeder extends Seeder
             "width" => 10,
             "position_id" => Position::factory()->create()->id
         ]);
-        $waterCave->pokemons()->attach(Pokemon::where("name", "Squirtle")->first());
-        $waterCave->pokemons()->attach(Pokemon::where("name", "Wartortle")->first());
-        $waterCave->pokemons()->attach(Pokemon::where("name", "Blastoise")->first());
-        $waterCave->pokemons()->attach(Pokemon::where("name", "Metapod")->first());
-        $waterCave->pokemons()->attach(Pokemon::where("name", "Butterfree")->first());
+        $waterCave->pokemons()->attach(Pokemon::where("name", "Squirtle")->first()->id);
+        $waterCave->pokemons()->attach(Pokemon::where("name", "Wartortle")->first()->id);
+        $waterCave->pokemons()->attach(Pokemon::where("name", "Blastoise")->first()->id);
+        $waterCave->pokemons()->attach(Pokemon::where("name", "Metapod")->first()->id);
+        $waterCave->pokemons()->attach(Pokemon::where("name", "Butterfree")->first()->id);
 
         $mountMoon = Zone::create([
             "name" => "Mount Moon",
@@ -416,9 +418,9 @@ class DatabaseSeeder extends Seeder
             "width" => 10,
             "position_id" => Position::factory()->create()->id
         ]);
-        $mountMoon->pokemons()->attach(Pokemon::where("name", "Caterpie")->first());
-        $mountMoon->pokemons()->attach(Pokemon::where("name", "Metapod")->first());
-        $mountMoon->pokemons()->attach(Pokemon::where("name", "Butterfree")->first());
+        $mountMoon->pokemons()->attach(Pokemon::where("name", "Caterpie")->first()->id);
+        $mountMoon->pokemons()->attach(Pokemon::where("name", "Metapod")->first()->id);
+        $mountMoon->pokemons()->attach(Pokemon::where("name", "Butterfree")->first()->id);
 
         $pokemonMansion = Zone::create([
             "name" => "Pokemon Mansion",
@@ -426,11 +428,11 @@ class DatabaseSeeder extends Seeder
             "width" => 10,
             "position_id" => Position::factory()->create()->id
         ]);
-        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Pidgey")->first());
-        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Charmeleon")->first());
-        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Butterfree")->first());
-        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Ivysaur")->first());
-        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Venusaur")->first());
+        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Pidgey")->first()->id);
+        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Charmeleon")->first()->id);
+        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Butterfree")->first()->id);
+        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Ivysaur")->first()->id);
+        $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Venusaur")->first()->id);
 
         $powerPlant = Zone::create([
             "name" => "Power Plant",
@@ -438,12 +440,12 @@ class DatabaseSeeder extends Seeder
             "width" => 10,
             "position_id" => Position::factory()->create()->id
         ]);
-        $powerPlant->pokemons()->attach(Pokemon::where("name", "Pidgey")->first());
-        $powerPlant->pokemons()->attach(Pokemon::where("name", "Charizard")->first());
-        $powerPlant->pokemons()->attach(Pokemon::where("name", "Blastoise")->first());
-        $powerPlant->pokemons()->attach(Pokemon::where("name", "Butterfree")->first());
-        $powerPlant->pokemons()->attach(Pokemon::where("name", "Ivysaur")->first());
-        $powerPlant->pokemons()->attach(Pokemon::where("name", "Venusaur")->first());
+        $powerPlant->pokemons()->attach(Pokemon::where("name", "Pidgey")->first()->id);
+        $powerPlant->pokemons()->attach(Pokemon::where("name", "Charizard")->first()->id);
+        $powerPlant->pokemons()->attach(Pokemon::where("name", "Blastoise")->first()->id);
+        $powerPlant->pokemons()->attach(Pokemon::where("name", "Butterfree")->first()->id);
+        $powerPlant->pokemons()->attach(Pokemon::where("name", "Ivysaur")->first()->id);
+        $powerPlant->pokemons()->attach(Pokemon::where("name", "Venusaur")->first()->id);
     }
 
     private function seedStoryTools(){
@@ -460,16 +462,16 @@ class DatabaseSeeder extends Seeder
             'description' => 'Lorem Ipsum'
         ]);
         $red = User::where("email", "red@pokemon.com")->first();
-        $red->storyTools()->attach($pokedex, ['quantity' => 1]);
-        $red->storyTools()->attach($bike, ['quantity' => 1]);
-        $red->storyTools()->attach($cityMap, ['quantity' => 1]);        
+        $red->storyTools()->attach($pokedex->id, ['quantity' => 1]);
+        $red->storyTools()->attach($bike->id, ['quantity' => 1]);
+        $red->storyTools()->attach($cityMap->id, ['quantity' => 1]);        
 
         $yellow = User::where("email", "yellow@pokemon.com")->first();
-        $yellow->storyTools()->attach($pokedex, ['quantity' => 1]);
-        $yellow->storyTools()->attach($bike, ['quantity' => 1]);
+        $yellow->storyTools()->attach($pokedex->id, ['quantity' => 1]);
+        $yellow->storyTools()->attach($bike->id, ['quantity' => 1]);
 
         $green = User::where("email", "green@pokemon.com")->first();
-        $green->storyTools()->attach($pokedex, ['quantity' => 1]);
+        $green->storyTools()->attach($pokedex->id, ['quantity' => 1]);
     }
 
     private function seedBattleTools(){
@@ -540,42 +542,42 @@ class DatabaseSeeder extends Seeder
         ]);
 
         //Add StateRecovery
-        $antidote->statesRecovery()->attach(State::where("name", "Poison")->first());
-        $burnHeal->statesRecovery()->attach(State::where("name", "Burn")->first());
-        $iceHeal->statesRecovery()->attach(State::where("name", "Freeze")->first());
-        $awakening->statesRecovery()->attach(State::where("name", "Sleep")->first());
-        $paralyzeHeal->statesRecovery()->attach(State::where("name", "Paralysis")->first());
-        $fullHeal->statesRecovery()->attach(State::where("name", "Poison")->first());
-        $fullHeal->statesRecovery()->attach(State::where("name", "Burn")->first());
-        $fullHeal->statesRecovery()->attach(State::where("name", "Freeze")->first());
-        $fullHeal->statesRecovery()->attach(State::where("name", "Sleep")->first());
-        $fullHeal->statesRecovery()->attach(State::where("name", "Paralysis")->first());
+        $antidote->statesRecovery()->attach(State::where("name", "Poison")->first()->id);
+        $burnHeal->statesRecovery()->attach(State::where("name", "Burn")->first()->id);
+        $iceHeal->statesRecovery()->attach(State::where("name", "Freeze")->first()->id);
+        $awakening->statesRecovery()->attach(State::where("name", "Sleep")->first()->id);
+        $paralyzeHeal->statesRecovery()->attach(State::where("name", "Paralysis")->first()->id);
+        $fullHeal->statesRecovery()->attach(State::where("name", "Poison")->first()->id);
+        $fullHeal->statesRecovery()->attach(State::where("name", "Burn")->first()->id);
+        $fullHeal->statesRecovery()->attach(State::where("name", "Freeze")->first()->id);
+        $fullHeal->statesRecovery()->attach(State::where("name", "Sleep")->first()->id);
+        $fullHeal->statesRecovery()->attach(State::where("name", "Paralysis")->first()->id);
 
         //Add to user bag        
         $red = User::where("email", "red@pokemon.com")->first();
-        $red->battleTools()->attach($potion, ['amount' => 10]);
-        $red->battleTools()->attach($superPotion, ['amount' => 10]);
-        $red->battleTools()->attach($hyperPotion, ['amount' => 10]);
-        $red->battleTools()->attach($maxPotion, ['amount' => 10]);
-        $red->battleTools()->attach($revive, ['amount' => 10]);
-        $red->battleTools()->attach($maxRevive, ['amount' => 10]);
-        $red->battleTools()->attach($antidote, ['amount' => 10]);
+        $red->battleTools()->attach($potion->id, ['amount' => 10]);
+        $red->battleTools()->attach($superPotion->id, ['amount' => 10]);
+        $red->battleTools()->attach($hyperPotion->id, ['amount' => 10]);
+        $red->battleTools()->attach($maxPotion->id, ['amount' => 10]);
+        $red->battleTools()->attach($revive->id, ['amount' => 10]);
+        $red->battleTools()->attach($maxRevive->id, ['amount' => 10]);
+        $red->battleTools()->attach($antidote->id, ['amount' => 10]);
 
         $yellow = User::where("email", "yellow@pokemon.com")->first();
-        $yellow->battleTools()->attach($fullHeal, ['amount' => 10]);
-        $yellow->battleTools()->attach($fullRestore, ['amount' => 10]);
-        $yellow->battleTools()->attach($paralyzeHeal, ['amount' => 10]);
-        $yellow->battleTools()->attach($awakening, ['amount' => 10]);
-        $yellow->battleTools()->attach($iceHeal, ['amount' => 10]);
-        $yellow->battleTools()->attach($burnHeal, ['amount' => 10]);
+        $yellow->battleTools()->attach($fullHeal->id, ['amount' => 10]);
+        $yellow->battleTools()->attach($fullRestore->id, ['amount' => 10]);
+        $yellow->battleTools()->attach($paralyzeHeal->id, ['amount' => 10]);
+        $yellow->battleTools()->attach($awakening->id, ['amount' => 10]);
+        $yellow->battleTools()->attach($iceHeal->id, ['amount' => 10]);
+        $yellow->battleTools()->attach($burnHeal->id, ['amount' => 10]);
 
         $green = User::where("email", "green@pokemon.com")->first();
-        $green->battleTools()->attach($revive, ['amount' => 10]);
-        $green->battleTools()->attach($maxRevive, ['amount' => 10]);
-        $green->battleTools()->attach($antidote, ['amount' => 10]);
-        $green->battleTools()->attach($awakening, ['amount' => 10]);
-        $green->battleTools()->attach($iceHeal, ['amount' => 10]);
-        $green->battleTools()->attach($burnHeal, ['amount' => 10]);
+        $green->battleTools()->attach($revive->id, ['amount' => 10]);
+        $green->battleTools()->attach($maxRevive->id, ['amount' => 10]);
+        $green->battleTools()->attach($antidote->id, ['amount' => 10]);
+        $green->battleTools()->attach($awakening->id, ['amount' => 10]);
+        $green->battleTools()->attach($iceHeal->id, ['amount' => 10]);
+        $green->battleTools()->attach($burnHeal->id, ['amount' => 10]);
     }
 
     private function seedGyms(){
@@ -671,41 +673,41 @@ class DatabaseSeeder extends Seeder
         $paralyzeHeal = BattleTool::where("name", "Paralyze Heal")->first();
         $fullHeal = BattleTool::where("name", "Full Heal")->first();
 
-        $brock->battleTools()->attach($hyperPotion, ['amount' => 3]);
-        $brock->battleTools()->attach($maxPotion, ['amount' => 3]);
-        $brock->battleTools()->attach($antidote, ['amount' => 3]);
-        $brock->battleTools()->attach($awakening, ['amount' => 3]);
+        $brock->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
+        $brock->battleTools()->attach($maxPotion->id, ['amount' => 3]);
+        $brock->battleTools()->attach($antidote->id, ['amount' => 3]);
+        $brock->battleTools()->attach($awakening->id, ['amount' => 3]);
 
-        $misty->battleTools()->attach($hyperPotion, ['amount' => 3]);
-        $misty->battleTools()->attach($maxPotion, ['amount' => 3]);
-        $misty->battleTools()->attach($burnHeal, ['amount' => 3]);
-        $misty->battleTools()->attach($awakening, ['amount' => 3]);
+        $misty->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
+        $misty->battleTools()->attach($maxPotion->id, ['amount' => 3]);
+        $misty->battleTools()->attach($burnHeal->id, ['amount' => 3]);
+        $misty->battleTools()->attach($awakening->id, ['amount' => 3]);
 
-        $ltSurge->battleTools()->attach($hyperPotion, ['amount' => 3]);
-        $ltSurge->battleTools()->attach($maxPotion, ['amount' => 3]);
-        $ltSurge->battleTools()->attach($paralyzeHeal, ['amount' => 3]);
-        $ltSurge->battleTools()->attach($awakening, ['amount' => 3]);
+        $ltSurge->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
+        $ltSurge->battleTools()->attach($maxPotion->id, ['amount' => 3]);
+        $ltSurge->battleTools()->attach($paralyzeHeal->id, ['amount' => 3]);
+        $ltSurge->battleTools()->attach($awakening->id, ['amount' => 3]);
 
-        $erika->battleTools()->attach($hyperPotion, ['amount' => 3]);
-        $erika->battleTools()->attach($maxPotion, ['amount' => 3]);
-        $erika->battleTools()->attach($antidote, ['amount' => 3]);
-        $erika->battleTools()->attach($fullHeal, ['amount' => 3]);
+        $erika->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
+        $erika->battleTools()->attach($maxPotion->id, ['amount' => 3]);
+        $erika->battleTools()->attach($antidote->id, ['amount' => 3]);
+        $erika->battleTools()->attach($fullHeal->id, ['amount' => 3]);
 
-        $koga->battleTools()->attach($hyperPotion, ['amount' => 3]);
-        $koga->battleTools()->attach($maxPotion, ['amount' => 3]);
+        $koga->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
+        $koga->battleTools()->attach($maxPotion->id, ['amount' => 3]);
 
-        $sabrina->battleTools()->attach($hyperPotion, ['amount' => 3]);
+        $sabrina->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
 
-        $blaine->battleTools()->attach($hyperPotion, ['amount' => 3]);
+        $blaine->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
 
-        $giovanni->battleTools()->attach($hyperPotion, ['amount' => 3]);
-        $giovanni->battleTools()->attach($maxPotion, ['amount' => 3]);
-        $giovanni->battleTools()->attach($revive, ['amount' => 3]);
+        $giovanni->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
+        $giovanni->battleTools()->attach($maxPotion->id, ['amount' => 3]);
+        $giovanni->battleTools()->attach($revive->id, ['amount' => 3]);
 
-        $lorelei->battleTools()->attach($hyperPotion, ['amount' => 3]);
-        $lorelei->battleTools()->attach($maxPotion, ['amount' => 3]);
-        $lorelei->battleTools()->attach($revive, ['amount' => 3]);
-        $lorelei->battleTools()->attach($maxRevive, ['amount' => 3]);       
+        $lorelei->battleTools()->attach($hyperPotion->id, ['amount' => 3]);
+        $lorelei->battleTools()->attach($maxPotion->id, ['amount' => 3]);
+        $lorelei->battleTools()->attach($revive->id, ['amount' => 3]);
+        $lorelei->battleTools()->attach($maxRevive->id, ['amount' => 3]);       
 
     }
 
@@ -807,7 +809,7 @@ class DatabaseSeeder extends Seeder
         // each exemplary have 3 or 4 move
         $moves = Move::inRandomOrder($this->faker->randomNumber(2))->limit($this->faker->numberBetween(3, 4))->get();
         foreach($moves as $move){
-            $exemplary->move()->attach($move);
+            $exemplary->move()->attach($move->id);
         }
 
         //simulate the capture, set a capture object and duplicate exemplary assignign exemplaryId with reference to current exemplary
@@ -921,45 +923,8 @@ class DatabaseSeeder extends Seeder
 
     private function seedAdmin(){
         Admin::create([
-            'email' => 'admin@admin.com',
+            'email' => 'admin@pokemon.com',
             'password' => bcrypt('password')
         ]);
     }
 }
-
-
-/*
-OK- rarities
-OK- pokemon
-OK- types
-OK- natures
-OK- admins
-OK positions
-OK- users
-OK- genders
-OK- states
-OK- moves
-OK- boxes
-OK- can_learn_level
-OK- effectivness
-OK - pokemon_type
-OK- zones
-OK - can_be_found
-OK pokemon_encountereds
-OK mn_mts
-OK mn_mt_quantity
-OK story_tools
-OK story_tool_user
-OK battle_tools
-OK state_battle_tools
-OK gyms
-OK battle_tool_users
-OK npcs
-OK battle_tool_npcs
-OK can_learn_from
-OK exemplaries
-OK state_exemplaries
-OK exemplary_move
-
-missing new tables
-*/

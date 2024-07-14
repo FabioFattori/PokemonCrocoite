@@ -15,6 +15,6 @@ class StoryTool extends Model
 
     public function user()
     {
-        return $this->belongsToMany(User::class, 'story_tool_user')->withPivot('quantity');
+        return $this->belongsToMany(User::class, 'story_tool_user', 'story_tool_id', 'user_id')->withPivot('quantity');
     }
 }
