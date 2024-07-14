@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Battle;
+use App\Models\BattleRegistry;
 use App\Models\Battles;
 use App\Models\BattleTool;
 use App\Models\Box;
@@ -38,6 +40,7 @@ use App\Tables\MovesTable;
 use App\Tables\NatureTable;
 use App\Tables\PokemonTable;
 use App\Tables\PositionTable;
+use App\Tables\SingleBattleMode;
 use App\Tables\ZonesTable;
 use Illuminate\Support\Facades\DB;
 use Mockery\Undefined;
@@ -733,23 +736,21 @@ class AdminController extends Controller
                 "healthRecovery" => "required|integer",
                 "state_id" => "required|integer",
             ]);
-            StateBattleTool::create([
-                "battle_tool_id" => BattleTool::create([
-                    "name" => $request->input("name"),
-                    "description" => $request->input("description"),
-                    "healthRecovery" => $request->input("healthRecovery"),
-                ])->id,
-                "state_id" => $request->input("state_id"),
+            $tb=BattleTool::create([
+                "name" => $request->input("name"),
+                "description" => $request->input("description"),
+                "healthRecovery" => $request->input("healthRecovery"),
             ]);
+            $tb->statesRecovery()->attach($request->input("state_id"));
+            
         }else if(key_exists("prefabbricato", $request->all()) && key_exists("state_id", $request->all())){
             $request->validate([
                 "prefabbricato" => "required|integer",
                 "state_id" => "required|integer",
             ]);
-            StateBattleTool::create([
-                "battle_tool_id" => $request->input("prefabbricato"),
-                "state_id" => $request->input("state_id"),
-            ]);
+
+            $tb = BattleTool::find($request->input("prefabbricato"));
+            $tb->statesRecovery()->attach($request->input("state_id"));
         }else{
             $request->validate([
                 "name" => "required",
@@ -761,7 +762,6 @@ class AdminController extends Controller
                 "description" => $request->input("description"),
                 "healthRecovery" => $request->input("healthRecovery"),
             ]);
-            return $request->all();
         }
 
 
@@ -776,16 +776,14 @@ class AdminController extends Controller
             "healthRecovery" => "required|integer",
         ]);
 
-        BattleTool::where("id", "=", $request->input("id"))->update([
+        $bt=BattleTool::where("id", "=", $request->input("id"))->update([
             "name" => $request->input("name"),
             "description" => $request->input("description"),
             "healthRecovery" => $request->input("healthRecovery"),
         ]);
 
         if(key_exists("state_id", $request->all())){
-            StateBattleTool::where("battle_tool_id", "=", $request->input("id"))->update([
-                "state_id" => $request->input("state_id"),
-            ]);
+            $bt->statesRecovery()->attach($request->input("state_id"));
         }
 
         return redirect()->back();
@@ -836,7 +834,7 @@ class AdminController extends Controller
         }
 
         if(key_exists("battle_id", $request->all()) && $request->all()["battle_id"] != null){
-            $singlePokemonBattle = new SinglePokemonBattleTable();
+            $singlePokemonBattle = new SinglePokemonBattleTable(SingleBattleMode::GivenBattleId, $request->all()["battle_id"]);
             if(key_exists("exemplary_id", $request->all()) && $request->all()["exemplary_id"] != null){
                 $exemplary = new ExemplaryTable(mode:Mode::SingleExemplary, SingleExemplaryId:$request->all()["exemplary_id"]);
                 return Inertia::render("Admin/Battaglie",[
@@ -863,48 +861,79 @@ class AdminController extends Controller
     }
 
     public function addBattle(Request $request){
-        return $request->all();
-        $request->validate([
-            "date" => "required|date",
-            "winner" => "required|integer",
-            "user_1" => "required|integer",
-            "user_2" => "required|integer",
-        ]);
-
-        if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
-            return redirect()->back();
+        if(key_exists("exemplary1",$request->all()) && key_exists("exemplary2",$request->all())){
+            $request->validate([
+                "battle_id" => "required|integer",
+                "exemplary1" => "required|integer",
+                "exemplary2" => "required|integer",
+                "winner" => "required|integer",
+            ]);
+            
+            BattleRegistry::create([
+                "battle_id" => $request->input("battle_id"),
+                "exemplary1_id" => $request->input("exemplary1"),
+                "exemplary2_id" => $request->input("exemplary2"),
+                "winner" => $request->input("winner"),
+            ]);
+        }else{
+            $request->validate([
+                "date" => "required|date",
+                "winner" => "required|integer",
+                "user_1" => "required|integer",
+                "user_2" => "required|integer",
+            ]);
+    
+            if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
+                return redirect()->back();
+            }
+    
+            $battle = Battle::create([
+                "date" => $this->resolveDate($request->input("date")),
+                "winner" => $request->input("winner"),
+                "user_1" => $request->input("user_1"),
+                "user_2" => $request->input("user_2"),
+    
+            ]);
         }
-
-        $battle = Battles::create([
-            "date" => $this->resolveDate($request->input("date")),
-            "winner" => $request->input("winner"),
-            "user_1" => $request->input("user_1"),
-            "user_2" => $request->input("user_2"),
-
-        ]);
 
         return redirect()->back();
     }
 
     public function editBattle(Request $request){
-        $request->validate([
-            "id" => "required|integer",
-            "date" => "required|date",
-            "winner" => "required|integer",
-            "user_1" => "required|integer",
-            "user_2" => "required|integer",
-        ]);
+        if(key_exists("exemplary1",$request->all()) && key_exists("exemplary2",$request->all())){
+            $request->validate([
+                "battle_id" => "required|integer",
+                "exemplary1" => "required|integer",
+                "exemplary2" => "required|integer",
+                "winner" => "required|integer",
+            ]);
 
-        if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
-            return redirect()->back();
+            BattleRegistry::where("id", "=", $request->input("id"))->update([
+                "exemplary1_id" => $request->input("exemplary1"),
+                "exemplary2_id" => $request->input("exemplary2"),
+                "winner" => $request->input("winner"),
+            ]);
+
+        }else{
+            $request->validate([
+                "id" => "required|integer",
+                "date" => "required|date",
+                "winner" => "required|integer",
+                "user_1" => "required|integer",
+                "user_2" => "required|integer",
+            ]);
+            if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
+                return redirect()->back();
+            }
+    
+            Battle::where("id", "=", $request->input("id"))->update([
+                "date" => $this->resolveDate($request->input("date")),
+                "winner" => $request->input("winner"),
+                "user_1" => $request->input("user_1"),
+                "user_2" => $request->input("user_2"),
+            ]);
         }
 
-        Battles::where("id", "=", $request->input("id"))->update([
-            "date" => $this->resolveDate($request->input("date")),
-            "winner" => $request->input("winner"),
-            "user_1" => $request->input("user_1"),
-            "user_2" => $request->input("user_2"),
-        ]);
 
         return redirect()->back();
     }
@@ -914,7 +943,7 @@ class AdminController extends Controller
             "id" => "required|integer",
         ]);
 
-        Battles::where("id", "=", $request->input("id"))->delete();
+        Battle::where("id", "=", $request->input("id"))->delete();
 
         return redirect()->back();
     }

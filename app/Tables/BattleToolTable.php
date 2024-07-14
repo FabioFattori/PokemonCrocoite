@@ -12,7 +12,7 @@ class BattleToolTable extends Table
 {
     public function getDependencies(): array
     {
-        return ["StateBattleTool","State","BattleTool"];
+        return ["State","BattleTool"];
     }
 
     public function getQuery(): Builder|EloquentBuilder

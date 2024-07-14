@@ -2,7 +2,7 @@
 
 namespace App\Tables;
 
-use App\Models\Battles;
+use App\Models\Battle;
 use App\Tables\Class\Column;
 use App\Tables\Class\Types;
 
@@ -17,7 +17,7 @@ class BattleTable extends Table
     private int $userId;
     public function getQuery(): \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
     {
-        $q = Battles::query();
+        $q = Battle::query();
         if($this->mode == BattleMode::USER){
             $q->where("user_1", "=", $this->userId)->orWhere("user_2", "=", $this->userId);
         }

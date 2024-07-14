@@ -67,6 +67,11 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
         request["defending_id"] = inputs[0]
       }
     }
+
+    if(window.location.href.split("battle_id=")[1]!=undefined){
+      request["battle_id"] = window.location.href.split("battle_id=")[1].split("&")[0]
+    }
+
     // dependenciesNames.forEach(name => {
     //   request[name] = inputs[headers.indexOf(name)]
     // });
