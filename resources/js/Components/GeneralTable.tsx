@@ -120,8 +120,9 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                         <Tooltip title="Delete">
                         <IconButton
                             onClick={() =>
-                                {buttons[2].url != null
-                                    ? router.post(buttons[2].url,{"id":selected[0]["id"]})
+                                {
+                                    buttons[2].url != null
+                                    ? router.post(buttons[2].url,{"id":selected[0]["id"],"headers":headers})
                                     : null
                                     setSelected([]);
                                 }
@@ -206,6 +207,12 @@ export default function GeneralTable({
     } = translator({ sennisTable: dbObject });
 
     const [selected, setSelected] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        setSelected([]);
+        setOpenCreate(false);
+        setOpenEdit(false);
+    }, [data]);
 
     function EnhancedTableCell({ columnName }: { columnName: string }) {
         const [order, setOrder] = React.useState<"ASC" | "DESC">("ASC");
@@ -518,16 +525,29 @@ export default function GeneralTable({
                                                     !columns[field]["hidden"]
                                             )
                                             .map((header, key) => {
-                                                return (
-                                                    <TableCell
-                                                        key={key}
-                                                        align="right"
-                                                    >
-                                                        {row[header] != null
-                                                            ? row[header]
-                                                            : "NULL"}
-                                                    </TableCell>
-                                                );
+                                                let flag = header.toLowerCase().includes("isGym".toLowerCase())
+                                                if(flag){
+                                                    return (
+                                                        <TableCell
+                                                            key={key}
+                                                            align="right"
+                                                        >
+                                                            {row[header] == 1? "Si" : "No"}
+                                                        </TableCell>
+                                                    );
+                                                }else{
+
+                                                    return (
+                                                        <TableCell
+                                                            key={key}
+                                                            align="right"
+                                                        >
+                                                            {row[header] != null
+                                                                ? row[header]
+                                                                : "NULL"}
+                                                        </TableCell>
+                                                    );
+                                                }
                                             })}
                                     </TableRow>
                                 );

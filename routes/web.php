@@ -119,7 +119,14 @@ Route::prefix("admin")->group(function () {
     Route::post("/battles/Edit", [AdminController::class, "editBattle"])->name("battles.edit");
     Route::post("/battles/Delete", [AdminController::class, "deleteBattle"])->name("battles.delete");
     Route::match(['GET', 'POST'],"/battles", [AdminController::class, "battles"])->name("admin.battles");
-
+    Route::post("/rarities/Add", [AdminController::class, "addRarity"])->name("rarities.add");
+    Route::post("/rarities/Edit", [AdminController::class, "editRarity"])->name("rarities.edit");
+    Route::post("/rarities/Delete", [AdminController::class, "deleteRarity"])->name("rarities.delete");
+    Route::match(['GET', 'POST'],"/rarities", [AdminController::class, "rarities"])->name("admin.rarities");
+    Route::post("/npcs/Add", [AdminController::class, "addNpc"])->name("npcs.add");
+    Route::post("/npcs/Edit", [AdminController::class, "editNpc"])->name("npcs.edit");
+    Route::post("/npcs/Delete", [AdminController::class, "deleteNpc"])->name("npcs.delete");
+    Route::match(['GET', 'POST'],"/npcs", [AdminController::class, "npcs"])->name("admin.npcs");
     // Route::get("/profile", [ProfileController::class, "index"])->name("admin.profile");
     // Route::get("/profile/{id}", [ProfileController::class, "show"])->name("admin.profile.show");
     // Route::get("/profile/{id}/edit", [ProfileController::class, "edit"])->name("admin.profile.edit");

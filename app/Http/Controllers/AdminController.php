@@ -24,11 +24,13 @@ use App\Models\Nature;
 use App\Models\Npc;
 use App\Models\Pokemon;
 use App\Models\Position;
+use App\Models\Rarity;
 use App\Models\State;
 use App\Models\StateBattleTool;
 use App\Models\Team;
 use App\Models\Type;
 use App\Models\Zone;
+use App\Tables\BattleToolMode;
 use App\Tables\BattleToolTable;
 use App\Tables\BoxTable;
 use App\Tables\Class\DependeciesResolver;
@@ -38,8 +40,10 @@ use App\Tables\GymsTable;
 use App\Tables\MovesMode;
 use App\Tables\MovesTable;
 use App\Tables\NatureTable;
+use App\Tables\NpcTable;
 use App\Tables\PokemonTable;
 use App\Tables\PositionTable;
+use App\Tables\RaritiesTable;
 use App\Tables\SingleBattleMode;
 use App\Tables\ZonesTable;
 use Illuminate\Support\Facades\DB;
@@ -327,10 +331,12 @@ class AdminController extends Controller
         $request->validate([
             "name" => "required",
             "type_id" => "required|integer",
+            "rarity_id" => "required|integer",
         ]);
 
         $pokemon = Pokemon::create([
             "name" => $request->input("name"),
+            "rarity_id" => $request->input("rarity_id"),
         ]);
 
         $pokemon->type()->attach($request->input("type_id"));
@@ -828,6 +834,7 @@ class AdminController extends Controller
     }
     
     public function battles(Request $request){
+        
         $tb = new BattleTable();
         if($request->all() != [] &&key_exists("id",$request->all())&& $tb->equalsById($request->all()["id"])){
             $tb->setConfigObject($request->all());
@@ -942,8 +949,202 @@ class AdminController extends Controller
         $request->validate([
             "id" => "required|integer",
         ]);
+        if(key_exists("headers",$request->all()) && $request->all()["headers"][1] == "Exemplary 1 Level"){
+            BattleRegistry::where("id", "=", $request->input("id"))->delete();
+        }else{
+            Battle::where("id", "=", $request->input("id"))->delete();
+        }
 
-        Battle::where("id", "=", $request->input("id"))->delete();
+        return redirect()->back();
+    }
+
+    public function rarities(Request $request){
+        $tb = new RaritiesTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Rarita",[
+            'rarities' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addRarity(Request $request){
+        $request->validate([
+            "name" => "required",
+        ]);
+
+        Rarity::create([
+            "name" => $request->input("name"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editRarity(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+        ]);
+
+        Rarity::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteRarity(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Rarity::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function npcs(Request $request){
+        $tb = new NpcTable();
+        //check if the request contains a query for the battle_tools table
+
+        if($request->all() != [] && key_exists("id",$request->all()) &&  $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        $selectAllTheZonesThatHaveGyms = Zone::whereHas("gym", function($query){
+            $query->where("id", ">", 0);
+        })->get();
+        $invetory = null;
+        $dp = DependeciesResolver::resolve($tb);
+        // set the Zone key of the dp to the zones that have gyms
+        $dpNames = $tb->getDependencies();
+        if ($request->all() != [] && key_exists("npc_id", $request->all()) && $request->all()["npc_id"] != null){
+            $invetory = new BattleToolTable(mode:BattleToolMode::ofNpc, id:$request->all()["npc_id"]);
+            $dp = $this->putTogheterDepencencies($tb, $invetory);
+            $dpNames = $this->putTogheterDepencenciesNames($tb, $invetory);
+            $invetory->setPerPage(count($invetory->get()));
+            $invetory = $invetory->get();
+        }
+        $dp["Zone"] = $selectAllTheZonesThatHaveGyms;
+
+        return Inertia::render("Admin/Npc",[
+            'npcs' => $tb->get(),
+            'dependencies' => $dp,
+            'dependenciesName' => $dpNames,
+            'inventory' => $invetory,
+        ]);
+    }
+
+    public function addNpc(Request $request){
+        
+        if(key_exists("npc_id",$request->all())){
+            if(!key_exists("prefabbricato", $request->all())){
+                $request->validate([
+                    "name" => "required",
+                    "description" => "required",
+                    "healthRecovery" => "required|integer",
+                    "state_id" => "required|integer",
+                ]);
+                $tb=BattleTool::create([
+                    "name" => $request->input("name"),
+                    "description" => $request->input("description"),
+                    "healthRecovery" => $request->input("healthRecovery"),
+                ]);
+                $tb->statesRecovery()->attach($request->input("state_id"));
+                $npc = Npc::find($request->input("npc_id"));
+                $npc->battleTools()->attach($tb->id,["amount" => $request->input("amount")]);
+            }else if(key_exists("prefabbricato", $request->all())){
+                $request->validate([
+                    "prefabbricato" => "required|integer",
+                ]);
+    
+                $tb = BattleTool::find($request->input("prefabbricato"));
+                $npc = Npc::find($request->input("npc_id"));
+                $npc->battleTools()->attach($tb->id,["amount" => $request->input("amount")]);
+            }else{
+                $request->validate([
+                    "name" => "required",
+                    "description" => "required",
+                    "healthRecovery" => "required|integer",
+                ]);
+                $bt = BattleTool::create([
+                    "name" => $request->input("name"),
+                    "description" => $request->input("description"),
+                    "healthRecovery" => $request->input("healthRecovery"),
+                ]);
+
+                $npc = Npc::find($request->input("npc_id"));
+                $npc->battleTools()->attach($bt->id,["amount" => $request->input("amount")]);
+            }
+        }else{
+            $request->validate([
+                "name" => "required",
+                "isGymLeader" => "required|integer",
+                "position" => "required|integer",
+            ]);
+    
+    
+            Npc::create([
+                "name" => $request->input("name"),
+                "gym_id" => $request->input("gym"),
+                "position_id" => $request->input("position"),
+                "is_gym_leader" => $request->input("isGymLeader"),
+            ]);
+        }
+
+
+        return redirect()->back();
+    }
+
+    public function editNpc(Request $request){
+        if(key_exists("npc_id",$request->all())){
+            $request->validate([
+                "prefabbricato" => "required|integer",
+                "old_prefabbricato" => "required|string",
+                "amount" => "required|integer",
+            ]);
+            
+            $oldTool = BattleTool::where("name","=",$request->input("old_prefabbricato"))->get()->first();
+            
+            $npc = Npc::find($request->input("npc_id"));
+            $npc->battleTools()->detach($oldTool->id);
+            $npc->battleTools()->attach($request->input("prefabbricato"),["amount" => $request->input("amount")]);
+        }else{
+            $request->validate([
+                "id" => "required|integer",
+                "name" => "required",
+                "position" => "required|integer",
+            ]);
+
+            Npc::where("id", "=", $request->input("id"))->update([
+                "name" => $request->input("name"),
+                "gym_id" => $request->input("gym"),
+                "position_id" => $request->input("position"),
+                "is_gym_leader" => $request->input("isGymLeader"),
+            ]);
+        }
+        return redirect()->back();
+    }
+
+    public function deleteNpc(Request $request){
+        if(key_exists("npc_id",$request->all())){
+
+            $request->validate([
+                "npc_id" => "required|integer",
+            ]);
+
+            $npc = Npc::find($request->input("npc_id"));
+            $npc->battleTools()->detach($request->input("id"));
+        }else{
+            $request->validate([
+                "id" => "required|integer",
+            ]);
+
+            Npc::where("id", "=", $request->input("id"))->delete();
+        }
 
         return redirect()->back();
     }

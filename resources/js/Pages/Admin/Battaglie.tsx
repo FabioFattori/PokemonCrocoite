@@ -19,7 +19,7 @@ function Battaglie() {
 
     let exemplaryToDisplay = (usePage().props.exemplary as any) ?? null;
 
-    let buttonsForSinglePokemonBattle = [{ label:"Add", icon: AddIcon, url: null },{label:"Edit", icon: Edit, url: null },{label:"Delete", icon: Delete, url: window.location.href+"/Delete"},{
+    let buttonsForSinglePokemonBattle = [{ label:"Add", icon: AddIcon, url: null },{label:"Edit", icon: Edit, url: null },{label:"Delete", icon: Delete, url: !window.location.href.includes("Delete")?window.location.href.split("?battle_id")[0]+"/Delete":window.location.href},{
         label: "Pokemon 1 Details", icon: LooksOneIcon, method({ props }: { props: any[]; }) {
             let exId = props[0].exemplary1;
             console.log(props[0])
@@ -33,6 +33,7 @@ function Battaglie() {
     }] as unknown as Button[]
 
     React.useEffect(() => {
+        console.log(window.location.href)
         addNewInterractableButton("show battle details",ExpandCircleDownIcon,({ props }: { props: any })=>{
             router.get("/admin/battles",{battle_id:props[0].id})
         })

@@ -13,7 +13,8 @@ import FitnessCenterIcon from '@mui/icons-material/FitnessCenter';
 import EmojiNatureIcon from '@mui/icons-material/EmojiNature';
 import PlumbingIcon from '@mui/icons-material/Plumbing';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
-
+import StarIcon from '@mui/icons-material/Star';
+import SmartToyIcon from '@mui/icons-material/SmartToy';
 interface Route{
     Title: string;
     Path: string;
@@ -63,6 +64,11 @@ export default [
         Icon: BiotechIcon,
     },
     {
+        Title: "Rarità Pokemon",
+        Path: "/admin/rarities",
+        Icon: StarIcon,
+    },
+    {
         Title: "Box Pokemon",
         Path: "/admin/boxes",
         Icon: ArchiveIcon,
@@ -85,6 +91,10 @@ export default [
         Title:"Palestre",
         Path:"/admin/gyms",
         Icon: FitnessCenterIcon
+    },{
+        Title: "Npc",
+        Path: "/admin/npcs",
+        Icon: SmartToyIcon,
     },
     {
         Title:"Posizioni",
