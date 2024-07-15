@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import { router, usePage } from "@inertiajs/react";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import { FormControl, FormControlLabel, FormLabel, InputLabel, MenuItem, Radio, RadioGroup, Select } from "@mui/material";
 
 function resolveDependecieName(row:any){
   let result = ""
@@ -31,7 +31,7 @@ function resolveDependecieName(row:any){
 
 
 
-function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNames:string[] , data: any[]}) {
+function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], fieldNames:string[] , data: any[]}) {
 
   const [inputs, setInputs] = React.useState(data.length != 0 ? fieldNames.filter((field)=>field!="id").map((field)=>data[field as unknown as number]):[])
 
@@ -47,6 +47,8 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
   React.useEffect(() => {
     //   console.log(dependencies)
     //   console.log(dependenciesNames)
+    console.log(data)
+    console.log(inputs)
     //  console.log(headers)
     //  console.log(fieldNames)
     //   console.log(headers.filter((header)=>header.toLowerCase() != "id"))
@@ -72,6 +74,11 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
       request["battle_id"] = window.location.href.split("battle_id=")[1].split("&")[0]
     }
 
+    if(window.location.href.split("npc_id=")[1]!=undefined){
+      request["npc_id"] = window.location.href.split("npc_id=")[1].split("&")[0]
+      request["old_prefabbricato"] = data["prefabbricato" as unknown as number]
+    }
+
     // dependenciesNames.forEach(name => {
     //   request[name] = inputs[headers.indexOf(name)]
     // });
@@ -80,7 +87,34 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
 
   return (
     <div  style={{ display:"flex" , flexDirection:"column" , gap:"30px 10px" , marginTop:"10px" , minWidth:"300px" , width:"70%" }}>
-        {headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
+        {data != null && data["prefabbricato" as unknown as number] != null?
+        <>
+          <FormControl fullWidth>
+          <InputLabel id="demo-simple-select-label">{"prefabbricato"}</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            value={inputs[0] != undefined ? inputs[0] : ""}
+            label="prefabbricato"
+            onChange={(e)=>{changeInput(0,e.target.value)}}
+          >
+            {dependencies.length!=0?dependencies["BattleTool" as unknown as number].map((item: any) => {
+              return <MenuItem value={item.id}>{resolveDependecieName(item)}</MenuItem>
+            }):null}
+          </Select>
+        </FormControl>
+        <TextField
+          key={1}
+          required
+          type={"number"}
+          id="outlined-required"
+          label={"amount"}
+          defaultValue={data[fieldNames.filter((value) => value != "id")[1] as unknown as number]}
+          onChange={(e)=>changeInput(inputs.length-1,e.target.value)}
+          value={inputs[inputs.length-1]}
+        />
+        </>
+        :headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
           return dependenciesNames.length!=0&&dependenciesNames.includes(header.split(' ')[0])? 
           <FormControl fullWidth>
           <InputLabel id="demo-simple-select-label">{header}</InputLabel>
@@ -95,9 +129,22 @@ function Form({headers=[] , fieldNames=[] , data=[]}:{headers: string[], fieldNa
               return <MenuItem value={item.id}>{resolveDependecieName(item)}</MenuItem>
             }):null}
           </Select>
-        </FormControl> : header.toLowerCase().includes("password") ? <PasswordInput label={header} data={data.length != 0 ? data[fieldNames.filter((value) => value != "id")[index] as unknown as number]:inputs[index]} onChange={(e)=>changeInput(index,e.target.value)} />:
+        </FormControl> :header.toLowerCase().includes("è Capo".toLowerCase()) ?
+          <FormControl>
+          <FormLabel id="demo-radio-buttons-group-label">{headers[index+1<headers.length?index+1:index]}</FormLabel>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue=""
+            name="radio-buttons-group"
+            onChange={(e)=>changeInput(index,e.target.value)}
+          >
+            <FormControlLabel value="1" control={<Radio />} label="si" />
+            <FormControlLabel value="0" control={<Radio />} label="no" />
+          </RadioGroup>
+        </FormControl>: header.toLowerCase().includes("password") ? <PasswordInput label={header} data={data.length != 0 ? data[fieldNames.filter((value) => value != "id")[index] as unknown as number]:inputs[index]} onChange={(e)=>changeInput(index,e.target.value)} />:
 
-           fieldNames[index].toLowerCase().includes("date") ? <DatePicker label={header} value={data.length != 0 ?dayjs((data[fieldNames.filter((value) => value != "id")[index]as unknown as number] as string)):inputs[index]} onChange={(e)=>changeInput(index,e)} /> : <TextField
+          fieldNames[index].toLowerCase().includes("date") ? <DatePicker label={header} value={data.length != 0 ?dayjs((data[fieldNames.filter((value) => value != "id")[index]as unknown as number] as string)):inputs[index]} onChange={(e)=>changeInput(index,e)} /> : 
+          <TextField
           key={index}
           required
           type={Number.isInteger(data[fieldNames.filter((value) => value != "id")[index]as unknown as number]) ? "number" : "text"}

@@ -120,8 +120,9 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                         <Tooltip title="Delete">
                         <IconButton
                             onClick={() =>
-                                {buttons[2].url != null
-                                    ? router.post(buttons[2].url,{"id":selected[0]["id"]})
+                                {
+                                    buttons[2].url != null
+                                    ? router.post(buttons[2].url,{"id":selected[0]["id"],"headers":headers})
                                     : null
                                     setSelected([]);
                                 }
@@ -206,6 +207,12 @@ export default function GeneralTable({
     } = translator({ sennisTable: dbObject });
 
     const [selected, setSelected] = React.useState<any[]>([]);
+
+    React.useEffect(() => {
+        setSelected([]);
+        setOpenCreate(false);
+        setOpenEdit(false);
+    }, [data]);
 
     function EnhancedTableCell({ columnName }: { columnName: string }) {
         const [order, setOrder] = React.useState<"ASC" | "DESC">("ASC");
@@ -377,8 +384,9 @@ export default function GeneralTable({
     };
 
     const handleSearch = () => {
-        let text = (document.getElementById("searchInput") as HTMLInputElement)
+        let text = (document.getElementById("searchInput"+tableTitle) as HTMLInputElement)
             .value;
+            console.log(text)
         if (columnName != "") {
             let filterObj = getReqObject("filters", [
                 constructFilter(
@@ -424,7 +432,7 @@ export default function GeneralTable({
 
                 <div  style={{ width: "80%", display:"flex",height:"100%" }}>
                     <InputBase
-                        id="searchInput"
+                        id={"searchInput"+tableTitle}
                         style={{ width: "100%" }}
                         sx={{ ml: 1, flex: 1 }}
                         placeholder={"Cerca tra " + tableTitle}
@@ -518,16 +526,29 @@ export default function GeneralTable({
                                                     !columns[field]["hidden"]
                                             )
                                             .map((header, key) => {
-                                                return (
-                                                    <TableCell
-                                                        key={key}
-                                                        align="right"
-                                                    >
-                                                        {row[header] != null
-                                                            ? row[header]
-                                                            : "NULL"}
-                                                    </TableCell>
-                                                );
+                                                let flag = header.toLowerCase().includes("isGym".toLowerCase())
+                                                if(flag){
+                                                    return (
+                                                        <TableCell
+                                                            key={key}
+                                                            align="right"
+                                                        >
+                                                            {row[header] == 1? "Si" : "No"}
+                                                        </TableCell>
+                                                    );
+                                                }else{
+
+                                                    return (
+                                                        <TableCell
+                                                            key={key}
+                                                            align="right"
+                                                        >
+                                                            {row[header] != null
+                                                                ? row[header]
+                                                                : "NULL"}
+                                                        </TableCell>
+                                                    );
+                                                }
                                             })}
                                     </TableRow>
                                 );
