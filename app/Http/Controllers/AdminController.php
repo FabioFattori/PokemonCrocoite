@@ -63,9 +63,9 @@ class AdminController extends Controller
         $dpNames = $tb->getDependencies();
         $tools = null;
         //codice della madonna 
-        if(key_exists("user_id",$request->all()) || (key_exists("id",$request->all()))){
+        if(key_exists("user_id",$request->all())){
             $tools = new BattleToolTable(BattleToolMode::ofUser,$request->all()["user_id"]);
-            if($tools->equalsById($request->all()["id"])){
+            if((key_exists("id",$request->all())) && $tools->equalsById($request->all()["id"])){
                 $tools->setConfigObject($request->all());
             }
             $dp = $this->putTogheterDepencencies($tb, $tools);
@@ -82,7 +82,46 @@ class AdminController extends Controller
     }
 
     public function addUser(Request $request){
-        return $request->all();
+        if(key_exists("user_id",$request->all())){
+            if(!key_exists("prefabbricato", $request->all())){
+                $request->validate([
+                    "name" => "required",
+                    "description" => "required",
+                    "healthRecovery" => "required|integer",
+                    "state_id" => "required|integer",
+                ]);
+                $tb=BattleTool::create([
+                    "name" => $request->input("name"),
+                    "description" => $request->input("description"),
+                    "healthRecovery" => $request->input("healthRecovery"),
+                ]);
+                $tb->statesRecovery()->attach($request->input("state_id"));
+                $npc = User::find($request->input("user_id"));
+                $npc->battleTools()->attach($tb->id,["amount" => $request->input("amount")]);
+            }else if(key_exists("prefabbricato", $request->all())){
+                $request->validate([
+                    "prefabbricato" => "required|integer",
+                ]);
+    
+                $tb = BattleTool::find($request->input("prefabbricato"));
+                $npc = User::find($request->input("user_id"));
+                $npc->battleTools()->attach($tb->id,["amount" => $request->input("amount")]);
+            }else{
+                $request->validate([
+                    "name" => "required",
+                    "description" => "required",
+                    "healthRecovery" => "required|integer",
+                ]);
+                $bt = BattleTool::create([
+                    "name" => $request->input("name"),
+                    "description" => $request->input("description"),
+                    "healthRecovery" => $request->input("healthRecovery"),
+                ]);
+
+                $npc = User::find($request->input("user_id"));
+                $npc->battleTools()->attach($bt->id,["amount" => $request->input("amount")]);
+            }
+        }else{
         $request->validate([
             "email" => "required|email",
             "password" => "required",
@@ -104,11 +143,25 @@ class AdminController extends Controller
             "date" => now(),
             "user_id" => $user->id,
         ]);
+    }
 
-        return redirect()->route("admin.users");
+        return redirect()->back();
     }
 
     public function editUser(Request $request){
+        if(key_exists("user_id",$request->all())){
+            $request->validate([
+                "prefabbricato" => "required|integer",
+                "old_prefabbricato" => "required|string",
+                "amount" => "required|integer",
+            ]);
+            
+            $oldTool = BattleTool::where("name","=",$request->input("old_prefabbricato"))->get()->first();
+            
+            $npc = User::find($request->input("user_id"));
+            $npc->battleTools()->detach($oldTool->id);
+            $npc->battleTools()->attach($request->input("prefabbricato"),["amount" => $request->input("amount")]);
+        }else{
         $request->validate([
             "id" => "required|integer",
             "email" => "required|email",
@@ -120,18 +173,28 @@ class AdminController extends Controller
             "password" => Hash::make($request->input("password")),
             "position_id" => $request->input("position_id"),
         ]);
+    }
 
-        return redirect()->route("admin.users");
+        return redirect()->back();
     }
 
     public function deleteUser(Request $request){
+        if(key_exists("user_id",$request->all())){
+
+            $request->validate([
+                "user_id" => "required|integer",
+            ]);
+
+            $npc = User::find($request->input("user_id"));
+            $npc->battleTools()->detach($request->input("id"));
+        }else{
         $request->validate([
             "id" => "required|integer",
         ]);
 
         User::where("id", "=", $request->input("id"))->delete();
-
-        return redirect()->route("admin.users");
+    }
+        return redirect()->back();
     }
 
     public function Exemplaries(Request $request){

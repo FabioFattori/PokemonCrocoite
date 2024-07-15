@@ -79,6 +79,11 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
       request["old_prefabbricato"] = data["prefabbricato" as unknown as number]
     }
 
+    if(window.location.href.split("user_id=")[1]!=undefined){
+      request["user_id"] = window.location.href.split("user_id=")[1].split("&")[0]
+      request["old_prefabbricato"] = data["prefabbricato" as unknown as number]
+    }
+
     // dependenciesNames.forEach(name => {
     //   request[name] = inputs[headers.indexOf(name)]
     // });
