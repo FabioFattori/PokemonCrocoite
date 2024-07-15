@@ -384,8 +384,9 @@ export default function GeneralTable({
     };
 
     const handleSearch = () => {
-        let text = (document.getElementById("searchInput") as HTMLInputElement)
+        let text = (document.getElementById("searchInput"+tableTitle) as HTMLInputElement)
             .value;
+            console.log(text)
         if (columnName != "") {
             let filterObj = getReqObject("filters", [
                 constructFilter(
@@ -431,7 +432,7 @@ export default function GeneralTable({
 
                 <div  style={{ width: "80%", display:"flex",height:"100%" }}>
                     <InputBase
-                        id="searchInput"
+                        id={"searchInput"+tableTitle}
                         style={{ width: "100%" }}
                         sx={{ ml: 1, flex: 1 }}
                         placeholder={"Cerca tra " + tableTitle}

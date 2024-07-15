@@ -53,20 +53,36 @@ use PhpParser\Node\Stmt\Return_;
 class AdminController extends Controller
 {
     public function Users(Request $request){
+        
         $tb = new UserTable();
-        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+        if($request->all() != [] &&key_exists("id",$request->all())&& $tb->equalsById($request->all()["id"])){
             $tb->setConfigObject($request->all());
         }
 
+        $dp = DependeciesResolver::resolve($tb);
+        $dpNames = $tb->getDependencies();
+        $tools = null;
+        //codice della madonna 
+        if(key_exists("user_id",$request->all()) || (key_exists("id",$request->all()))){
+            $tools = new BattleToolTable(BattleToolMode::ofUser,$request->all()["user_id"]);
+            if($tools->equalsById($request->all()["id"])){
+                $tools->setConfigObject($request->all());
+            }
+            $dp = $this->putTogheterDepencencies($tb, $tools);
+            $dpNames = $this->putTogheterDepencenciesNames($tb, $tools);
+            $tools = $tools->get();
+        }
 
         return Inertia::render('Admin/Utenti', [
             'users' => $tb->get(),
-            'dependencies' => DependeciesResolver::resolve($tb),
-            'dependenciesName' => $tb->getDependencies(),
+            'dependencies' => $dp,
+            'dependenciesName' => $dpNames,
+            'tools' => $tools,
         ]);
     }
 
     public function addUser(Request $request){
+        return $request->all();
         $request->validate([
             "email" => "required|email",
             "password" => "required",
