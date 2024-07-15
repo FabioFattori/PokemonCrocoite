@@ -58,7 +58,8 @@ class ERHelper{
             $columns = $this->getColumns($table);
             $mermaid .= "    $table {\n";
             foreach ($columns as $column) {
-                $mermaid .= "        string {$column->Field}\n";
+                $type = str_replace(' ', '_', $column->Type);
+                $mermaid .= "        {$type} {$column->Field}\n";
             }
             $mermaid .= "    }\n";
             
