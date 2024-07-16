@@ -380,6 +380,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Dream Forest",
             "length" => 10,
             "width" => 10,
+            "is_city" => false,
             "position_id" => Position::factory()->create()->id
         ]);
         $dreamForest->pokemons()->attach(Pokemon::where("name", "Bulbasaur")->first()->id);
@@ -393,6 +394,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Fire Mountain",
             "length" => 10,
             "width" => 10,
+            "is_city" => true,
             "position_id" => Position::factory()->create()->id
         ]);
         $fireMountain->pokemons()->attach(Pokemon::where("name", "Charmander")->first()->id);
@@ -404,6 +406,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Water Cave",
             "length" => 10,
             "width" => 10,
+            "is_city" => true,
             "position_id" => Position::factory()->create()->id
         ]);
         $waterCave->pokemons()->attach(Pokemon::where("name", "Squirtle")->first()->id);
@@ -416,6 +419,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Mount Moon",
             "length" => 10,
             "width" => 10,
+            "is_city" => true,
             "position_id" => Position::factory()->create()->id
         ]);
         $mountMoon->pokemons()->attach(Pokemon::where("name", "Caterpie")->first()->id);
@@ -426,6 +430,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Pokemon Mansion",
             "length" => 10,
             "width" => 10,
+            "is_city" => true,
             "position_id" => Position::factory()->create()->id
         ]);
         $pokemonMansion->pokemons()->attach(Pokemon::where("name", "Pidgey")->first()->id);
@@ -438,6 +443,7 @@ class DatabaseSeeder extends Seeder
             "name" => "Power Plant",
             "length" => 10,
             "width" => 10,
+            "is_city" => true,
             "position_id" => Position::factory()->create()->id
         ]);
         $powerPlant->pokemons()->attach(Pokemon::where("name", "Pidgey")->first()->id);
@@ -587,15 +593,18 @@ class DatabaseSeeder extends Seeder
 
         Gym::create([
             'position_id' => Position::factory()->create()->id,
-            'zone_id' => $dreamForest->id
+            'zone_id' => $dreamForest->id,
+            'type_id' => Type::where("name", "Water")->first()->id
         ]);
         Gym::create([
             'position_id' => Position::factory()->create()->id,
-            'zone_id' => $fireMountain->id
+            'zone_id' => $fireMountain->id,
+            'type_id' => Type::where("name", "Fire")->first()->id
         ]);
         Gym::create([
             'position_id' => Position::factory()->create()->id,
-            'zone_id' => $waterCave->id
+            'zone_id' => $waterCave->id,
+            'type_id' => Type::where("name", "Grass")->first()->id
         ]);
     }
 
@@ -821,18 +830,17 @@ class DatabaseSeeder extends Seeder
             $user = $team->user_id;
         }
         if($user !== null){
-            $exemplary->captured()->create([
-                "date" => $this->faker->dateTimeBetween('-1 years', 'now'),
-                "zone_id" => Zone::inRandomOrder($this->faker->randomNumber(2))->first()->id,
-                "user_id" => $user,
-            ]);
-
             //duplicate exemplary (with different id)
             $exemplaryClone = $exemplary->replicate();
             $exemplaryClone->exemplary_id = $exemplary->id;
             $exemplaryClone->save();
-        }
 
+            $exemplaryClone->captured()->create([
+                "date" => $this->faker->dateTimeBetween('-1 years', 'now'),
+                "zone_id" => Zone::inRandomOrder($this->faker->randomNumber(2))->first()->id,
+                "user_id" => $user,
+            ]);
+        }
     }
 
     private function seedBattles(){
@@ -848,21 +856,51 @@ class DatabaseSeeder extends Seeder
             'winner' => 1,
         ]);
 
-        //in each battle got N battle registry
+        //in each battle got N bat
+        $id = $red->exemplaries()->whereNull("exemplary_id")->skip(0)->first()->id;
+        $redEx1 = Exemplary::find($id)->replicate();
+        $redEx1->exemplary_id = $id;
+        $redEx1->save();
+        $redEx1->copyMovesFrom($id);
+        $id = $yellow->exemplaries()->whereNull("exemplary_id")->skip(0)->first()->id;
+        $yellowEx1 = Exemplary::find($id)->replicate();
+        $yellowEx1->exemplary_id = $id;
+        $yellowEx1->save();
+        $yellowEx1->copyMovesFrom($id);
+        $id = $red->exemplaries()->whereNull("exemplary_id")->skip(1)->first()->id;
+        $redEx2 = Exemplary::find($id)->replicate();
+        $redEx2->exemplary_id = $id;
+        $redEx2->save();
+        $redEx2->copyMovesFrom($id);
+        $id = $yellow->exemplaries()->whereNull("exemplary_id")->skip(1)->first()->id;
+        $yellowEx2 = Exemplary::find($id)->replicate();
+        $yellowEx2->exemplary_id = $id;
+        $yellowEx2->save();
+        $yellowEx2->copyMovesFrom($id);
+        $id = $red->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
+        $redEx3 = Exemplary::find($id)->replicate();
+        $redEx3->exemplary_id = $id;
+        $redEx3->save();
+        $redEx3->copyMovesFrom($id);
+        $id = $yellow->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
+        $yellowEx3 = Exemplary::find($id)->replicate();
+        $yellowEx3->exemplary_id = $id;
+        $yellowEx3->save();
+        $yellowEx3->copyMovesFrom($id);
         $battleRedYellow->registry()->createMany([
             [
-                'exemplary1_id' => $red->exemplaries()->where("exemplary_id", null)->skip(0)->first()->id,
-                'exemplary2_id' => $yellow->exemplaries()->where("exemplary_id", null)->skip(0)->first()->id,
+                'exemplary1_id' => $redEx1->id,
+                'exemplary2_id' => $yellowEx1->id,
                 'winner' => 1
             ],
             [
-                'exemplary1_id' => $red->exemplaries()->where("exemplary_id", null)->skip(1)->first()->id,
-                'exemplary2_id' => $yellow->exemplaries()->where("exemplary_id", null)->skip(1)->first()->id,
+                'exemplary1_id' => $redEx2->id,
+                'exemplary2_id' => $yellowEx2->id,
                 'winner' => 2
             ],
             [
-                'exemplary1_id' => $red->exemplaries()->where("exemplary_id", null)->skip(2)->first()->id,
-                'exemplary2_id' => $yellow->exemplaries()->where("exemplary_id", null)->skip(2)->first()->id,
+                'exemplary1_id' => $redEx3->id,
+                'exemplary2_id' => $yellowEx3->id,
                 'winner' => 1
             ],
         ]);
@@ -874,21 +912,51 @@ class DatabaseSeeder extends Seeder
             'winner' => 1,
         ]);
 
+        $id = $red->exemplaries()->whereNull("exemplary_id")->skip(0)->first()->id;
+        $redEx1 = Exemplary::find($id)->replicate();
+        $redEx1->exemplary_id = $id;
+        $redEx1->save();
+        $redEx1->copyMovesFrom($id);
+        $id = $green->exemplaries()->whereNull("exemplary_id")->skip(0)->first()->id;
+        $greenEx1 = Exemplary::find($id)->replicate();
+        $greenEx1->exemplary_id = $id;
+        $greenEx1->save();
+        $greenEx1->copyMovesFrom($id);
+        $id = $red->exemplaries()->whereNull("exemplary_id")->skip(1)->first()->id;
+        $redEx2 = Exemplary::find($id)->replicate();
+        $redEx2->exemplary_id = $id;
+        $redEx2->save();
+        $redEx2->copyMovesFrom($id);
+        $id = $green->exemplaries()->whereNull("exemplary_id")->skip(1)->first()->id;
+        $greenEx2 = Exemplary::find($id)->replicate();
+        $greenEx2->exemplary_id = $id;
+        $greenEx2->save();
+        $greenEx2->copyMovesFrom($id);
+        $id = $red->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
+        $redEx3 = Exemplary::find($id)->replicate();
+        $redEx3->exemplary_id = $id;
+        $redEx3->save();
+        $redEx3->copyMovesFrom($id);
+        $id = $green->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
+        $greenEx3 = Exemplary::find($id)->replicate();
+        $greenEx3->exemplary_id = $id;
+        $greenEx3->save();
+        $greenEx3->copyMovesFrom($id);
         //in each battle got N battle registry
         $battleRedGreen->registry()->createMany([
             [
-                'exemplary1_id' => $red->exemplaries()->where("exemplary_id", null)->skip(0)->first()->id,
-                'exemplary2_id' => $green->exemplaries()->where("exemplary_id", null)->skip(0)->first()->id,
+                'exemplary1_id' =>$redEx1->id,
+                'exemplary2_id' => $greenEx1->id,
                 'winner' => 1
             ],
             [
-                'exemplary1_id' => $red->exemplaries()->where("exemplary_id", null)->skip(1)->first()->id,
-                'exemplary2_id' => $green->exemplaries()->where("exemplary_id", null)->skip(1)->first()->id,
+                'exemplary1_id' => $redEx2->id,
+                'exemplary2_id' => $greenEx2->id,
                 'winner' => 2
             ],
             [
-                'exemplary1_id' => $red->exemplaries()->where("exemplary_id", null)->skip(2)->first()->id,
-                'exemplary2_id' => $green->exemplaries()->where("exemplary_id", null)->skip(2)->first()->id,
+                'exemplary1_id' => $redEx3->id,
+                'exemplary2_id' => $greenEx3->id,
                 'winner' => 1
             ],
         ]);
@@ -900,21 +968,53 @@ class DatabaseSeeder extends Seeder
             'winner' => 1,
         ]);
 
+        
+        $id = $yellow->exemplaries()->whereNull("exemplary_id")->skip(0)->first()->id;
+        $yellowEx1 = Exemplary::find($id)->replicate();
+        $yellowEx1->exemplary_id = $id;
+        $yellowEx1->save();
+        $yellowEx1->copyMovesFrom($id);
+        $id = $green->exemplaries()->whereNull("exemplary_id")->skip(0)->first()->id;
+        $greenEx1 = Exemplary::find($id)->replicate();
+        $greenEx1->exemplary_id = $id;
+        $greenEx1->save();
+        $greenEx1->copyMovesFrom($id);
+        $id = $yellow->exemplaries()->whereNull("exemplary_id")->skip(1)->first()->id;
+        $yellowEx2 = Exemplary::find($id)->replicate();
+        $yellowEx2->exemplary_id = $id;
+        $yellowEx2->save();
+        $yellowEx2->copyMovesFrom($id);
+        $id = $green->exemplaries()->whereNull("exemplary_id")->skip(1)->first()->id;
+        $greenEx2 = Exemplary::find($id)->replicate();
+        $greenEx2->exemplary_id = $id;
+        $greenEx2->save();
+        $greenEx2->copyMovesFrom($id);
+        $id = $yellow->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
+        $yellowEx3 = Exemplary::find($id)->replicate();
+        $yellowEx3->exemplary_id = $id;
+        $yellowEx3->save();
+        $yellowEx3->copyMovesFrom($id);
+        $id = $green->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
+        $greenEx3 = Exemplary::find($id)->replicate();
+        $greenEx3->exemplary_id = $id;
+        $greenEx3->save();
+        $greenEx3->copyMovesFrom($id);
+
         //in each battle got N battle registry
         $battleYellowGreen->registry()->createMany([
             [
-                'exemplary1_id' => $yellow->exemplaries()->where("exemplary_id", null)->skip(0)->first()->id,
-                'exemplary2_id' => $green->exemplaries()->where("exemplary_id", null)->skip(0)->first()->id,
+                'exemplary1_id' => $yellowEx1->id,
+                'exemplary2_id' => $greenEx1->id,
                 'winner' => 1
             ],
             [
-                'exemplary1_id' => $yellow->exemplaries()->where("exemplary_id", null)->skip(1)->first()->id,
-                'exemplary2_id' => $green->exemplaries()->where("exemplary_id", null)->skip(1)->first()->id,
+                'exemplary1_id' => $yellowEx2->id,
+                'exemplary2_id' => $greenEx2->id,
                 'winner' => 2
             ],
             [
-                'exemplary1_id' => $yellow->exemplaries()->where("exemplary_id", null)->skip(2)->first()->id,
-                'exemplary2_id' => $green->exemplaries()->where("exemplary_id", null)->skip(2)->first()->id,
+                'exemplary1_id' => $yellowEx3->id,
+                'exemplary2_id' => $greenEx3->id,
                 'winner' => 1
             ],
         ]);

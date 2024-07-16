@@ -14,9 +14,12 @@ class Move extends Model
     protected $fillable = [
         'description',
         'name',
+        'type_id',
+        'probState',
+        'state_id'
     ];
     
-    public function exemplary()
+public function exemplary()
     {
         return $this->belongsToMany(Exemplary::class, 'exemplary_move', 'move_id', 'exemplary_id');
     }
@@ -34,5 +37,9 @@ class Move extends Model
     public function types()
     {
         return $this->belongsTo(Type::class);
+    }
+
+    public function state(){
+        return $this->belongsTo(State::class);
     }
 }

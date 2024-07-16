@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('move_id')->constrained()->cascadeOnDelete();
             $table->integer('number');
+            $table->boolean('is_mn')->default(false);
             $table->string('description');
         });
     }

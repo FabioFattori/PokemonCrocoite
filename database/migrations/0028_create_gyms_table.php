@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('position_id')->constrained()->cascadeOnDelete();
             $table->foreignId('zone_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('type_id')->constrained()->cascadeOnDelete();
         });
         
     }

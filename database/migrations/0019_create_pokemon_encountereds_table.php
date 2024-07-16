@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('pokemon_id')->constrained()->cascadeOnDelete();
             $table->foreignId('zone_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-
+            $table->dateTime("date");
             $table->unique(['pokemon_id', 'user_id']);
         });
     }

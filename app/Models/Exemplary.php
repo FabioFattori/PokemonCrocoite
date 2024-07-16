@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Exemplary extends Model
 {
@@ -59,6 +60,13 @@ class Exemplary extends Model
     public function captured()
     {
         return $this->hasOne(Captured::class);
+    }
+
+    public function copyMovesFrom($exId){
+        $moves = Exemplary::with("move")->find($exId)->move;
+        foreach ($moves as $key => $move) {
+            $this->move()->attach($move->id);
+        }
     }
 
 

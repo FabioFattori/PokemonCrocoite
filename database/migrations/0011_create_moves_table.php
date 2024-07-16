@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->string('description');
+            $table->integer('probState')->nullable();
             $table->foreignId('type_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('state_id')->nullable()->constrained()->cascadeOnDelete();
+
         });
     }
 

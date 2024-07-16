@@ -45,8 +45,8 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
   const dependenciesNames = usePage().props.dependenciesName as any[] ?? [];
 
   React.useEffect(() => {
-    //   console.log(dependencies)
-    //   console.log(dependenciesNames)
+      console.log(dependencies)
+     console.log(dependenciesNames)
     console.log(data)
     console.log(inputs)
     //  console.log(headers)
@@ -84,6 +84,18 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
       request["old_prefabbricato"] = data["prefabbricato" as unknown as number]
     }
 
+    if(window.location.href.split("pokemon_id=")[1]!=undefined){
+      request["pokemon_id"] = window.location.href.split("pokemon_id=")[1].split("&")[0]
+      request["old_prefabbricato"] = data["prefabbricato" as unknown as number]
+    }
+
+    if(window.location.href.split("mnMt=")[1]!=undefined){
+      let mnMt = window.location.href.split("mnMt=")[1].split("&")[0]
+      if(mnMt == "1"){
+        request["old_move"] = data["name"]
+      }
+    }
+
     // dependenciesNames.forEach(name => {
     //   request[name] = inputs[headers.indexOf(name)]
     // });
@@ -103,9 +115,10 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
             label="prefabbricato"
             onChange={(e)=>{changeInput(0,e.target.value)}}
           >
-            {dependencies.length!=0?dependencies["BattleTool" as unknown as number].map((item: any) => {
+            {dependencies.length!=0 && dependencies["BattleTool" as unknown as number] != null?dependencies["BattleTool" as unknown as number].map((item: any) => {
               return <MenuItem value={item.id}>{resolveDependecieName(item)}</MenuItem>
-            }):null}
+            }):dependencies["Move" as unknown as number] != null? dependencies["Move" as unknown as number].map((item: any) => {
+              return <MenuItem value={item.id}>{resolveDependecieName(item)}</MenuItem>}):null}
           </Select>
         </FormControl>
         <TextField
@@ -134,7 +147,7 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
               return <MenuItem value={item.id}>{resolveDependecieName(item)}</MenuItem>
             }):null}
           </Select>
-        </FormControl> :header.toLowerCase().includes("è Capo".toLowerCase()) ?
+        </FormControl> :header.toLowerCase().includes("è ".toLowerCase()) ?
           <FormControl>
           <FormLabel id="demo-radio-buttons-group-label">{headers[index+1<headers.length?index+1:index]}</FormLabel>
           <RadioGroup
@@ -148,7 +161,7 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
           </RadioGroup>
         </FormControl>: header.toLowerCase().includes("password") ? <PasswordInput label={header} data={data.length != 0 ? data[fieldNames.filter((value) => value != "id")[index] as unknown as number]:inputs[index]} onChange={(e)=>changeInput(index,e.target.value)} />:
 
-          fieldNames[index].toLowerCase().includes("date") ? <DatePicker label={header} value={data.length != 0 ?dayjs((data[fieldNames.filter((value) => value != "id")[index]as unknown as number] as string)):inputs[index]} onChange={(e)=>changeInput(index,e)} /> : 
+          fieldNames[index].toLowerCase().includes("date") ? <DatePicker label={header} value={data.length != 0 ?dayjs((data[fieldNames.filter((value) => value != "id")[index]as unknown as number] as string)):dayjs(inputs[index])} onChange={(e)=>changeInput(index,e)} /> : 
           <TextField
           key={index}
           required

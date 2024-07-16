@@ -11,7 +11,7 @@ class Zone extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['name', 'length', 'width', "position_id"];
+    protected $fillable = ['name', 'length', 'width', "position_id", 'is_city'];
 
     public function pokemons()
     {

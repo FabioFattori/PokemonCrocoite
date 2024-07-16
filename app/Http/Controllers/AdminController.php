@@ -2,16 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Tables\StoryToolMode;
+use Database\Seeders\DatabaseSeeder;
 use App\Models\Battle;
 use App\Models\BattleRegistry;
 use App\Models\Battles;
 use App\Models\BattleTool;
 use App\Models\Box;
+use App\Models\MnMt;
+use App\Models\StoryTool;
 use App\Models\User;
 use App\Tables\BattleTable;
 use App\Tables\ExemplaryTable;
+use App\Tables\MnMtTable;
 use App\Tables\Mode;
 use App\Tables\SinglePokemonBattleTable;
+use App\Tables\StateTable;
+use App\Tables\StoryToolTable;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Tables\UserTable;
@@ -62,6 +69,8 @@ class AdminController extends Controller
         $dp = DependeciesResolver::resolve($tb);
         $dpNames = $tb->getDependencies();
         $tools = null;
+        $storyTools = null;
+        $mnmt = null;
         //codice della madonna 
         if(key_exists("user_id",$request->all())){
             $tools = new BattleToolTable(BattleToolMode::ofUser,$request->all()["user_id"]);
@@ -71,6 +80,15 @@ class AdminController extends Controller
             $dp = $this->putTogheterDepencencies($tb, $tools);
             $dpNames = $this->putTogheterDepencenciesNames($tb, $tools);
             $tools = $tools->get();
+
+            $storyTools = new StoryToolTable(mode:StoryToolMode::ofUser,userId:$request->all()["user_id"]);
+            if((key_exists("id",$request->all())) && $storyTools->equalsById($request->all()["id"])){
+                $storyTools->setConfigObject($request->all());
+            }
+            $dp = $this->putTogheterDepencencies($tb, $storyTools);
+            $dpNames = $this->putTogheterDepencenciesNames($tb, $storyTools);
+            $storyTools = $storyTools->get();
+
         }
 
         return Inertia::render('Admin/Utenti', [
@@ -78,6 +96,8 @@ class AdminController extends Controller
             'dependencies' => $dp,
             'dependenciesName' => $dpNames,
             'tools' => $tools,
+            'storyTool' => $storyTools,
+            'mnMt' => $mnmt,
         ]);
     }
 
@@ -228,6 +248,7 @@ class AdminController extends Controller
     
     public function addEmplaries(Request $request){
         $request->validate([
+            "name" => "required",
             "level" => "required|integer",
             "speed" => "required|integer",
             "attack" => "required|integer",
@@ -240,7 +261,8 @@ class AdminController extends Controller
             "gender_id" => "required|integer",
         ]);
 
-        Exemplary::create([
+        $ex = Exemplary::create([
+            "name" => $request->input("name"),
             "level" => $request->input("level"),
             "speed" => $request->input("speed"),
             "attack" => $request->input("attack"),
@@ -254,9 +276,76 @@ class AdminController extends Controller
             "npc_id" => $request->input("npc_id"),
             "team_id" => $request->input("team_id"),
             "box_id" => $request->input("box_id"),
+            "holding_tools_id" => $request->input("holding_tools_id"),
         ]);
+        if(key_exists("catchDate",$request->all()) && key_exists("zone_id",$request->all()) && key_exists("user_id",$request->all())){
+            $ex->captured()->create([
+                "date" => $request->input("catchDate"),
+                "zone_id" => $request->input("zone_id"),
+                "user_id" => $request->input("user_id"),
+            ]);
+        }
+        
+        
         
         return redirect()->route("admin.exemplaries");
+    }
+
+    public function editEmplaries(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "level" => "required|integer",
+            "speed" => "required|integer",
+            "attack" => "required|integer",
+            "defense" => "required|integer",
+            "specialAttack" => "required|integer",
+            "specialDefense" => "required|integer",
+            "hp" => "required|integer",
+            "pokemon_id" => "required|integer",
+            "nature_id" => "required|integer",
+            "gender_id" => "required|integer",
+            "zone_id" => "required|integer",
+            "catchDate" => "required|date",
+        ]);
+        
+        $ex = Exemplary::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "level" => $request->input("level"),
+            "speed" => $request->input("speed"),
+            "attack" => $request->input("attack"),
+            "defense" => $request->input("defense"),
+            "specialAttack" => $request->input("specialAttack"),
+            "specialDefense" => $request->input("specialDefense"),
+            "ps" => $request->input("hp"),
+            "pokemon_id" => $request->input("pokemon_id"),
+            "nature_id" => $request->input("nature_id"),
+            "box_id" => $request->input("box_id"),
+            "team_id" => $request->input("team_id"),
+            "npc_id" => $request->input("npc_id"),
+            "holding_tools_id" => $request->input("holding_tools_id"),
+        ]);
+
+
+        if(key_exists("catchDate",$request->all()) && key_exists("zone_id",$request->all()) && key_exists("user_id",$request->all())){
+            $ex = Exemplary::find($request->input("id"));
+            //check if the exemplary has already a captured
+            if($ex->captured()->get()->first() != null){
+                $ex->captured()->update([
+                    "date" => $request->input("catchDate"),
+                    "zone_id" => $request->input("zone_id"),
+                    "user_id" => $request->input("user_id"),
+                ]);
+            }else{
+                $ex->captured()->create([
+                    "date" => $request->input("catchDate"),
+                    "zone_id" => $request->input("zone_id"),
+                    "user_id" => $request->input("user_id"),
+                ]);
+            }
+        }
+
+        return redirect()->back();
     }
 
     public  function deleteEmplaries(Request $request){
@@ -287,12 +376,16 @@ class AdminController extends Controller
             "name" => "required",
             "description" => "required",
             "type_id" => "required|integer",
+            "probState" => "required|integer",
+            "state_id" => "required|integer",
         ]);
 
         Move::create([
             "name" => $request->input("name"),
             "description" => $request->input("description"),
             "type_id" => $request->input("type_id"),
+            "probState" => $request->input("probState"),
+            "state_id" => $request->input("state_id"),
         ]);
 
         return redirect()->route("admin.moves");
@@ -304,12 +397,16 @@ class AdminController extends Controller
             "name" => "required",
             "description" => "required",
             "type_id" => "required|integer",
+            "probState" => "required|integer",
+            "state_id" => "required|integer",
         ]);
 
         Move::where("id", "=", $request->input("id"))->update([
             "name" => $request->input("name"),
             "description" => $request->input("description"),
             "type_id" => $request->input("type_id"),
+            "probState" => $request->input("probState"),
+            "state_id" => $request->input("state_id"),
         ]);
 
         return redirect()->route("admin.moves");
@@ -393,20 +490,91 @@ class AdminController extends Controller
 
     public function Pokemons(Request $request){
         $tb = new PokemonTable();
-        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+        if($request->all() != [] && key_exists("id",$request->all()) && $tb->equalsById($request->all()["id"])){
             $tb->setConfigObject($request->all());
         }
 
-        
+        $move = null;
+        $moveMn = null;
+        $dp = DependeciesResolver::resolve($tb);
+        $dpNames = $tb->getDependencies();
+        if(key_exists("pokemon_id",$request->all())){
+            if(key_exists("mnMt",$request->all()) && $request->input("mnMt") == 1){
+                $move1 = new MovesTable(MovesMode::getMovesForExemplaryMnMt,$request->all()["pokemon_id"]);
+                $dp = $this->putTogheterDepencencies($tb, $move1);
+                $dpNames = $this->putTogheterDepencenciesNames($tb, $move1);
+                $moveMn = $move1->get();
+            }else{
+                $move = new MovesTable(MovesMode::getMovesForExemplaryLevel,$request->all()["pokemon_id"]);
+                $dp = $this->putTogheterDepencencies($tb, $move);
+                $dpNames = $this->putTogheterDepencenciesNames($tb, $move);
+                $move = $move->get();
+            }
+            
+        }
+        $id = null ;
+        if(key_exists("pokemon_id",$request->all())){
+            $id = $request->all()["pokemon_id"];
+        }
 
         return Inertia::render("Admin/Razze",[
             'pokemon' => $tb->get(),
-            'dependencies' => DependeciesResolver::resolve($tb),
-            'dependenciesName' => $tb->getDependencies(),
+            'dependencies' => $dp,
+            'dependenciesName' => $dpNames,
+            'moves' => $move,
+            'movesMn' => $moveMn,
+            "url1" => "pokemons/Delete?mnMt=0&pokemon_id=".$id,
+            "url2" => "pokemons/Delete?mnMt=1&pokemon_id=".$id,
         ]);
     }
 
     public function addPokemon(Request $request){
+        if(key_exists("pokemon_id",$request->all()) && !key_exists("rarity_id",$request->all())){
+            if(key_exists("can_learn_mn_mt",$request->all())){
+                $request->validate([
+                    "can_learn_mn_mt" => "required|integer",
+                ]);
+    
+                $move = Move::find($request->input("can_learn_mn_mt"));
+                $move->canLearnFromMachine()->attach($request->input("pokemon_id"));
+            }else{
+                if(!key_exists("prefabbricato", $request->all())){
+                    $request->validate([
+                        "name" => "required",
+                        "description" => "required",
+                        "type_id" => "required|integer",
+                    ]);
+                    $move = Move::create([
+                        "name" => $request->input("name"),
+                        "description" => $request->input("description"),
+                        "type_id" => $request->type_id,
+                    ]);
+                    $move->canLearnFromLevel()->attach($request->input("pokemon_id"),["level" => $request->input("can_learn_level")]);
+                }else if(key_exists("prefabbricato", $request->all())){
+                    $request->validate([
+                        "prefabbricato" => "required|integer",
+                        "can_learn_level" => "required|integer",
+                    ]);
+    
+                    $move = Move::find($request->input("prefabbricato"));
+                    $move->canLearnFromLevel()->attach($request->input("pokemon_id"),["level" => $request->input("can_learn_level")]);
+        
+                }else{
+                    $request->validate([
+                        "name" => "required",
+                        "description" => "required",
+                        "type_id" => "required|integer",
+                        "can_learn_level" => "required|integer",
+                    ]);
+                    $move = Move::create([
+                        "name" => $request->input("name"),
+                        "description" => $request->input("description"),
+                        "type_id" => $request->input("type_id"),
+                    ]);
+                    $move->canLearnFromLevel()->attach($request->input("pokemon_id"),["level" => $request->input("can_learn_level")]);
+                }
+            }
+        }else{
         $request->validate([
             "name" => "required",
             "type_id" => "required|integer",
@@ -419,11 +587,37 @@ class AdminController extends Controller
         ]);
 
         $pokemon->type()->attach($request->input("type_id"));
-
+    }
         return redirect()->back();
     }
 
     public function editPokemon(Request $request){
+        //return $request->all();
+        if(key_exists("pokemon_id",$request->all())){
+            if(key_exists("can_learn_mn_mt",$request->all())){
+                $request->validate([
+                    "can_learn_mn_mt" => "required|integer",
+                    "old_move" => "required|string",
+                ]);
+                $move = Move::where("name","=",$request->input("old_move"))->get()->first();
+                $move->canLearnFromMachine()->detach($move->id);
+                $move = Move::find($request->input("can_learn_mn_mt"));
+                $move->canLearnFromMachine()->attach($move->id);
+
+            }else{
+                $request->validate([
+                    "prefabbricato" => "required|integer",
+                    "old_prefabbricato" => "required|string",
+                    "can_learn_level" => "required|integer",
+                ]);
+                
+                $oldTool = Move::where("name","=",$request->input("old_prefabbricato"))->get()->first();
+                
+                $npc = Pokemon::find($request->input("pokemon_id"));
+                $npc->canLearnFromLevel()->detach($oldTool->id);
+                $npc->canLearnFromLevel()->attach($request->input("prefabbricato"),["level" => $request->input("can_learn_level")]);
+            }
+        }else{
         $request->validate([
             "id" => "required|integer",
             "name" => "required",
@@ -432,18 +626,36 @@ class AdminController extends Controller
         Pokemon::where("id", "=", $request->input("id"))->update([
             "name" => $request->input("name"),
         ]);
-
+    }
         return redirect()->back();
     }
 
     public function deletePokemon(Request $request){
+
+        if(key_exists("pokemon_id",$request->all())){
+            if(key_exists("mnMt",$request->all()) && $request->input("mnMt") == 1){
+                
+                
+    
+                $move = Move::find($request->input("id"));
+                $move->canLearnFromMachine()->detach($request->input("pokemon_id"));
+
+            }else{
+                $request->validate([
+                    "pokemon_id" => "required|integer",
+                ]);
+    
+                $npc = Pokemon::find($request->input("pokemon_id"));
+                $npc->canLearnFromLevel()->detach($request->input("id"));
+            }
+        }else{
         $request->validate([
             "id" => "required|integer",
         ]);
 
         Pokemon::where("id", "=", $request->input("id"))->delete();
-
-        return redirect()->back();
+    }
+        return redirect()->route("admin.pokemons");
     }
 
     public function boxes(Request $request){
@@ -643,6 +855,7 @@ class AdminController extends Controller
             "length" => "required|integer",
             "width" => "required|integer",
             "position_id" => "required|integer",
+            "is_city" => "required|integer",
         ]);
 
         Zone::create([
@@ -650,6 +863,7 @@ class AdminController extends Controller
             "length" => $request->input("length"),
             "width" => $request->input("width"),
             "position_id" => $request->input("position_id"),
+            "is_city" => $request->input("is_city"),
         ]);
 
         return redirect()->back();
@@ -662,6 +876,7 @@ class AdminController extends Controller
             "length" => "required|integer",
             "width" => "required|integer",
             "position_id" => "required|integer",
+            "is_city" => "required|integer",
         ]);
 
         Zone::where("id", "=", $request->input("id"))->update([
@@ -669,6 +884,7 @@ class AdminController extends Controller
             "length" => $request->input("length"),
             "width" => $request->input("width"),
             "position_id" => $request->input("position_id"),
+            "is_city" => $request->input("is_city"),
         ]);
 
         return redirect()->back();
@@ -702,11 +918,13 @@ class AdminController extends Controller
             "zone_id" => "required|integer",
             "npc_id" => "required|integer",
             "position_id" => "required|integer",
+            "type_id" => "required|integer",
         ]);
 
         $gym = Gym::create([
             "zone_id" => $request->input("zone_id"),
             "position_id" => $request->input("position_id"),
+            "type_id" => $request->input("type_id"),
         ]);
 
         Npc::where("id", "=", $request->input("npc_id"))->update([
@@ -722,11 +940,13 @@ class AdminController extends Controller
             "zone_id" => "required|integer",
             "npc_id" => "required|integer",
             "position_id" => "required|integer",
+            "type_id" => "required|integer",
         ]);
 
         Gym::where("id", "=", $request->input("id"))->update([
             "zone_id" => $request->input("zone_id"),
             "position_id" => $request->input("position_id"),
+            "type_id" => $request->input("type_id"),
         ]);
 
         Npc::where("id", "=", $request->input("npc_id"))->update([
@@ -1227,6 +1447,194 @@ class AdminController extends Controller
 
         return redirect()->back();
     }
+
+    public function mnmts(Request $request){
+        $tb = new MnMtTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/MnMt",[
+            'mnmts' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addMnMt(Request $request){
+        $request->validate([
+            "number" => "required",
+            "description" => "required",
+            "move_id" => "required|integer",
+            "isMn" => "required|integer",
+        ]);
+
+        MnMt::create([
+            "number" => $request->input("number"),
+            "description" => $request->input("description"),
+            "move_id" => $request->input("move_id"),
+            "is_mn" => $request->input("isMn"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editMnMt(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "number" => "required",
+            "description" => "required",
+            "move_id" => "required|integer",
+            "isMn" => "required|integer",
+        ]);
+
+        MnMt::where("id", "=", $request->input("id"))->update([
+            "number" => $request->input("number"),
+            "description" => $request->input("description"),
+            "move_id" => $request->input("move_id"),
+            "is_mn" => $request->input("isMn"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteMnMt(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        MnMt::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function states(Request $request){
+        $tb = new StateTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Stati",[
+            'states' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addState(Request $request){
+        $request->validate([
+            "name" => "required",
+            "description" => "required",
+        ]);
+
+        State::create([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editState(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "description" => "required",
+        ]);
+
+        State::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteState(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        State::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function storyTools(Request $request){
+        $tb = new StoryToolTable();
+        if($request->all() != [] && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/StrumentiStoria",[
+            'storyTools' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function addStoryTool(Request $request){
+        $request->validate([
+            "name" => "required",
+            "description" => "required",
+        ]);
+
+        $tb=StoryTool::create([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editStoryTool(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "name" => "required",
+            "description" => "required",
+        ]);
+
+        $bt=StoryTool::where("id", "=", $request->input("id"))->update([
+            "name" => $request->input("name"),
+            "description" => $request->input("description"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function deleteStoryTool(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        StoryTool::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function teams(Request $request){
+        $tb = new ExemplaryTable(mode:Mode::TEAM,userId:$request->input("user_id"));
+        if($request->all() != [] && key_exists("id",$request->all()) && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        return Inertia::render("Admin/Squadre",[
+            'teams' => $tb->get(),
+            'dependencies' => DependeciesResolver::resolve($tb),
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function deleteTeam(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Exemplary::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
 
 
     private function resolveDate($date){

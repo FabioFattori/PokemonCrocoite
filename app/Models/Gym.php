@@ -11,7 +11,7 @@ class Gym extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['position_id', 'zone_id'];
+    protected $fillable = ['position_id', 'zone_id', 'type_id'];
 
     public function position()
     {
@@ -26,5 +26,9 @@ class Gym extends Model
     public function npc()
     {
         return $this->hasMany(Npc::class);
+    }
+
+    public function type(){
+        return $this->belongsTo(Type::class);
     }
 }

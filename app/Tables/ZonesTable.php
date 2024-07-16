@@ -34,6 +34,7 @@ class ZonesTable extends Table{
             "x" => Column::Visible("x","positions.x","X",isOriginal:false),
             "y" => Column::Visible("y","positions.y","Y",isOriginal:false),
             "position_id" => Column::Hidden("position_id","positions.id","Position",isOriginal:true),
+            "is_city" => Column::Visible("is_city","zones.is_city","è una Città",types:Types::BOOLEAN,isOriginal:true),
         ]);
     }
 }

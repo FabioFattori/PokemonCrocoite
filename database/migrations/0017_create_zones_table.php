@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer("length");
             $table->integer("width");
             $table->unique("name");
+            $table->boolean("is_city");
             $table->foreignId('position_id')->constrained()->cascadeOnDelete();
         });
     }

@@ -75,8 +75,7 @@ class User extends Authenticatable
     }
 
     public function exemplaries(){
-        return $this->join('teams', 'teams.user_id', '=', 'users.id')
-            ->join('exemplaries', 'teams.id', '=', 'exemplaries.team_id')
-            ->select('exemplaries.*');
+        return Team::join('exemplaries', 'teams.id', '=', 'exemplaries.team_id')
+            ->select('exemplaries.*')->where("teams.user_id", $this->id);
     }
 }

@@ -121,6 +121,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
                         <IconButton
                             onClick={() =>
                                 {
+                                    console.log(buttons[2].url)
                                     buttons[2].url != null
                                     ? router.post(buttons[2].url,{"id":selected[0]["id"],"headers":headers})
                                     : null
@@ -526,7 +527,7 @@ export default function GeneralTable({
                                                     !columns[field]["hidden"]
                                             )
                                             .map((header, key) => {
-                                                let flag = header.toLowerCase().includes("isGym".toLowerCase())
+                                                let flag = header.toLowerCase().includes("is".toLowerCase())
                                                 if(flag){
                                                     return (
                                                         <TableCell

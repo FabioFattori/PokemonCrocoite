@@ -11,6 +11,10 @@ class PokemonEncountered extends Model
 
     public $timestamps = false;
 
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
     protected $fillable = ['pokemon_id', 'user_id', 'zone_id', 'date'];
 
     public function pokemon()

@@ -11,7 +11,8 @@ class MnMt extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['move_id', 'number', 'description'];
+
+    protected $fillable = ['move_id', 'number', 'description', 'is_mn'];
 
     public function move()
     {

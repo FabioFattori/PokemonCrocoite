@@ -15,6 +15,10 @@ import PlumbingIcon from '@mui/icons-material/Plumbing';
 import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import StarIcon from '@mui/icons-material/Star';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
+import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
+import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+
 interface Route{
     Title: string;
     Path: string;
@@ -64,9 +68,19 @@ export default [
         Icon: BiotechIcon,
     },
     {
+        Title: "Mn Mt",
+        Path: "/admin/mnmts",
+        Icon: PrecisionManufacturingIcon,
+    },
+    {
         Title: "Rarità Pokemon",
         Path: "/admin/rarities",
         Icon: StarIcon,
+    },
+    {
+        Title: "Stati Pokemon",
+        Path: "/admin/states",
+        Icon: HeartBrokenIcon,
     },
     {
         Title: "Box Pokemon",
@@ -82,6 +96,11 @@ export default [
         Title: "Oggetti da Battaglia",
         Path:"/admin/tools",
         Icon: PlumbingIcon,
+    },
+    {
+        Title: "Oggetti della storia",
+        Path:"/admin/storyTools",
+        Icon: HistoryEduIcon,
     },
     {
         Title:"Zone",
