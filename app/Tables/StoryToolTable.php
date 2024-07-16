@@ -23,8 +23,10 @@ class StoryToolTable extends Table{
         if($this->mode == StoryToolMode::all){
             return StoryTool::query();
         }else {
+            //select * from story_tools left JOIN story_tool_user on story_tools.id = story_tool_user.story_tool_id WHERE story_tool_user.user_id = $this->userId;
             $q = StoryTool::query();
-            $q = $q->leftJoin("story_tool_user","story_tool_user.story_tool_id","=","story_tool_user.id")->leftJoin("users","users.id","=","story_tool_user.user_id");
+            $q->leftJoin("story_tool_user","story_tools.id","=","story_tool_user.story_tool_id");
+            $q->where("story_tool_user.user_id","=",$this->userId);
             return $q; 
         }
     }
@@ -39,14 +41,13 @@ class StoryToolTable extends Table{
                 "id" => Column::Hidden("id","story_tools.id","id",types:Types::INTEGER,isOriginal:true),
                 "name" => Column::Visible("name","story_tools.name","Nome",isOriginal:true),
                 "description" => Column::Visible("description","story_tools.description","Descrizione",isOriginal:true),
-                "quantity" => Column::Visible("quantity","story_tool_user.quantity","Quantità",isOriginal:false),
+                "quantity" => Column::Visible("quantity","story_tool_user.quantity","Quantità",isOriginal:true),
             ]);
         }else{
             $this->setColumns([
                 "id" => Column::Hidden("id","story_tools.id","id",types:Types::INTEGER,isOriginal:true),
                 "name" => Column::Visible("name","story_tools.name","Nome",isOriginal:true),
                 "description" => Column::Visible("description","story_tools.description","Descrizione",isOriginal:true),
-                
             ]);
         }
     }

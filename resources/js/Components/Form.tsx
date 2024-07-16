@@ -82,6 +82,8 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
     if(window.location.href.split("user_id=")[1]!=undefined){
       request["user_id"] = window.location.href.split("user_id=")[1].split("&")[0]
       request["old_prefabbricato"] = data["prefabbricato" as unknown as number]
+      request["old_move"] = data["move_id" as unknown as number]
+      request["old_storyToolName"] = data
     }
 
     if(window.location.href.split("pokemon_id=")[1]!=undefined){

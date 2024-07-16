@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Tables\MnMtMode;
 use App\Tables\StoryToolMode;
 use Database\Seeders\DatabaseSeeder;
 use App\Models\Battle;
@@ -85,9 +86,24 @@ class AdminController extends Controller
             if((key_exists("id",$request->all())) && $storyTools->equalsById($request->all()["id"])){
                 $storyTools->setConfigObject($request->all());
             }
-            $dp = $this->putTogheterDepencencies($tb, $storyTools);
-            $dpNames = $this->putTogheterDepencenciesNames($tb, $storyTools);
             $storyTools = $storyTools->get();
+
+            //return $storyTools;
+
+            $mnMt = new MnMtTable(mode:MnMtMode::ofUser,userId:$request->all()["user_id"]);
+
+            if((key_exists("id",$request->all())) && $mnMt->equalsById($request->all()["id"])){
+                $mnMt->setConfigObject($request->all());
+            }
+
+            $dp1 = $this->putTogheterDepencencies($tb, $mnMt);
+            $dpNames1 = $this->putTogheterDepencenciesNames($tb, $mnMt);
+            $mnmt = $mnMt->get();
+
+            $dp = array_merge($dp,$dp1);
+            $dpNames = array_merge($dpNames,$dpNames1);
+            
+
 
         }
 
@@ -102,7 +118,40 @@ class AdminController extends Controller
     }
 
     public function addUser(Request $request){
+        
         if(key_exists("user_id",$request->all())){
+            if(key_exists("move_id",$request->all())){
+                
+                $request->validate([
+                    "move_id" => "required|integer",
+                    "number" => "required|integer",
+                    "description" => "required|string",
+                    "isMn" => "required|integer",
+                    "quantity" => "required|integer",
+                ]);
+
+                $user = User::find($request->input("user_id"));
+                $mnMt = MnMt::create([
+                    "move_id" => $request->input("move_id"),
+                    "number" => $request->input("number"),
+                    "description" => $request->input("description"),
+                    "is_mn" => $request->input("isMn"),
+                ]);
+                $user->mnMt()->attach($mnMt->id,["quantity" => $request->input("quantity")]);
+                
+            }else if(key_exists("quantity",$request->all())){
+                $request->validate([
+                    "name" => 'required',
+                    "description" => 'required',
+                    "quantity" => 'required|integer',
+                ]);
+                $newTool = StoryTool::create([
+                    "name" => $request->input("name"),
+                    "description" => $request->input("description"),
+                ]);
+                $npc = User::find($request->input("user_id"));
+                $npc->storyTools()->attach($newTool->id,["quantity" => $request->input("quantity")]);
+            }else 
             if(!key_exists("prefabbricato", $request->all())){
                 $request->validate([
                     "name" => "required",
@@ -119,6 +168,7 @@ class AdminController extends Controller
                 $npc = User::find($request->input("user_id"));
                 $npc->battleTools()->attach($tb->id,["amount" => $request->input("amount")]);
             }else if(key_exists("prefabbricato", $request->all())){
+                
                 $request->validate([
                     "prefabbricato" => "required|integer",
                 ]);
@@ -126,7 +176,9 @@ class AdminController extends Controller
                 $tb = BattleTool::find($request->input("prefabbricato"));
                 $npc = User::find($request->input("user_id"));
                 $npc->battleTools()->attach($tb->id,["amount" => $request->input("amount")]);
-            }else{
+            }else 
+
+            {
                 $request->validate([
                     "name" => "required",
                     "description" => "required",
@@ -170,17 +222,60 @@ class AdminController extends Controller
 
     public function editUser(Request $request){
         if(key_exists("user_id",$request->all())){
-            $request->validate([
-                "prefabbricato" => "required|integer",
-                "old_prefabbricato" => "required|string",
-                "amount" => "required|integer",
-            ]);
             
-            $oldTool = BattleTool::where("name","=",$request->input("old_prefabbricato"))->get()->first();
-            
-            $npc = User::find($request->input("user_id"));
-            $npc->battleTools()->detach($oldTool->id);
-            $npc->battleTools()->attach($request->input("prefabbricato"),["amount" => $request->input("amount")]);
+            if(key_exists("move_id",$request->all())){
+                $request->validate([
+                    "old_move"=> "required|integer",
+                    "move_id" => "required|integer",
+                    "number" => "required|integer",
+                    "description" => "required|string",
+                    "isMn" => "required|integer",
+                    "quantity" => "required|integer",
+                ]);
+
+                $user = User::find($request->input("user_id"));
+                $mnMt = MnMt::find($request->input("id"));
+                $mnMt->update([
+                    "move_id" => $request->input("move_id"),
+                    "number" => $request->input("number"),
+                    "description" => $request->input("description"),
+                    "is_mn" => $request->input("isMn"),
+                ]);
+                $user->mnMt()->where("mn_mt_id","=",$request->input("old_move"))->updateExistingPivot($mnMt->id,["quantity" => $request->input("quantity")]);
+
+                
+            }else if(key_exists("old_storyToolName",$request->all())){
+                $request->validate([
+                    "old_storyToolName" => 'required',
+                    "name" => 'required',
+                    "description" => 'required',
+                    "quantity" => 'required|integer',
+                ]);
+                $oldTool = StoryTool::find($request->input("old_storyToolName")["id"]);
+                $npc = User::find($request->input("user_id"));
+                $npc->storyTools()->detach($request->input("old_storyToolName")["id"]);
+                $oldTool->update([
+                    "name" => $request->input("name"),
+                    "description" => $request->input("description"),
+                ]);
+                $npc->storyTools()->attach($oldTool->id,["quantity" => $request->input("quantity")]);
+                
+                
+            }else{
+
+                $request->validate([
+                    "prefabbricato" => "required|integer",
+                    "old_prefabbricato" => "required|string",
+                    "amount" => "required|integer",
+                ]);
+                
+                $oldTool = BattleTool::where("name","=",$request->input("old_prefabbricato"))->get()->first();
+                
+                $npc = User::find($request->input("user_id"));
+                $npc->battleTools()->detach($oldTool->id);
+                $npc->battleTools()->attach($request->input("prefabbricato"),["amount" => $request->input("amount")]);
+            }
+
         }else{
         $request->validate([
             "id" => "required|integer",
@@ -199,14 +294,23 @@ class AdminController extends Controller
     }
 
     public function deleteUser(Request $request){
+        return $request->all();
         if(key_exists("user_id",$request->all())){
 
             $request->validate([
                 "user_id" => "required|integer",
             ]);
 
-            $npc = User::find($request->input("user_id"));
-            $npc->battleTools()->detach($request->input("id"));
+            if(key_exists("Nome Mossa",$request->all()["headers"])){
+                $npc = User::find($request->input("user_id"));
+                $npc->mnMt()->detach($request->input("id"));
+            }else if(key_exists("Quantità",$request->all()["headers"])){
+                $npc = User::find($request->input("user_id"));
+                $npc->storyTools()->detach($request->input("id"));
+            }else{
+                $npc = User::find($request->input("user_id"));
+                $npc->battleTools()->detach($request->input("id"));
+            }
         }else{
         $request->validate([
             "id" => "required|integer",

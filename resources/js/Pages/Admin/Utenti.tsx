@@ -35,6 +35,33 @@ function Utenti() {
         },
     ] as Button[];
 
+    let btnsToolsStory = [
+        { label: "Add", icon: AddIcon, url: null },
+        { label: "Edit", icon: Edit, url: null },
+        {
+            label: "Delete",
+            icon: Delete,
+            url: !window.location.href.includes("Delete")
+                ? window.location.href.split("?user_id")[0] +
+                  "/Delete?user_id=" +
+                  window.location.href.split("?user_id=")[1] 
+                : window.location.href,
+        },
+    ] as Button[];
+
+    let btnsMnMt = [
+        { label: "Add", icon: AddIcon, url: null },
+        { label: "Edit", icon: Edit, url: null },
+        {
+            label: "Delete",
+            icon: Delete,
+            url: !window.location.href.includes("Delete")
+                ? window.location.href.split("?user_id")[0] +
+                  "/Delete?user_id=" +
+                  window.location.href.split("?user_id=")[1] 
+                : window.location.href,
+        },
+    ] as Button[];
   
 
     setTableToUse("users");
@@ -53,6 +80,8 @@ function Utenti() {
               router.get("/admin/teams", { user_id: props[0].id });
           }
       );
+       
+    
         return () => {
             resetButtonsConfiguration();
         };
@@ -65,6 +94,7 @@ function Utenti() {
                 dbObject={users}
                 buttons={buttons}
             />
+            {tools != null || storyTool != null || mnMt != null ? <h1 style={{display:"flex",justifyContent:"center"}} className="Title">Inventario</h1>:null}
             {tools != null ? (
                 <GeneralTable
                     tableTitle="Oggetti da Battaglia"
@@ -78,7 +108,7 @@ function Utenti() {
                     tableTitle="Strumenti inerenti alla storia"
                     rootForPagination={window.location.href}
                     dbObject={storyTool}
-                    buttons={[]}
+                    buttons={btnsToolsStory}
                 />
             :null}
             {mnMt != null ?
@@ -86,7 +116,7 @@ function Utenti() {
                     tableTitle="Mn e Mt"
                     rootForPagination={window.location.href}
                     dbObject={mnMt}
-                    buttons={[]}
+                    buttons={btnsMnMt}
                 />
             :null}
         </>
