@@ -6,12 +6,15 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SeedController;
+use App\Http\Controllers\StatsController;
 use App\Http\Controllers\UserController;
 use App\Tables\ExemplaryTable;
 use App\Tables\UserTable;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get("/stats", [StatsController::class, "index"])->name("stats");
 
 Route::match(['GET', 'POST'], '/', [HomeController::class, "index"])->name("home.get");
 
