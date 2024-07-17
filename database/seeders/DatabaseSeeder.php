@@ -833,6 +833,11 @@ class DatabaseSeeder extends Seeder
             //duplicate exemplary (with different id)
             $exemplaryClone = $exemplary->replicate();
             $exemplaryClone->exemplary_id = $exemplary->id;
+            $exemplaryClone->speed = $exemplary->speed - $this->faker->numberBetween(0, $exemplary->speed);
+            $exemplaryClone->specialDefense = $exemplary->specialDefense - $this->faker->numberBetween(0, $exemplary->specialDefense);
+            $exemplaryClone->defense = $exemplary->defense - $this->faker->numberBetween(0, $exemplary->defense);
+            $exemplaryClone->attack = $exemplary->attack - $this->faker->numberBetween(0, $exemplary->attack);
+            $exemplaryClone->specialAttack = $exemplary->specialAttack - $this->faker->numberBetween(0, $exemplary->specialAttack);
             $exemplaryClone->save();
 
             $exemplaryClone->captured()->create([
