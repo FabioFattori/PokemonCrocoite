@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class StatsController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
+        
+
         $params = [
             "mostVariegatedPlayerTeam" => $this->mostVariegatedPlayerTeams(),
             "bestPokemonForUpgradeAverage" => $this->bestPokemonForUpgradeAverage(),
             "mostWinningRarityAverage" => $this->mostWinningRarityAverage(),
-            "zoneWithGreatestPokemon" => $this->zoneWithGreatestPokemon()
+            "zoneWithGreatestPokemon" => $this->zoneWithGreatestPokemon(),
+            "greatestPokemon" => $this->greatestPokemon(),
+            "greatestMoves" => $this->greatestMoves()
         ];
 
         return Inertia::render('Stats', $params);
@@ -91,4 +96,53 @@ GROUP by c.zone_id
     ) as t1 join zones z on z.id = t1.zone_id
     order by average_power desc");
     }
+
+
+    private function greatestPokemon(){
+        return DB::select("with BattlesWinner as (
+select 
+    CASE
+    	WHEN br.winner = 1 then br.exemplary1_id
+    	WHEN br.winner = 2 then br.exemplary2_id
+    END as winner,
+    CASE
+    	WHEN br.winner = 1 then br.exemplary2_id
+    	WHEN br.winner = 2 then br.exemplary1_id
+    END as loser
+    from battle_registries br
+)
+
+select amount, e.name as pokemon_name, u.email from exemplaries e join (
+select count(*) as amount, exemplary_id from exemplaries e
+join BattlesWinner bw on bw.winner = e.id
+group by exemplary_id
+    ) as t1 on t1.exemplary_id = e.id
+    join teams t on t.id = e.team_id
+    join users u on u.id = t.user_id
+    order by amount desc");
+    }
+
+    private function greatestMoves(){
+        return DB::select("with BattlesWinner as (
+        select 
+            CASE
+                WHEN br.winner = 1 then br.exemplary1_id
+                WHEN br.winner = 2 then br.exemplary2_id
+            END as winner,
+            CASE
+                WHEN br.winner = 1 then br.exemplary2_id
+                WHEN br.winner = 2 then br.exemplary1_id
+            END as loser
+            from battle_registries br
+        )
+
+        select  count(m.id) as amount, m.name as move_name from exemplaries e
+        join BattlesWinner bw on bw.winner = e.id
+        join exemplary_move em on em.exemplary_id = e.id
+        join moves m on m.id = em.move_id
+        group by m.id
+        order by amount desc");
+    }
+
+     
 }

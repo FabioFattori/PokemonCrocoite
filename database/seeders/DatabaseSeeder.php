@@ -882,11 +882,11 @@ class DatabaseSeeder extends Seeder
         $yellowEx2->exemplary_id = $id;
         $yellowEx2->save();
         $yellowEx2->copyMovesFrom($id);
-        $id = $red->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
-        $redEx3 = Exemplary::find($id)->replicate();
-        $redEx3->exemplary_id = $id;
-        $redEx3->save();
-        $redEx3->copyMovesFrom($id);
+        // $id = $red->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
+        // $redEx3 = Exemplary::find($id)->replicate();
+        // $redEx3->exemplary_id = $id;
+        // $redEx3->save();
+        // $redEx3->copyMovesFrom($id);
         $id = $yellow->exemplaries()->whereNull("exemplary_id")->skip(2)->first()->id;
         $yellowEx3 = Exemplary::find($id)->replicate();
         $yellowEx3->exemplary_id = $id;
@@ -904,7 +904,7 @@ class DatabaseSeeder extends Seeder
                 'winner' => 2
             ],
             [
-                'exemplary1_id' => $redEx3->id,
+                'exemplary1_id' => $redEx1->id,
                 'exemplary2_id' => $yellowEx3->id,
                 'winner' => 1
             ],

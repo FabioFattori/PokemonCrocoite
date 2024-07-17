@@ -1,5 +1,17 @@
-import { Stack, Typography, Container, Box } from "@mui/material";
+import {
+    Stack,
+    Typography,
+    Container,
+    Box,
+    Tab,
+    Tabs,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+} from "@mui/material";
 import ChartManager from "../Components/ChartManager";
+import { router } from "@inertiajs/react";
 
 interface StatsProps {
     mostVariegatedPlayerTeam: {
@@ -19,6 +31,15 @@ interface StatsProps {
         zone_name: string;
         average_power: number;
     }[];
+    greatestPokemon: {
+        amount: number;
+        pokemon_name: string;
+        email: string;
+    }[];
+    greatestMoves: {
+        amount: number;
+        move_name: string;
+    }[];
 }
 
 const Stats = (props: StatsProps) => {
@@ -27,8 +48,9 @@ const Stats = (props: StatsProps) => {
         bestPokemonForUpgradeAverage,
         mostWinningRarityAverage,
         zoneWithGreatestPokemon,
+        greatestPokemon,
+        greatestMoves,
     } = props;
-    console.log(zoneWithGreatestPokemon);
     return (
         <Container>
             <Stack spacing={1}>
@@ -78,6 +100,28 @@ const Stats = (props: StatsProps) => {
                             .concat([""])}
                         y={zoneWithGreatestPokemon
                             .map((q) => Number(q.average_power))
+                            .concat([0])}
+                    />
+                </Box>
+                <Box>
+                    <ChartManager
+                        label=""
+                        title="Esemplari più forti per battaglie vinte"
+                        x={greatestPokemon
+                            .map((q) => q.pokemon_name + " di " + q.email)
+                            .concat([""])}
+                        y={greatestPokemon
+                            .map((q) => Number(q.amount))
+                            .concat([0])}
+                    />
+                </Box>
+                <Box>
+                    <ChartManager
+                        label=""
+                        title="Mosse più presenti negli esemplari che hanno vinto le battaglie"
+                        x={greatestMoves.map((q) => q.move_name).concat([""])}
+                        y={greatestMoves
+                            .map((q) => Number(q.amount))
                             .concat([0])}
                     />
                 </Box>
