@@ -118,9 +118,18 @@ class  UserController extends Controller
         $ex = Exemplary::find($request->exemplary_id);
         $box = Box::find($request->box_id);
 
-        $ex->team_id = null;
-        $ex->box_id = $box->id;
-        $ex->save();
+        $user = auth()->user();
+        
+        $nExeInTeam = Exemplary::all()->whereNull("exemplary_id");
+        $nExeInTeam = $nExeInTeam->where("team_id", Team::where("user_id", $user->id)->first()->id)->count();
+
+        if($nExeInTeam == 1){
+            return redirect()->back()->withErrors(['user_id' => 'Hai solo questo esemplare nel team, non puoi giocare senza pokemon']);
+        }else{
+            $ex->team_id = null;
+            $ex->box_id = $box->id;
+            $ex->save();
+        }
        
         return redirect()->back()->with('success', 'Il Pokemon è stato aggiunto al box');
     }
