@@ -6,6 +6,7 @@ import SportsKabaddiIcon from '@mui/icons-material/SportsKabaddi';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import BackpackIcon from '@mui/icons-material/Backpack';
 import EqualizerIcon from '@mui/icons-material/Equalizer';
+import MapIcon from '@mui/icons-material/Map';
 interface Route{
     Title: string;
     Path: string;
@@ -42,8 +43,11 @@ export default [
         Title: "Zaino",
         Path: "/user/bag",
         Icon: BackpackIcon,
+    },{
+        Title: "Mappa di gioco",
+        Path: "/user/map",
+        Icon: MapIcon,
     },
-    
     {
         Title: "Statistiche",
         Path: "/stats",

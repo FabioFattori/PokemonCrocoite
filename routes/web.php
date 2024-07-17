@@ -168,4 +168,5 @@ Route::prefix("user")->group(function () {
     Route::match(['GET', 'POST'],"/singleBattle", [UserController::class, "singleBattle"])->name("user.singleBattle");
     Route::match(['GET', 'POST'],"/bag", [UserController::class, "bag"])->name("user.bag");
     Route::match(['GET', 'POST'],"/moves", [UserController::class, "moves"])->name("user.moves");
+    Route::get("/map", [UserController::class, "map"])->name("user.map");
 });

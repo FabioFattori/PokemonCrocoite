@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Box;
 use App\Models\Exemplary;
+use App\Models\Position;
 use App\Models\Team;
+use App\Models\Zone;
 use App\Tables\BattleMode;
 use App\Tables\BattleTable;
 use App\Tables\BattleToolMode;
@@ -242,5 +244,17 @@ class  UserController extends Controller
         ]);
 
 
+    }
+
+
+    public function map(Request $request){
+        $zones = Zone::all();
+        $user = auth()->user();
+        $userPos = Position::where('id',$user->position_id)->first();
+
+        return Inertia::render('Users/Zones', [
+            'zones' => $zones,
+            'userPos' => $userPos,
+        ]);
     }
 }
