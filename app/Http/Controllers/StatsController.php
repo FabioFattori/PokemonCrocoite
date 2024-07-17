@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Rarity;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -10,11 +11,14 @@ use Inertia\Inertia;
 class StatsController extends Controller
 {
     public function index(Request $request){
-        
+        $rarityId = $request->rarityId ?? Rarity::where("name", "Common")->first()->id ;
 
         $params = [
+            "rarities" => Rarity::all(),
+            "rarityId" => $rarityId,
             "mostVariegatedPlayerTeam" => $this->mostVariegatedPlayerTeams(),
             "bestPokemonForUpgradeAverage" => $this->bestPokemonForUpgradeAverage(),
+            "playerWithMoreRarities" => $this->playerWithMoreRarities($rarityId),
             "mostWinningRarityAverage" => $this->mostWinningRarityAverage(),
             "zoneWithGreatestPokemon" => $this->zoneWithGreatestPokemon(),
             "greatestPokemon" => $this->greatestPokemon(),
@@ -50,6 +54,16 @@ select e.id, pokemon_id, pa.avarage - (speed + specialDefense + specialAttack + 
    ) as t1 on t1.pokemon_id = pokemon.id
    order by values_avarage desc
 ");
+    }
+
+    private function playerWithMoreRarities($rarityId){
+        return DB::select("select count(*) as amount, u.email from rarities r 
+            join pokemon p on p.rarity_id = r.id
+            join exemplaries e on e.pokemon_id = p.id
+            join captureds c on c.exemplary_id = e.id
+            join users u on u.id = c.user_id
+            where r.id = ?
+            group by u.id", [$rarityId]);
     }
 
     private function mostWinningRarityAverage(){
@@ -99,27 +113,32 @@ GROUP by c.zone_id
 
 
     private function greatestPokemon(){
-        return DB::select("with BattlesWinner as (
-select 
-    CASE
-    	WHEN br.winner = 1 then br.exemplary1_id
-    	WHEN br.winner = 2 then br.exemplary2_id
-    END as winner,
-    CASE
-    	WHEN br.winner = 1 then br.exemplary2_id
-    	WHEN br.winner = 2 then br.exemplary1_id
-    END as loser
-    from battle_registries br
+        return DB::select("WITH BattlesWinner AS
+(
+	SELECT  CASE WHEN br.winner = 1 THEN br.exemplary1_id
+	             WHEN br.winner = 2 THEN br.exemplary2_id END AS winner
+	       ,CASE WHEN br.winner = 1 THEN br.exemplary2_id
+	             WHEN br.winner = 2 THEN br.exemplary1_id END AS loser
+	FROM battle_registries br
 )
 
-select amount, e.name as pokemon_name, u.email from exemplaries e join (
-select count(*) as amount, exemplary_id from exemplaries e
-join BattlesWinner bw on bw.winner = e.id
-group by exemplary_id
-    ) as t1 on t1.exemplary_id = e.id
-    join teams t on t.id = e.team_id
-    join users u on u.id = t.user_id
-    order by amount desc");
+SELECT amount, email, e.name as pokemon_name from exemplaries e join ( 
+SELECT  amount, e.exemplary_id, u.email
+FROM exemplaries e
+JOIN
+(
+	SELECT  COUNT(*) AS amount
+	       ,exemplary_id
+	FROM exemplaries e
+	JOIN BattlesWinner bw
+	ON bw.winner = e.id
+	GROUP BY  exemplary_id
+) AS t1
+ON t1.exemplary_id = e.exemplary_id
+join captureds c on c.exemplary_id = e.id 
+join users u on u.id = c.user_id
+    ) as t2 on t2.exemplary_id = e.id
+    order by amount DESC");
     }
 
     private function greatestMoves(){

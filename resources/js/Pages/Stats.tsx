@@ -16,6 +16,11 @@ import SideBar from "../Components/SideBar";
 import userMode from "../Components/userMode";
 
 interface StatsProps {
+    rarities: {
+        id: number;
+        name: string;
+    }[];
+    rarityId: number;
     mostVariegatedPlayerTeam: {
         pokemon_types: number;
         move_types: number;
@@ -24,6 +29,10 @@ interface StatsProps {
     bestPokemonForUpgradeAverage: {
         values_avarage: number;
         pokemon_name: string;
+    }[];
+    playerWithMoreRarities: {
+        amount: number;
+        email: string;
     }[];
     mostWinningRarityAverage: {
         average_win: number;
@@ -52,6 +61,7 @@ const Stats = (props: StatsProps) => {
         zoneWithGreatestPokemon,
         greatestPokemon,
         greatestMoves,
+        playerWithMoreRarities,
     } = props;
     return (
         <>
@@ -80,6 +90,46 @@ const Stats = (props: StatsProps) => {
                                 .concat([""])}
                             y={bestPokemonForUpgradeAverage
                                 .map((q) => Number(q.values_avarage))
+                                .concat([0])}
+                        />
+                    </Box>
+                    <Box>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">
+                                Rarità
+                            </InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={props.rarityId}
+                                label="Rarità"
+                                onChange={(e) =>
+                                    router.get(
+                                        "/stats",
+                                        {
+                                            rarityId: e.target.value,
+                                        },
+                                        {
+                                            preserveScroll: true,
+                                        }
+                                    )
+                                }
+                            >
+                                {props.rarities.map((r) => (
+                                    <MenuItem key={r.id} value={r.id}>
+                                        {r.name}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <ChartManager
+                            label=""
+                            title="Utenti che hanno più esemplari della rarità selezionata"
+                            x={playerWithMoreRarities
+                                .map((q) => q.email)
+                                .concat([""])}
+                            y={playerWithMoreRarities
+                                .map((q) => Number(q.amount))
                                 .concat([0])}
                         />
                     </Box>

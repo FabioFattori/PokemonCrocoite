@@ -109,13 +109,26 @@ ON t1.pokemon_id = pokemon.id
 ORDER BY values_avarage desc
 ```
 
-Extra:
-> Una classifica delle zone con il miglior miglioramento medio in termini di statistiche base.
-
 ### Utenti con il maggior numero di pokemon di ogni rarità catturati
 > Mostra i primi 10 utenti con il maggior numero di pokemon di ogni rarità catturati.
 
-L'utente dovrà selezionare la rarità di cui vuole visualizzare i primi 10 utenti.
+L'utente dovrà selezionare la rarità di cui vuole visualizzare i primi utenti.
+```sql
+
+SELECT  COUNT(*) AS amount
+       ,u.email
+FROM rarities r
+JOIN pokemon p
+ON p.rarity_id = r.id
+JOIN exemplaries e
+ON e.pokemon_id = p.id
+JOIN captureds c
+ON c.exemplary_id = e.id
+JOIN users u
+ON u.id = c.user_id
+WHERE r.id = ?
+GROUP BY  u.id "
+```
 
 ### Rarità più vincenti
 > Mostra le  rarità con il maggior numero di vittorie.
@@ -220,24 +233,32 @@ WITH BattlesWinner AS
 	FROM battle_registries br
 )
 SELECT  amount
+       ,email
        ,e.name AS pokemon_name
-       ,u.email
 FROM exemplaries e
 JOIN
 (
-	SELECT  COUNT(*) AS amount
-	       ,exemplary_id
+	SELECT  amount
+	       ,e.exemplary_id
+	       ,u.email
 	FROM exemplaries e
-	JOIN BattlesWinner bw
-	ON bw.winner = e.id
-	GROUP BY  exemplary_id
-) AS t1
-ON t1.exemplary_id = e.id
-JOIN teams t
-ON t.id = e.team_id
-JOIN users u
-ON u.id = t.user_id
-ORDER BY amount desc
+	JOIN
+	(
+		SELECT  COUNT(*) AS amount
+		       ,exemplary_id
+		FROM exemplaries e
+		JOIN BattlesWinner bw
+		ON bw.winner = e.id
+		GROUP BY  exemplary_id
+	) AS t1
+	ON t1.exemplary_id = e.exemplary_id
+	JOIN captureds c
+	ON c.exemplary_id = e.id
+	JOIN users u
+	ON u.id = c.user_id
+) AS t2
+ON t2.exemplary_id = e.id
+ORDER BY amount DESC
 ```
 
 ### Analisi mosse più efficaci

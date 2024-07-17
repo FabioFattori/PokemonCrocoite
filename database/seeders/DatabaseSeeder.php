@@ -774,15 +774,10 @@ class DatabaseSeeder extends Seeder
         $this->fakeExemplary($metapod, $greenTeam);
         $this->fakeExemplary($venusaur, $greenTeam);
 
-        // 3 exemplary for some box
-        $users = [$red, $yellow, $green];
-        $boxes = ["Box 1", "Box 2", "Box 3"];
         $pokemons = [$bulbasaur, $charmander, $squirtle, $blastoise, $charizard, $butterfree, $caterpie, $metapod, $venusaur];
-        for($i = 0; $i < 3; $i++){
-            $box = Box::where("name", $boxes[$i])->first();
-            $user = $users[$i];
+        foreach(Box::all() as $box){
             for($j = 0; $j < 3; $j++){
-                $pokemon = $pokemons[$j];
+                $pokemon = Pokemon::inRandomOrder($this->faker->numberBetween(1, 100))->first();
                 $this->fakeExemplary($pokemon, null, null, $box);
             }
         }
