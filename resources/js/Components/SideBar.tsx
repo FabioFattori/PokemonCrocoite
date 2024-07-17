@@ -1,6 +1,6 @@
-import { router } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import Divider from "@mui/material/Divider";
-import { Drawer, Icon, Toolbar, Typography } from "@mui/material";
+import { Alert, Drawer, Icon, Toolbar, Typography } from "@mui/material";
 import React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import List from "@mui/material/List";
@@ -21,6 +21,8 @@ function SideBar({ title,mode }: { title: string,mode:userMode }) {
     const theme = useTheme();
     const [open, setOpen] = React.useState(false);
     const [Mode, setMode] = React.useState(mode);
+    
+    let Error = (usePage().props.errors as any) ?? null;
     let drawerWidth = 240;
     const AppBar = styled(MuiAppBar, {
         shouldForwardProp: (prop) => prop !== "open",
@@ -47,6 +49,16 @@ function SideBar({ title,mode }: { title: string,mode:userMode }) {
         justifyContent: "flex-end",
     }));
 
+    const RemoveKey = (obj: any, deleteKey: string) => {
+        console.log("apply Filter");
+        return Object.keys(obj).reduce((result:any, key) => {
+            if (key !== deleteKey) {
+                result[key] = obj[key];
+            }
+            return result;
+        }, {});
+    };
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -57,6 +69,12 @@ function SideBar({ title,mode }: { title: string,mode:userMode }) {
     return (
         <div>
             <AppBar position="fixed" open={open}>
+            {Object.keys(Error).length != 0 ? Object.keys(Error).map((key)=>{
+            return (
+                <Alert className="allert" severity="error" >{Error[key]}</Alert>
+            )
+        }) : null}
+            
                 <Toolbar>
                     <IconButton
                         color="inherit"
@@ -72,6 +90,8 @@ function SideBar({ title,mode }: { title: string,mode:userMode }) {
                     </Typography>
                 </Toolbar>
             </AppBar>
+            
+            
             <Drawer
                 sx={{
                     width: drawerWidth,
@@ -120,7 +140,9 @@ function SideBar({ title,mode }: { title: string,mode:userMode }) {
                         </ListItem>
                     ))}
                 </List>
+            
             </Drawer>
+            
         </div>
     );
 }

@@ -1,7 +1,7 @@
 import HomeIcon from '@mui/icons-material/Home';
-import PetsIcon from '@mui/icons-material/Pets';
 import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ArchiveIcon from '@mui/icons-material/Archive';
 
 interface Route{
     Title: string;
@@ -16,14 +16,14 @@ export default [
         Icon: HomeIcon,
     },
     {
-        Title: "Esemplari",
-        Path: "/user/exemplaries",
-        Icon: PetsIcon,
-    },
-    {
         Title: "Team",
         Path: "/user/userTeam",
         Icon: CatchingPokemonIcon,
+    },
+    {
+        Title: "Box",
+        Path: "/user/boxes",
+        Icon: ArchiveIcon,
     },
     {
         Title: "Logout",

@@ -24,8 +24,7 @@ function AdminView() {
 
     return (
         <div>
-            <h1 style={{fontSize:120}}>SUCAMINCHIA</h1>
-            <h1 style={{fontSize:50}}>Statistiche generali</h1>
+            <h1 className="Title" style={{marginTop:"55px"}}>Statistiche generali</h1>
             <ChartManager title="Mosse più utilizzate (Mosse più presenti nel reparto mosse degli esemplari)" label="Mosse più utilizzate" x={d} y = {c}/> 
             <ChartManager title="Numero di giocatori per zona" label="Numero di giocatori per zona" x={b} y = {a}/> 
             <ChartManager title="Pokemon più utilizzati" label="Pokemon più utilizzati" x={w} y = {z}/> 

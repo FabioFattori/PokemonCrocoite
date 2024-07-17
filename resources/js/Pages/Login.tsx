@@ -52,7 +52,7 @@ function Login() {
         <div className="login-form">
             <div>
                 <div>
-                    <img src={landingImage} alt="landing" />
+                    <h1 className="Title">{mode}</h1>
                     <label>Email</label>
                     <input
                         type="email"

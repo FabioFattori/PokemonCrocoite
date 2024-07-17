@@ -4,7 +4,7 @@ import * as React from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import Form from './Form';
+import {Form} from './Form';
 
 export default function DialogForm({open,openDialog,closeDialog,headers=[],fieldNames=[], data=[]}:{open:boolean,openDialog:()=>void,closeDialog:()=>void,headers: string[],fieldNames:string[] , data: any[]}) {
   

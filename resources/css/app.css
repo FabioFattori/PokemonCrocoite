@@ -147,3 +147,12 @@
     justify-content: center;
     align-items: center;
 }
+
+.allert{
+    width: 25%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    
+}
