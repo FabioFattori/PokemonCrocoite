@@ -1302,6 +1302,10 @@ class AdminController extends Controller
                 "exemplary2" => "required|integer",
                 "winner" => "required|integer",
             ]);
+
+            if($request->input("winner") != 1 && $request->input("winner") != 2){
+                return redirect()->back()->withErrors(["winner" => "The winner must be 1 or 2"]);
+            }
             
             BattleRegistry::create([
                 "battle_id" => $request->input("battle_id"),
@@ -1317,8 +1321,8 @@ class AdminController extends Controller
                 "user_2" => "required|integer",
             ]);
     
-            if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
-                return redirect()->back();
+            if($request->input("winner") != 1 && $request->input("winner") != 2){
+                return redirect()->back()->withErrors(["winner" => "The winner must be 1 or 2"]);
             }
     
             $battle = Battle::create([

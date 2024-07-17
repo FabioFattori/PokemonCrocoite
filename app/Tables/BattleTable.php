@@ -23,8 +23,6 @@ class BattleTable extends Table
         }
         $q->leftJoin("users as user_1","user_1","=","user_1.id");
         $q->leftJoin("users as user_2","user_2","=","user_2.id");
-        $q->leftJoin("users","winner","=","users.id");
-        $q->select("battles.id","battles.date","battles.winner","users.email","user_1.email","user_2.email");
         return $q;
     }
 
@@ -42,8 +40,7 @@ class BattleTable extends Table
         $this->setColumns([
             "id" => Column::Hidden("id","battles.id",types:Types::INTEGER),
             "date" => Column::Visible("date","battles.date","Data Della battaglia",types:Types::DATE,isOriginal:true),
-            "winnerName" => Column::Visible("winnerName","users.email","Vincitore ",types:Types::STRING,isOriginal:false),
-            "winner" => Column::Hidden("winner","battles.winner","User Vincitore",types:Types::INTEGER,isOriginal:true),
+            "winner" => Column::Visible("winner","battles.winner","Vincitore",types:Types::INTEGER,isOriginal:true),
             "user_1Name" => Column::Visible("user_1Name","user_1.email","User 1",types:Types::STRING,isOriginal:false),
             "user_2Name" => Column::Visible("user_2Name","user_2.email","User 2",types:Types::STRING,isOriginal:false),
             "user_1" => Column::Hidden("user_1","battles.user_1","User 1",types:Types::INTEGER,isOriginal:true),

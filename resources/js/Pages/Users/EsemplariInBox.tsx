@@ -4,8 +4,8 @@ import GeneralTable from "../../Components/GeneralTable";
 import { Button} from "../../utils/buttons";
 import SideBar from "../../Components/SideBar";
 import userMode from "../../Components/userMode";
-import SentimentVeryDissatisfiedIcon from "@mui/icons-material/SentimentVeryDissatisfied";
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
+import { SignLanguage } from "@mui/icons-material";
 
 function GenericExemplary() {
     var exemplaries = (usePage().props.EsemplariInBox as any[]) ?? null;
@@ -13,10 +13,10 @@ function GenericExemplary() {
     var t2 = (usePage().props.t2 as string) ?? "";
     let btn = [
         {
-            label: "Libera Pokemon",
-            icon: SentimentVeryDissatisfiedIcon,
+            label: "mostra Mosse",
+            icon: SignLanguage,
             method: ({ props }: { props: any }) => {
-                router.post("/user/exemplary/free", { id: props[0].id });
+                router.get("/user/moves",{id:props[0].id});
             },
         },
         {

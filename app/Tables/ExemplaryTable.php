@@ -39,7 +39,7 @@ class ExemplaryTable extends Table{
     }
 
     public function getQuery():Builder|EloquentBuilder{
-        $q = Exemplary::query()->whereNull("exemplaries.exemplary_id")->leftJoin("captureds", "captureds.exemplary_id", "=", "exemplaries.id");
+        $q = Exemplary::query()->leftJoin("captureds", "captureds.exemplary_id", "=", "exemplaries.id");
         $q->leftJoin("zones", "captureds.zone_id", "=", "zones.id");
         $q->leftJoin("teams", "exemplaries.team_id", "=", "teams.id");
         $q->leftJoin("users", "teams.user_id", "=", "users.id");
@@ -48,16 +48,20 @@ class ExemplaryTable extends Table{
         $q->leftJoin("states", "state_exemplaries.state_id", "=", "states.id");
         if($this->currentMode == Mode::TEAM && auth()->user() != null){
             $q->where("team_id", "=", auth()->user()->getTeamId());
+            $q->whereNull("exemplaries.exemplary_id");
         }else if($this->currentMode == Mode::TEAM && auth()->user() == null){
             $q->where("team_id", "=", $this->userId);
+            $q->whereNull("exemplaries.exemplary_id");
         }
 
         if($this->currentMode == Mode::ADMIN){
+            $q->whereNull("exemplaries.exemplary_id");
             $q->leftJoin("boxes", "exemplaries.box_id", "=", "boxes.id");
             $this->addElementToDependencies("Box");
         }
 
         if($this->currentMode == Mode::Box){
+            $q->whereNull("exemplaries.exemplary_id");
             $q->where("box_id", "=", $this->boxId);
         }
 

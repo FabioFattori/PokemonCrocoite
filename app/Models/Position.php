@@ -16,9 +16,16 @@ class Position extends Model
     public static function checkIfPositionIsInZone($x, $y, $zone_id)
     {
         $zone = Zone::where('id', $zone_id)->first();
-        if ($zone->x1 <= $x && $zone->x2 >= $x && $zone->y1 <= $y && $zone->y2 >= $y) {
+
+        $zoneWidth = $zone->width + $zone->position->x;
+        $zoneLength = $zone->length + $zone->position->y;
+
+        //check if the position is in the zone
+        if($x >= $zone->position->x && $x <= $zoneWidth && $y >= $zone->position->y && $y <= $zoneLength){
             return true;
         }
+
+        
         $position = Position::where('x', $x)->where('y', $y)->first();
         if($zone->position_id == $position->id){
             return true;

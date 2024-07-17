@@ -1,5 +1,7 @@
 import { Stack, Typography, Container, Box } from "@mui/material";
 import ChartManager from "../Components/ChartManager";
+import SideBar from "../Components/SideBar";
+import userMode from "../Components/userMode";
 
 interface StatsProps {
     mostVariegatedPlayerTeam: {
@@ -30,7 +32,9 @@ const Stats = (props: StatsProps) => {
     } = props;
     console.log(zoneWithGreatestPokemon);
     return (
-        <Container>
+        <>
+        <SideBar title={"Statistice"} mode={userMode.user}/>
+            <Container>
             <Stack spacing={1}>
                 <Typography variant="h4">Statistiche generali</Typography>
                 <Box>
@@ -83,6 +87,7 @@ const Stats = (props: StatsProps) => {
                 </Box>
             </Stack>
         </Container>
+        </>
     );
 };
 

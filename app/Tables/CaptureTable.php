@@ -8,8 +8,15 @@ use App\Tables\Class\Types;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
+class CaptureMode{
+    public const all = 0;
+    public const ofUser = 1;
+}
+
 class CaptureTable extends Table
 {
+    private int $mode;
+    private int $userId;
 
     public function getDependencies(): array
     {
@@ -21,11 +28,16 @@ class CaptureTable extends Table
         $q = Captured::query();
         $q->leftJoin('exemplaries', 'captureds.exemplary_id', '=', 'exemplaries.id');
         $q->leftJoin('zones', 'captureds.zone_id', '=', 'zones.id');
+        if($this->mode == CaptureMode::ofUser){
+            $q->where('captureds.user_id', $this->userId);
+        }
         return $q;
     }
 
-    public function __construct()
+    public function __construct($mode = CaptureMode::all, $userId = -1)
     {
+        $this->mode = $mode;
+        $this->userId = $userId;
         $this->setId(6123);
         parent::__construct();
         $this->setColumns([

@@ -17,6 +17,7 @@ export default function FormSpostaInBox({open,closeDialog,exe}:{open:boolean,clo
     newInputs[index] = value
     setInputs(newInputs)
   }
+
   return (
     <div>
       <Dialog
@@ -41,9 +42,10 @@ export default function FormSpostaInBox({open,closeDialog,exe}:{open:boolean,clo
             label="Box di destinazione"
             onChange={(e)=>{changeInput(0,e.target.value)}}
           >
-            {box.map((item: any) => {
-              return <MenuItem value={item.id}>{resolveDependecieName(item)}</MenuItem>
-            })}
+             {Object.keys(box).map((item: any) => {
+              console.log(box[item])
+              return <MenuItem value={box[item].id}>{resolveDependecieName(box[item])}</MenuItem>
+            })} 
           </Select>
         </FormControl>
 

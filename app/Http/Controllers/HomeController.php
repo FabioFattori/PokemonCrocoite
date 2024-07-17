@@ -9,9 +9,12 @@ use App\Tables\UserTable;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Http\Controllers\DBController;
+use App\Models\Captured;
 use App\Models\Move;
 use App\Models\Pokemon;
+use App\Models\PokemonEncountered;
 use App\Models\Position;
+use App\Models\Rarity;
 use App\Models\Type;
 use App\Models\User;
 use App\Models\Zone;
@@ -27,15 +30,54 @@ class HomeController extends Controller
 
         if(!auth('admin')->check()){
             $user = auth()->user();
-            $team = new ExemplaryTable(mode:Mode::TEAM);
 
-            $position = $user->position()->get();
+            $position = Position::where("id", $user->position_id)->first();
 
-             if($id != null && $team->equalsByID($id)){
-                 $team->setConfigObject($request->all());
-             }
+            $zone = Zone::all();
 
-            return Inertia::render('Home', ['team' => $team->get(), 'user' => $user, 'position' => $position,"mode" => "user"]);
+            $zone = $zone->filter(function($zone) use ($position){
+                return Position::checkIfPositionIsInZone($position->x, $position->y, $zone->id);
+            })->first();
+
+            //return $zone;
+
+            $pokemon = null;
+            $rarities = Rarity::all();
+
+            if($zone != null){
+                $pokemon = Pokemon::all();
+                $pokemon = $pokemon->filter(function($p) use ($zone){
+                    return $zone->pokemons()->where("pokemon_id", $p->id)->exists();
+                });
+            }
+
+            $allPokemon = Pokemon::all();
+
+            //foreach pokemon check if the user has captured it or encountered it
+            $allPokemon = $allPokemon->map(function($p) use ($user){
+                $allExemplaryOfPokemon = Exemplary::where("pokemon_id", $p->id)->get();
+                $p->captured = false;
+                $p->encountered = false;
+                $allExemplaryOfPokemon->map(function($exemplary) use ($user,$p){
+                    $captured = Captured::where("exemplary_id", $exemplary->id)->where("user_id", $user->id)->exists();
+
+                    if($captured){
+                        $p->captured = true;
+                        $p->encountered = true;
+                    }
+
+                    $encountered = PokemonEncountered::where("pokemon_id", $p->id)->where("user_id", $user->id)->exists();
+                    if($encountered){
+                        $p->encountered = true;
+                    }
+                });
+
+
+                return $p;
+            });
+
+
+            return Inertia::render('Home', ['user' => $user, 'position' => $position,"mode" => "user","zone" => $zone,"pokemonInZone" => $pokemon,"rarities" => $rarities,"pokedex" => $allPokemon]);
         }else{
             $user = auth('admin')->user();
 
