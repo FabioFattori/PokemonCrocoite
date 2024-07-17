@@ -54,7 +54,7 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
     //   console.log(headers.filter((header)=>header.toLowerCase() != "id"))
     //   console.log(headers.filter((header)=>header.toLowerCase() != "id").map((header, index) => {
     //   return dependenciesNames.length!=0&&dependenciesNames.includes(header)}))
-    // console.log(fieldNames.map((field) => field.toLowerCase().includes("date")))
+     console.log(fieldNames.map((field) => field.toLowerCase().includes("date")))
   }
   , [inputs])
 
@@ -181,4 +181,4 @@ function Form({headers=[] , fieldNames=[] , data=null}:{headers: string[], field
   )
 }
 
-export default Form
+export {Form,resolveDependecieName}

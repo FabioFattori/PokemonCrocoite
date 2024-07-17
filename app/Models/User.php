@@ -20,7 +20,7 @@ class User extends Authenticatable
     {
         $team= Team::where('user_id', $this->id)->get()->first();
         if($team != null){
-            return $team->pokemons();
+            return $team->exemplary();
         }
         return null;
     }

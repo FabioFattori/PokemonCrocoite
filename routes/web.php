@@ -144,6 +144,10 @@ Route::prefix("admin")->group(function () {
     Route::match(['GET', 'POST'],"/storyTools", [AdminController::class, "storyTools"])->name("admin.storyTools");
     Route::post("/teams/Delete", [AdminController::class, "deleteTeam"])->name("teams.delete");
     Route::match(['GET', 'POST'],"/teams", [AdminController::class, "teams"])->name("admin.teams");
+    Route::post("/captures/Delete", [AdminController::class, "deleteCapture"])->name("captures.delete");
+    Route::post("/captures/Add", [AdminController::class, "addCapture"])->name("captures.add");
+    Route::post("/captures/Edit", [AdminController::class, "editCapture"])->name("captures.edit");
+    Route::match(['GET', 'POST'],"/captures", [AdminController::class, "captures"])->name("admin.captures");
     // Route::get("/profile", [ProfileController::class, "index"])->name("admin.profile");
     // Route::get("/profile/{id}", [ProfileController::class, "show"])->name("admin.profile.show");
     // Route::get("/profile/{id}/edit", [ProfileController::class, "edit"])->name("admin.profile.edit");
@@ -154,8 +158,15 @@ Route::prefix("admin")->group(function () {
  
 
 Route::prefix("user")->group(function () {
-
-    Route::match(['GET', 'POST'],"/exemplaries", [UserController::class, "exemplaries"])->name("user.exemplaries");
+    Route::match(['GET', 'POST'],"/boxes", [UserController::class, "boxes"])->name("user.boxes");
+    Route::post("/exemplary/inTeam", [UserController::class, "exemplaryInTeam"])->name("user.exemplaries.inTeam");
+    Route::post("/exemplary/inBox", [UserController::class, "exemplaryInBox"])->name("user.exemplaries.inBox");
+    Route::match(['GET', 'POST'],"/exemplariesInBox", [UserController::class, "exemplariesInBox"])->name("user.exemplariesInBox");
     Route::match(['GET', 'POST'],"/userTeam", [UserController::class, "teams"])->name("user.userTeam");
-
+    Route::match(['GET', 'POST'],"/captures", [UserController::class, "captures"])->name("user.captures");
+    Route::match(['GET', 'POST'],"/battles", [UserController::class, "battles"])->name("user.battles");
+    Route::match(['GET', 'POST'],"/singleBattle", [UserController::class, "singleBattle"])->name("user.singleBattle");
+    Route::match(['GET', 'POST'],"/bag", [UserController::class, "bag"])->name("user.bag");
+    Route::match(['GET', 'POST'],"/moves", [UserController::class, "moves"])->name("user.moves");
+    Route::get("/map", [UserController::class, "map"])->name("user.map");
 });

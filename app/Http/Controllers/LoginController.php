@@ -43,10 +43,12 @@ class LoginController extends Controller
             'password' => 'required|max:255',
         ]);
 
+        $randomPos = Position::all()->random();
+
         $user = User::create([
             'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
-            'position_id' => Position::random()->id,
+            'position_id' => $randomPos->id,
         ]);
 
         Team::create([

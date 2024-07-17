@@ -15,6 +15,7 @@ import Delete from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import Edit from "@mui/icons-material/Edit";
 import ExpandCircleDownIcon from "@mui/icons-material/ExpandCircleDown";
+import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 
 function Utenti() {
     var users = (usePage().props.users as any[]) ?? null;
@@ -80,6 +81,14 @@ function Utenti() {
               router.get("/admin/teams", { user_id: props[0].id });
           }
       );
+
+      addNewInterractableButton(
+        "Mostra Catture",
+        CatchingPokemonIcon,
+        ({ props }: { props: any }) => {
+            router.get("/admin/captures", { user_id: props[0].id });
+        }
+    );
        
     
         return () => {

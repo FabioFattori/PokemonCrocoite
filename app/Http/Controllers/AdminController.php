@@ -10,6 +10,7 @@ use App\Models\BattleRegistry;
 use App\Models\Battles;
 use App\Models\BattleTool;
 use App\Models\Box;
+use App\Models\Captured;
 use App\Models\MnMt;
 use App\Models\StoryTool;
 use App\Models\User;
@@ -41,6 +42,7 @@ use App\Models\Zone;
 use App\Tables\BattleToolMode;
 use App\Tables\BattleToolTable;
 use App\Tables\BoxTable;
+use App\Tables\CaptureTable;
 use App\Tables\Class\DependeciesResolver;
 use App\Tables\EffectivnessTable;
 use App\Tables\GendersTable;
@@ -55,6 +57,7 @@ use App\Tables\RaritiesTable;
 use App\Tables\SingleBattleMode;
 use App\Tables\ZonesTable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Mockery\Undefined;
 use PhpParser\Node\Stmt\Return_;
 
@@ -365,6 +368,16 @@ class AdminController extends Controller
             "gender_id" => "required|integer",
         ]);
 
+        // the pokemon cannot have a box_id and a team_id at the same time
+        if(key_exists("box_id",$request->all()) && $request->all()["box_id"] != null && key_exists("team_id",$request->all()) && $request->all()["team_id"] != null){
+            return redirect()->back()->withErrors(["box_id" => "Non puoi avere un esemplare in una squadra e in una box allo stesso tempo"]);
+        }
+
+        //the pokemon cannot have a npc_id and a user_id at the same time
+        if(key_exists("npc_id",$request->all()) && $request->all()["npc_id"] != null && key_exists("user_id",$request->all()) && $request->all()["user_id"] != null){
+            return redirect()->back()->withErrors(["npc_id" => "Non puoi avere un esemplare in un npc e in un utente allo stesso tempo"]);
+        }
+
         $ex = Exemplary::create([
             "name" => $request->input("name"),
             "level" => $request->input("level"),
@@ -434,6 +447,17 @@ class AdminController extends Controller
         if(key_exists("catchDate",$request->all()) && key_exists("zone_id",$request->all()) && key_exists("user_id",$request->all())){
             $ex = Exemplary::find($request->input("id"));
             //check if the exemplary has already a captured
+            $validator = Validator::make($request->all(), [
+                "catchDate" => "required|date",
+                "zone_id" => "required|integer",
+                "user_id" => "required|integer",
+            ]);
+
+            if($validator->fails()){
+                return redirect()->back()->withErrors(["user_id" => "Si può inserire una cattura solo se l'esemplare è di un utente"]);
+            }
+            
+
             if($ex->captured()->get()->first() != null){
                 $ex->captured()->update([
                     "date" => $request->input("catchDate"),
@@ -1278,6 +1302,10 @@ class AdminController extends Controller
                 "exemplary2" => "required|integer",
                 "winner" => "required|integer",
             ]);
+
+            if($request->input("winner") != 1 && $request->input("winner") != 2){
+                return redirect()->back()->withErrors(["winner" => "The winner must be 1 or 2"]);
+            }
             
             BattleRegistry::create([
                 "battle_id" => $request->input("battle_id"),
@@ -1293,8 +1321,8 @@ class AdminController extends Controller
                 "user_2" => "required|integer",
             ]);
     
-            if($request->input("winner") != $request->input("user_1") && $request->input("winner") != $request->input("user_2")){
-                return redirect()->back();
+            if($request->input("winner") != 1 && $request->input("winner") != 2){
+                return redirect()->back()->withErrors(["winner" => "The winner must be 1 or 2"]);
             }
     
             $battle = Battle::create([
@@ -1735,6 +1763,93 @@ class AdminController extends Controller
         ]);
 
         Exemplary::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function captures(Request $request){
+        $tb = new CaptureTable();
+        if($request->all() != [] && key_exists("id",$request->all()) && $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
+
+        $dp = DependeciesResolver::resolve($tb);
+
+        $exemplariesThatAreOriginal = Exemplary::whereNull("exemplary_id")->get();
+        $dp["Exemplary"] = $exemplariesThatAreOriginal;
+
+        return Inertia::render("Admin/Catture",[
+            'captures' => $tb->get(),
+            'dependencies' => $dp,
+            'dependenciesName' => $tb->getDependencies(),
+        ]);
+    }
+
+    public function deleteCapture(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+        ]);
+
+        Captured::where("id", "=", $request->input("id"))->delete();
+
+        return redirect()->back();
+    }
+
+    public function addCapture(Request $request){
+        $request->validate([
+            "date" => "required|date",
+            "exemplary_id" => "required|integer",
+            "zone_id" => "required|integer",
+            "user_id" => "required|integer",
+        ]);
+
+        $ex = Exemplary::find($request->input("exemplary_id"));
+        $pokemon = Pokemon::find($ex->pokemon_id);
+        $zone = Zone::find($request->input("zone_id"));
+
+        //check if the pokemon can be captured in that zone
+        $isFoundInZone = $pokemon->zone()->where('zone_id', $zone->id)->exists();
+
+        if(!$isFoundInZone){
+            return redirect()->back()->withErrors(["error" => "Il pokemon non può essere catturato in questa zona"]);
+        }
+
+        Captured::create([
+            "date" => $this->resolveDate($request->input("date")),
+            "exemplary_id" => $request->input("exemplary_id"),
+            "zone_id" => $request->input("zone_id"),
+            "user_id" => $request->input("user_id"),
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editCapture(Request $request){
+        $request->validate([
+            "id" => "required|integer",
+            "date" => "required|date",
+            "exemplary_id" => "required|integer",
+            "zone_id" => "required|integer",
+            "user_id" => "required|integer",
+        ]);
+
+        $ex = Exemplary::find($request->input("exemplary_id"));
+        $pokemon = Pokemon::find($ex->pokemon_id);
+        $zone = Zone::find($request->input("zone_id"));
+
+        //check if the pokemon can be captured in that zone
+        $isFoundInZone = $pokemon->zone()->where('zone_id', $zone->id)->exists();
+
+        if(!$isFoundInZone){
+            return redirect()->back()->withErrors(["error" => "Il pokemon non può essere catturato in questa zona"]);
+        }
+
+        Captured::where("id", "=", $request->input("id"))->update([
+            "date" => $this->resolveDate($request->input("date")),
+            "exemplary_id" => $request->input("exemplary_id"),
+            "zone_id" => $request->input("zone_id"),
+            "user_id" => $request->input("user_id"),
+        ]);
 
         return redirect()->back();
     }
