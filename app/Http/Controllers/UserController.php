@@ -74,20 +74,20 @@ class  UserController extends Controller
             return redirect()->route('login.log');
         }
         $request->validate([
-            'id' => 'required|integer',
+            'box_id' => 'required|integer',
         ]);
 
-        $tb = new ExemplaryTable(mode:Mode::Box,boxId:$request->id);
+        $tb = new ExemplaryTable(mode:Mode::Box,boxId:$request->box_id);
 
-        
+        if($request->all() != [] && key_exists("id",$request->all()) &&  $tb->equalsById($request->all()["id"])){
+            $tb->setConfigObject($request->all());
+        }
 
 
         return Inertia::render('Users/EsemplariInBox', [
             'EsemplariInBox' => $tb->get(),
             'dependencies' => DependeciesResolver::resolve($tb),
             'dependenciesName' => $tb->getDependencies(),
-            't1' => "Esemplari contenuti nel box ". Box::find($request->id)->name,
-            't2' => "Esemplari",
         ]);
     }
 

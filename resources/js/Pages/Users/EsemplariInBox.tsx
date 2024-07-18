@@ -9,8 +9,6 @@ import { SignLanguage } from "@mui/icons-material";
 
 function GenericExemplary() {
     var exemplaries = (usePage().props.EsemplariInBox as any[]) ?? null;
-    var t1 = (usePage().props.t1 as string) ?? "";
-    var t2 = (usePage().props.t2 as string) ?? "";
     let btn = [
         {
             label: "mostra Mosse",
@@ -29,9 +27,10 @@ function GenericExemplary() {
     ] as unknown as Button[];
     return (
         <>
-            <SideBar title={t1} mode={userMode.user} />
+            <SideBar title={"Esemplari contenuti nel box"} mode={userMode.user} />
             <GeneralTable
-                tableTitle={t2}
+                tableTitle={"Esemplari"}
+                rootForPagination={window.location.href}
                 dbObject={exemplaries}
                 buttons={btn}
             />
