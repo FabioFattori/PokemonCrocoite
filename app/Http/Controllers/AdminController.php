@@ -425,6 +425,16 @@ class AdminController extends Controller
             "zone_id" => "required|integer",
             "catchDate" => "required|date",
         ]);
+
+        // the pokemon cannot have a box_id and a team_id at the same time
+        if(key_exists("box_id",$request->all()) && $request->all()["box_id"] != null && key_exists("team_id",$request->all()) && $request->all()["team_id"] != null){
+            return redirect()->back()->withErrors(["box_id" => "Non puoi avere un esemplare in una squadra e in una box allo stesso tempo"]);
+        }
+
+        //the pokemon cannot have a npc_id and a user_id at the same time
+        if(key_exists("npc_id",$request->all()) && $request->all()["npc_id"] != null && key_exists("user_id",$request->all()) && $request->all()["user_id"] != null){
+            return redirect()->back()->withErrors(["npc_id" => "Non puoi avere un esemplare in un npc e in un utente allo stesso tempo"]);
+        }
         
         $ex = Exemplary::where("id", "=", $request->input("id"))->update([
             "name" => $request->input("name"),
@@ -676,6 +686,8 @@ class AdminController extends Controller
                         "name" => $request->input("name"),
                         "description" => $request->input("description"),
                         "type_id" => $request->type_id,
+                        "probState" => $request->probState,
+                        "state_id" => $request->state_id,
                     ]);
                     $move->canLearnFromLevel()->attach($request->input("pokemon_id"),["level" => $request->input("can_learn_level")]);
                 }else if(key_exists("prefabbricato", $request->all())){
@@ -685,6 +697,13 @@ class AdminController extends Controller
                     ]);
     
                     $move = Move::find($request->input("prefabbricato"));
+                    
+                    //update the probState and the state_id
+                    $move->update([
+                        "probState" => $request->input("probState"),
+                        "state_id" => $request->input("state_id"),
+                    ]);
+
                     $move->canLearnFromLevel()->attach($request->input("pokemon_id"),["level" => $request->input("can_learn_level")]);
         
                 }else{
@@ -693,11 +712,14 @@ class AdminController extends Controller
                         "description" => "required",
                         "type_id" => "required|integer",
                         "can_learn_level" => "required|integer",
+
                     ]);
                     $move = Move::create([
                         "name" => $request->input("name"),
                         "description" => $request->input("description"),
                         "type_id" => $request->input("type_id"),
+                        "probState" => $request->input("probState"),
+                        "state_id" => $request->input("state_id"),
                     ]);
                     $move->canLearnFromLevel()->attach($request->input("pokemon_id"),["level" => $request->input("can_learn_level")]);
                 }
@@ -733,6 +755,7 @@ class AdminController extends Controller
                 $move->canLearnFromMachine()->attach($move->id);
 
             }else{
+                
                 $request->validate([
                     "prefabbricato" => "required|integer",
                     "old_prefabbricato" => "required|string",
