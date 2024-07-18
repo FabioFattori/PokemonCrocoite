@@ -232,16 +232,16 @@ class DatabaseSeeder extends Seeder
 
         $positions = [
             [
-                "x" => 10,
-                "y" => 20
+                "x" => 2,
+                "y" => 2
             ],
             [
-                "x" => 30,
-                "y" => 40
+                "x" => 12,
+                "y" => 3
             ],
             [
-                "x" => 50,
-                "y" => 60
+                "x" => 22,
+                "y" => 4
             ],
         ];
 
@@ -381,8 +381,11 @@ class DatabaseSeeder extends Seeder
             "length" => 10,
             "width" => 10,
             "is_city" => false,
-            "position_id" => Position::factory()->create()->id
-        ]);
+            "position_id" => Position::create([
+                "x" => 0,
+                "y" => 0
+            ])->id]
+        );
         $dreamForest->pokemons()->attach(Pokemon::where("name", "Bulbasaur")->first()->id);
         $dreamForest->pokemons()->attach(Pokemon::where("name", "Caterpie")->first()->id);
         $dreamForest->pokemons()->attach(Pokemon::where("name", "Pidgey")->first()->id);
@@ -395,7 +398,10 @@ class DatabaseSeeder extends Seeder
             "length" => 10,
             "width" => 10,
             "is_city" => true,
-            "position_id" => Position::factory()->create()->id
+            "position_id" => Position::create([
+                "x" => 10,
+                "y" => 0
+            ])->id
         ]);
         $fireMountain->pokemons()->attach(Pokemon::where("name", "Charmander")->first()->id);
         $fireMountain->pokemons()->attach(Pokemon::where("name", "Charmeleon")->first()->id);
@@ -407,7 +413,10 @@ class DatabaseSeeder extends Seeder
             "length" => 10,
             "width" => 10,
             "is_city" => true,
-            "position_id" => Position::factory()->create()->id
+            "position_id" => Position::create([
+                "x" => 20,
+                "y" => 00
+        ])->id
         ]);
         $waterCave->pokemons()->attach(Pokemon::where("name", "Squirtle")->first()->id);
         $waterCave->pokemons()->attach(Pokemon::where("name", "Wartortle")->first()->id);
