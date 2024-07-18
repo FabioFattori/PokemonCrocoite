@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('mn_mts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('move_id')->constrained()->cascadeOnDelete();
-            $table->integer('number');
+            $table->integer('number')->unique();
             $table->boolean('is_mn')->default(false);
             $table->string('description');
         });
