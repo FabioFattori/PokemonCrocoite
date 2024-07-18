@@ -3,8 +3,6 @@ import {
     Typography,
     Container,
     Box,
-    Tab,
-    Tabs,
     FormControl,
     InputLabel,
     MenuItem,
@@ -66,13 +64,13 @@ const Stats = (props: StatsProps) => {
     return (
         <>
             <SideBar title={"Statistice"} mode={userMode.user} />
-            <Container>
+            <Container sx={{ mt: 10 }}>
                 <Stack spacing={1}>
                     <Typography variant="h4">Statistiche generali</Typography>
                     <Box>
                         <ChartManager
                             label=""
-                            title="Allenatori con i pokemon più variegati (in casi di parità si considera il numero di tipi di mosse)"
+                            title="visualizzare la classifica degli utenti con le squadre più variegate"
                             x={mostVariegatedPlayerTeam
                                 .map((team) => team.email)
                                 .concat([""])}
@@ -84,7 +82,7 @@ const Stats = (props: StatsProps) => {
                     <Box>
                         <ChartManager
                             label=""
-                            title="Pokemon con il miglior miglioramento medio tra i loro esemplari"
+                            title="visualizzare i Pokémon con il miglioramento medio più alto"
                             x={bestPokemonForUpgradeAverage
                                 .map((q) => q.pokemon_name)
                                 .concat([""])}
@@ -124,7 +122,7 @@ const Stats = (props: StatsProps) => {
                         </FormControl>
                         <ChartManager
                             label=""
-                            title="Utenti che hanno più esemplari della rarità selezionata"
+                            title="visualizzare gli utenti con il maggior numero di esemplari catturati di una rarità selezionata"
                             x={playerWithMoreRarities
                                 .map((q) => q.email)
                                 .concat([""])}
@@ -136,7 +134,7 @@ const Stats = (props: StatsProps) => {
                     <Box>
                         <ChartManager
                             label=""
-                            title="Rarirità dei pokemon con la media di vittorie più alta (la media è relativa al numero di esemplari presenti)"
+                            title="visualizzare le rarità più vincenti"
                             x={mostWinningRarityAverage
                                 .map((q) => q.rarity)
                                 .concat([""])}
@@ -148,7 +146,7 @@ const Stats = (props: StatsProps) => {
                     <Box>
                         <ChartManager
                             label=""
-                            title="Zone con i pokemon più potenti al momento della cattura"
+                            title="visualizzare le zone con i Pokémon più forti"
                             x={zoneWithGreatestPokemon
                                 .map((q) => q.zone_name)
                                 .concat([""])}
@@ -160,7 +158,7 @@ const Stats = (props: StatsProps) => {
                     <Box>
                         <ChartManager
                             label=""
-                            title="Esemplari più forti per battaglie vinte"
+                            title="visualizzare gli esemplari più efficaci in battaglia"
                             x={greatestPokemon
                                 .map((q) => q.pokemon_name + " di " + q.email)
                                 .concat([""])}
@@ -172,7 +170,7 @@ const Stats = (props: StatsProps) => {
                     <Box>
                         <ChartManager
                             label=""
-                            title="Mosse più presenti negli esemplari che hanno vinto le battaglie"
+                            title="visualizzare le mosse più efficaci in battaglia"
                             x={greatestMoves
                                 .map((q) => q.move_name)
                                 .concat([""])}
