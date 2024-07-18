@@ -45,6 +45,10 @@ class LoginController extends Controller
 
         $randomPos = Position::all()->random();
 
+        if(User::where('email', $request->email)->first() != null){
+            return redirect()->back()->withErrors(['email' => 'Email already exists']);
+        }
+
         $user = User::create([
             'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
@@ -74,6 +78,10 @@ class LoginController extends Controller
             'email' => 'required|email',
             'password' => 'required|max:255',
         ]);
+
+        if(Admin::where('email', $request->email)->first() != null){
+            return redirect()->back()->withErrors(['email' => 'Email already exists']);
+        }
 
         $user = Admin::create([
             'email' => $request->email,
