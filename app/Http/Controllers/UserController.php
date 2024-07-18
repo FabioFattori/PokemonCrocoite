@@ -70,6 +70,9 @@ class  UserController extends Controller
     }
 
     public function exemplariesInBox(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $request->validate([
             'id' => 'required|integer',
         ]);
@@ -89,6 +92,9 @@ class  UserController extends Controller
     }
 
     public function exemplaryInTeam(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $request->validate([
             'id' => 'required|integer',
         ]);
@@ -112,6 +118,9 @@ class  UserController extends Controller
     }
 
     public function exemplaryInBox(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $request->validate([
             'box_id' => 'required|integer',
             'exemplary_id' => 'required|integer',
@@ -137,6 +146,9 @@ class  UserController extends Controller
     }
 
     public function captures(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $tb = new CaptureTable(mode:CaptureMode::ofUser,userId:auth()->user()->id);
 
         if($request->all() != [] && $tb->equalsById($request->all()["id"])){
@@ -151,6 +163,9 @@ class  UserController extends Controller
     }
 
     public function battles(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $tb = new BattleTable(mode:BattleMode::USER,userId:auth()->user()->id);
 
         if($request->all() != [] && $tb->equalsById($request->all()["id"])){
@@ -165,6 +180,9 @@ class  UserController extends Controller
     }
 
     public function singleBattle(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $request->validate([
             'id' => 'required|integer',
         ]);
@@ -194,6 +212,9 @@ class  UserController extends Controller
     }
 
     public function bag(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $user = auth()->user();
 
         $mnMT = new MnMtTable(MnMtMode::ofUser,$user->id);
@@ -248,7 +269,14 @@ class  UserController extends Controller
 
 
     public function map(Request $request){
+        if (auth()->user() == null) {
+            return redirect()->route('login.log');
+        }
         $zones = Zone::all();
+        $positions = Position::all();
+        $zones->map(function($zone) use ($positions){
+            $zone->position = $positions->where('id',$zone->position_id)->first();
+        });
         $user = auth()->user();
         $userPos = Position::where('id',$user->position_id)->first();
 
