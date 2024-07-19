@@ -72,22 +72,22 @@ class ExemplaryTable extends Table{
         }
 
         $subQuery = DB::table('exemplaries')
-            ->leftJoin('captureds', 'captureds.exemplary_id', '=', 'exemplaries.id')
-            ->select(
-                'exemplaries.id as exemplary_id',
-                'exemplaries.exemplary_id as exemplaries_exemplary_id',
-                'captureds.id as capture_id',
-                'captureds.exemplary_id as captureds_exemplary_id',
-                'captureds.date',
-                'zones.id as zone_id',
-                'zones.name as zone_name'
-            )
-            ->leftJoin('zones', 'captureds.zone_id', '=', 'zones.id')
-            ->whereNull('exemplaries.exemplary_id')
-            ->orWhereNotNull('captureds.exemplary_id');
+        ->leftJoin('captureds', 'captureds.exemplary_id', '=', 'exemplaries.id')
+        ->select(
+            'exemplaries.id as exemplary_id',
+            'exemplaries.exemplary_id as exemplaries_exemplary_id',
+            'captureds.id as capture_id',
+            'captureds.exemplary_id as captureds_exemplary_id',
+            'captureds.date',
+            'zones.id as zone_id',
+            'zones.name as zone_name'
+        )
+        ->leftJoin('zones', 'captureds.zone_id', '=', 'zones.id')->whereNotNull('exemplaries.exemplary_id')->whereNotNull("captureds.id")
+        ->orWhereColumn('exemplaries.id', 'exemplaries.exemplary_id');
+            
 
             $q->leftJoinSub($subQuery, 'previous_result', function($join) {
-                $join->on('exemplaries.id', '=', 'previous_result.exemplary_id');
+                $join->on('exemplaries.id', '=', 'previous_result.exemplaries_exemplary_id');
             });
         
         return $q;
