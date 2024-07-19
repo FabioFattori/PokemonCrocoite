@@ -2,12 +2,15 @@
 
 namespace App\Tables;
 
+use App\Models\Captured;
 use App\Models\Exemplary;
 use App\Tables\Class\Column;
 use App\Tables\Class\Types;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
+
+use Illuminate\Support\Facades\DB;
 
 final class Mode
 {
@@ -39,18 +42,17 @@ class ExemplaryTable extends Table{
     }
 
     public function getQuery():Builder|EloquentBuilder{
-        $q = Exemplary::query()->leftJoin("captureds", "captureds.exemplary_id", "=", "exemplaries.id");
-        $q->leftJoin("zones", "captureds.zone_id", "=", "zones.id");
+        $q = Exemplary::query();
         $q->leftJoin("teams", "exemplaries.team_id", "=", "teams.id");
         $q->leftJoin("users", "teams.user_id", "=", "users.id");
         $q->leftJoin("battle_tools", "exemplaries.holding_tools_id", "=", "battle_tools.id");
         $q->leftJoin("state_exemplaries", "exemplaries.id", "=", "state_exemplaries.exemplary_id");
         $q->leftJoin("states", "state_exemplaries.state_id", "=", "states.id");
         if($this->currentMode == Mode::TEAM && auth()->user() != null){
-            $q->where("team_id", "=", auth()->user()->getTeamId());
+            $q->where("exemplaries.team_id", "=", auth()->user()->getTeamId());
             $q->whereNull("exemplaries.exemplary_id");
         }else if($this->currentMode == Mode::TEAM && auth()->user() == null){
-            $q->where("team_id", "=", $this->userId);
+            $q->where("exemplaries.team_id", "=", $this->userId);
             $q->whereNull("exemplaries.exemplary_id");
         }
 
@@ -62,12 +64,32 @@ class ExemplaryTable extends Table{
 
         if($this->currentMode == Mode::Box){
             $q->whereNull("exemplaries.exemplary_id");
-            $q->where("box_id", "=", $this->boxId);
+            $q->where("exemplaries.box_id", "=", $this->boxId);
         }
 
         if($this->currentMode == Mode::SingleExemplary){
             $q->where("exemplaries.id", "=", $this->SingleExemplaryId);
         }
+
+        $subQuery = DB::table('exemplaries')
+        ->leftJoin('captureds', 'captureds.exemplary_id', '=', 'exemplaries.id')
+        ->select(
+            'exemplaries.id as exemplary_id',
+            'exemplaries.exemplary_id as exemplaries_exemplary_id',
+            'captureds.id as capture_id',
+            'captureds.exemplary_id as captureds_exemplary_id',
+            'captureds.date',
+            'zones.id as zone_id',
+            'zones.name as zone_name'
+        )
+        ->leftJoin('zones', 'captureds.zone_id', '=', 'zones.id')->whereNotNull('exemplaries.exemplary_id')->whereNotNull("captureds.id")
+        ->orWhereColumn('exemplaries.id', 'exemplaries.exemplary_id');
+            
+
+            $q->leftJoinSub($subQuery, 'previous_result', function($join) {
+                $join->on('exemplaries.id', '=', 'previous_result.exemplaries_exemplary_id');
+            });
+        
         return $q;
     }
 
@@ -87,7 +109,7 @@ class ExemplaryTable extends Table{
                 "defense" => Column::Visible("defense", "exemplaries.defense", "Difesa", true, true, Types::INTEGER),
                 "speed" => Column::Visible("speed", "exemplaries.speed", "Velocità", true, true, Types::INTEGER),
                 "specialAttack" => Column::Visible("specialAttack", "exemplaries.specialAttack", "Attacco Speciale", true, true, Types::INTEGER),
-                "catchDate" => Column::Visible("catchDate", "captureds.date", "Data Cattura", true, true, Types::DATE),
+                "catchDate" => Column::Visible("catchDate", "previous_result.date", "Data Cattura", true, true, Types::DATE),
                 "specialDefense" => Column::Visible("specialDefense", "exemplaries.specialDefense", "Difesa Speciale", true, true, Types::INTEGER),
                 "npc_id" => Column::Hidden("npc_id", "exemplaries.npc_id", "Npc", types: Types::INTEGER,isOriginal: true),
                 "nature_id" => Column::Hidden("nature_id", "exemplaries.nature_id", "Nature", types: Types::INTEGER,isOriginal: true),
@@ -95,8 +117,8 @@ class ExemplaryTable extends Table{
                 "box_id" => Column::Hidden("box_id", "exemplaries.box_id", "Box", types: Types::INTEGER,isOriginal: true),
                 "id" => Column::Hidden(name: "id", dbName: "exemplaries.id", types: Types::INTEGER,isOriginal: true),
                 "storico_id" => Column::Hidden("storico_id", "exemplaries.exemplary_id", "Exemplary", types: Types::INTEGER,isOriginal: false),
-                "zone_id" => Column::Hidden("zone_id", "zones.id", "Zone", types: Types::INTEGER,isOriginal: true),
-                "zoneName" => Column::Visible("zoneName", "zones.name","Zone Di Cattura", types: Types::STRING,isOriginal: false),
+                "zone_id" => Column::Hidden("zone_id", "previous_result.zone_id", "Zone", types: Types::INTEGER,isOriginal: true),
+                "zoneName" => Column::Visible("zoneName", "previous_result.zone_name","Zone Di Cattura", types: Types::STRING,isOriginal: false),
                 "holding_tools_id" => Column::Hidden("holding_tools_id", "exemplaries.holding_tools_id", "BattleTool which the pokemon holds", types: Types::INTEGER,isOriginal: true),
                 "holding_tools_name" => Column::Visible("holding_tools_name", "battle_tools.name", "Strumento", types: Types::STRING,isOriginal: false),
                 "state_id" => Column::Hidden("state_id", "state_exemplaries.state_id", "State", types: Types::INTEGER,isOriginal: false),
@@ -111,7 +133,7 @@ class ExemplaryTable extends Table{
                 "defense" => Column::Visible("defense", "exemplaries.defense", "Difesa", true, true, Types::INTEGER),
                 "speed" => Column::Visible("speed", "exemplaries.speed", "Velocità", true, true, Types::INTEGER),
                 "specialAttack" => Column::Visible("specialAttack", "exemplaries.specialAttack", "Attacco Speciale", true, true, Types::INTEGER),
-                "catchDate" => Column::Visible("catchDate", "captureds.date", "Data Cattura", true, true, Types::DATE),
+                "catchDate" => Column::Visible("catchDate", "previous_result.date", "Data Cattura", true, true, Types::DATE),
                 "specialDefense" => Column::Visible("specialDefense", "exemplaries.specialDefense", "Difesa Speciale", true, true, Types::INTEGER),
                 "pokemon_id" => Column::Hidden("pokemon_id", "exemplaries.pokemon_id", "Pokemon", types: Types::INTEGER,isOriginal: true),
                 "team_id" => Column::Hidden("team_id", "exemplaries.team_id", "Team", types: Types::INTEGER,isOriginal: true),
@@ -121,8 +143,8 @@ class ExemplaryTable extends Table{
                 "box_id" => Column::Hidden("box_id", "exemplaries.box_id", "Box", types: Types::INTEGER,isOriginal: true),
                 "id" => Column::Hidden(name: "id", dbName: "exemplaries.id", types: Types::INTEGER,isOriginal: true),
                 "storico_id" => Column::Hidden("storico_id", "exemplaries.exemplary_id", "Exemplary", types: Types::INTEGER,isOriginal: false),
-                "zone_id" => Column::Hidden("zone_id", "zones.id", "Zone", types: Types::INTEGER,isOriginal: true),
-                "zoneName" => Column::Visible("zoneName", "zones.name","Zone Di Cattura", types: Types::STRING,isOriginal: false),
+                "zone_id" => Column::Hidden("zone_id", "previous_result.zone_id", "Zone", types: Types::INTEGER,isOriginal: true),
+                "zoneName" => Column::Visible("zoneName", "previous_result.zone_name","Zone Di Cattura", types: Types::STRING,isOriginal: false),
                 "holding_tools_id" => Column::Hidden("holding_tools_id", "exemplaries.holding_tools_id", "BattleTool which the pokemon holds", types: Types::INTEGER,isOriginal: true),
                 "holding_tools_name" => Column::Visible("holding_tools_name", "battle_tools.name", "Strumento", types: Types::STRING,isOriginal: false),
                 "state_id" => Column::Hidden("state_id", "state_exemplaries.state_id", "State", types: Types::INTEGER,isOriginal: false),
@@ -137,7 +159,7 @@ class ExemplaryTable extends Table{
                 "defense" => Column::Visible("defense", "exemplaries.defense", "Difesa", true, true, Types::INTEGER),
                 "speed" => Column::Visible("speed", "exemplaries.speed", "Velocità", true, true, Types::INTEGER),
                 "specialAttack" => Column::Visible("specialAttack", "exemplaries.specialAttack", "Attacco Speciale", true, true, Types::INTEGER),
-                "catchDate" => Column::Visible("catchDate", "captureds.date", "Data Cattura", true, true, Types::DATE),
+                "catchDate" => Column::Visible("catchDate", "previous_result.date", "Data Cattura", true, true, Types::DATE),
                 "specialDefense" => Column::Visible("specialDefense", "exemplaries.specialDefense", "Difesa Speciale", true, true, Types::INTEGER),
                 "pokemon_id" => Column::Hidden("pokemon_id", "exemplaries.pokemon_id", "Pokemon", types: Types::INTEGER,isOriginal: true),
                 "team_id" => Column::Hidden("team_id", "exemplaries.team_id", "Team", types: Types::INTEGER,isOriginal: true),
@@ -147,8 +169,8 @@ class ExemplaryTable extends Table{
                 "box_id" => Column::Hidden("box_id", "exemplaries.box_id", "Box", types: Types::INTEGER,isOriginal: true),
                 "id" => Column::Hidden(name: "id", dbName: "exemplaries.id", types: Types::INTEGER,isOriginal: true),
                 "storico_id" => Column::Hidden("storico_id", "exemplaries.exemplary_id", "Exemplary", types: Types::INTEGER,isOriginal: false),
-                "zone_id" => Column::Hidden("zone_id", "zones.id", "Zone", types: Types::INTEGER,isOriginal: true),
-                "zoneName" => Column::Visible("zoneName", "zones.name","Zone Di Cattura", types: Types::STRING,isOriginal: false),
+                "zone_id" => Column::Hidden("zone_id", "previous_result.zone_id", "Zone", types: Types::INTEGER,isOriginal: true),
+                "zoneName" => Column::Visible("zoneName", "previous_result.zone_name","Zone Di Cattura", types: Types::STRING,isOriginal: false),
                 "user_id" => Column::Hidden("user_id", "users.id", "User", types: Types::INTEGER,isOriginal: true),
                 "userName" => Column::Visible("userName", "users.email", "Nome User", types: Types::STRING,isOriginal: false),
                 "holding_tools_id" => Column::Hidden("holding_tools_id", "exemplaries.holding_tools_id", "BattleTool which the pokemon holds", types: Types::INTEGER,isOriginal: true),

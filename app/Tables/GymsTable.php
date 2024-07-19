@@ -17,7 +17,7 @@ class GymsTable extends Table{
 
     public function getQuery(): Builder|EloquentBuilder
     {
-        $q = Gym::query() -> join("positions","positions.id","=","gyms.position_id") -> join("zones","zones.id","=","gyms.zone_id") -> leftJoin("npcs","npcs.gym_id","=","gyms.id");
+        $q = Gym::query() -> join("positions","positions.id","=","gyms.position_id") -> join("zones","zones.id","=","gyms.zone_id") -> leftJoin("npcs","npcs.gym_id","=","gyms.id")->where("npcs.is_gym_leader",1);
         $q = $q->select("gyms.id","positions.x","positions.y","gyms.position_id","gyms.zone_id","npcs.id as npc_id","zones.name as zone_name","npcs.name as npc_name");
         $q = $q->leftJoin("types","types.id","=","gyms.type_id");
         return $q;

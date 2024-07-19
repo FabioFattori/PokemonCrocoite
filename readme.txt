@@ -29,7 +29,7 @@
 -   `./vendor/bin/sail npm run dev` (in windows il file si chiama sail.bat)
 -   `./vendor/bin/sail artisan migrate` Per creare le tabelle nel Database
 -   `./vendor/bin/sail artisan db:seed` Per popolare le tabelle nel Databases
--   ora in `localhost/` ci sarò il sito ed in `localhost:81` PHPMYADMIN per visualizzare il database
+-   ora in `localhost/` ci sarò il sito, in `localhost:81` PHPMYADMIN per visualizzare il database, e in `localhost/db` la visualizzazione grafica della struttura dello schema in laravel
 
 ## Alternativa: Avvio tramite vscode task
 Per avviare l'applicazione tramite vscode task bisogna eseguire i task nel seguente ordine
