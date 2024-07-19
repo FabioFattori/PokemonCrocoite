@@ -63,7 +63,9 @@ select e.id, pokemon_id, pa.avarage - (speed + specialDefense + specialAttack + 
             join captureds c on c.exemplary_id = e.id
             join users u on u.id = c.user_id
             where r.id = ?
-            group by u.id", [$rarityId]);
+            group by u.id
+            order by amount DESC
+            ", [$rarityId]);
     }
 
     private function mostWinningRarityAverage(){
