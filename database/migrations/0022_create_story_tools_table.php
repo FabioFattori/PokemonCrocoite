@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('story_tools', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description');
+            $table->string('name')->unique();
+            $table->string('description')->default("");
         });
     }
 
